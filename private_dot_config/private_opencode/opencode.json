@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "google/gemini-3.1-pro-preview",
+  "model": "gemini-3.1-pro-preview",
   "small_model": "google/gemini-3.1-flash-preview",
   "instructions": [
     "instructions/INSTRUCTIONS.md"
@@ -9,7 +9,7 @@
   "agent": {
     "planner": {
       "description": "Expert planning specialist for complex features and refactoring. Use for implementation planning, architectural changes, or complex refactoring.",
-      "model": "google/gemini-3.1-pro-preview",
+      "model": "gemini-3.1-pro-preview",
       "mode": "subagent",
       "prompt": "{file:prompts/agents/planner.txt}",
       "tools": {
@@ -21,7 +21,7 @@
     },
     "architect": {
       "description": "Software architecture specialist for system design, scalability, and technical decision-making.",
-      "model": "google/gemini-3.1-pro-preview",
+      "model": "gemini-3.1-pro-preview",
       "mode": "subagent",
       "prompt": "{file:prompts/agents/architect.txt}",
       "tools": {
