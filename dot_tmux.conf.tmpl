@@ -29,6 +29,9 @@
 # - prefix + a       : Open TmuxAI in a 35% side pane
 # =============================================================================
 
+# Force default shell to zsh (prevents issues on systems where fish is default)
+set-option -g default-shell /bin/zsh
+
 # True color support (critical for eza, bat, neovim, and ghostty)
 set -g default-terminal "tmux-256color"
 set -ag terminal-overrides ",xterm-256color:RGB"
