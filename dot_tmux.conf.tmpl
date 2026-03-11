@@ -55,6 +55,8 @@ bind l select-pane -R
 bind a run-shell "tmux split-window -h -p 35 'tmuxai'"
 
 # Status bar customization (Minimalist Tokyo Night style)
+set-option -g status-position top
+set -g status-right ""
 set -g status-style bg=default,fg=white
 set -g status-left-length 40
 set -g status-left "#[fg=green,bold] #S #[fg=white]| "
