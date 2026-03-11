@@ -1,6 +1,6 @@
 [user]
-	name = Davide Mirtillo
-	email = davide.mirtillo@gmail.com
+	name = Your Name
+	email = your.email@example.com
 [credential]
 	helper = store
 [core]
@@ -9,8 +9,8 @@
 	defaultBranch = main
 
 # Work email overrides -- add these locally per-repo or use includeIf:
-# git config --local user.email "dmirtillo@actabase.com"
+# git config --local user.email "your.work@email.com"
 #
 # Or add conditional includes to your global ~/.gitconfig:
-# [includeIf "gitdir:~/projects/actabase/"]
-#     path = ~/.gitconfig-work-actabase
+# [includeIf "gitdir:~/projects/work/"]
+#     path = ~/.gitconfig-work

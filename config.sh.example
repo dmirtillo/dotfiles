@@ -1,0 +1,29 @@
+# =============================================================================
+# Dotfiles Configuration Template
+# 
+# Copy this file to 'config.sh' and fill in your details before running install.sh.
+# The config.sh file is git-ignored and contains your personal settings.
+# =============================================================================
+
+# --- Git Identity ---
+# Used to configure ~/.gitconfig during install
+DOTFILES_GIT_NAME="Your Name"
+DOTFILES_GIT_EMAIL="your.email@example.com"
+
+# --- SSH Keys ---
+# List of SSH keys in ~/.ssh/keys/ to load automatically in the background on startup
+# Example: DOTFILES_SSH_KEYS=("my-personal-key" "my-work-key")
+DOTFILES_SSH_KEYS=(
+  "dmirtillo-gitlab-arsenalia.key"
+  "frocetti.key"
+  "dmirtillo-actabaseadmin-ed25519.key"
+)
+
+# --- Optional Integrations ---
+
+# Google Cloud SDK variables (leave empty to disable)
+DOTFILES_GCLOUD_PROJECT="actabase-vertexai"
+DOTFILES_GCLOUD_LOCATION="global"
+
+# Antigravity (Python environment manager)
+DOTFILES_ENABLE_ANTIGRAVITY=true

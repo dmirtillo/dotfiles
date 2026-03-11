@@ -3,16 +3,22 @@ set -euo pipefail
 
 # =============================================================================
 # Dotfiles Installer
-# Symlinks dotfiles and installs dependencies for a fresh macOS setup.
+# Symlinks dotfiles and installs dependencies.
 # =============================================================================
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ECC_DIR="$DOTFILES_DIR/vendor/everything-claude-code"
 OC_CONFIG="$HOME/.config/opencode"
 
+# Load platform detection and config
+source "$DOTFILES_DIR/scripts/lib/platform.sh"
+source "$DOTFILES_DIR/scripts/lib/config.sh"
+load_dotfiles_config || echo "Warning: No config.sh found. Using defaults."
+
 echo "=================================================="
 echo "  Dotfiles Installer"
 echo "  Source: $DOTFILES_DIR"
+echo "  Platform: $DOTFILES_OS ($DOTFILES_ARCH)"
 echo "=================================================="
 echo ""
 
@@ -41,21 +47,40 @@ link_dir() {
   echo "  Linked $dst -> $src"
 }
 
-# --- Step 1: Install Homebrew ---
-echo "[1/8] Checking Homebrew..."
-if ! command -v brew &>/dev/null; then
-  echo "  Installing Homebrew..."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-else
-  echo "  Homebrew already installed."
+# --- Step 1: Install Homebrew (macOS) / Pacman (Linux) ---
+echo "[1/8] Checking package manager..."
+if [[ "$DOTFILES_OS" == "macos" ]]; then
+  if ! command -v brew &>/dev/null; then
+    echo "  Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$($DOTFILES_BREW_PREFIX/bin/brew shellenv)"
+  else
+    echo "  Homebrew already installed."
+  fi
+elif [[ "$DOTFILES_OS" == "linux" ]]; then
+  if [[ "$DOTFILES_PKG_MANAGER" == "pacman" ]]; then
+    echo "  Pacman detected."
+    if ! command -v yay &>/dev/null; then
+      echo "  WARNING: yay (AUR helper) is not installed. Some packages may fail to install."
+    fi
+  else
+    echo "  WARNING: Unsupported package manager ($DOTFILES_PKG_MANAGER)."
+  fi
 fi
 
-# --- Step 2: Install Brewfile packages ---
+# --- Step 2: Install packages ---
 echo ""
-echo "[2/8] Installing Brewfile packages..."
-echo "  This may take a while on a fresh machine."
-brew bundle install --file="$DOTFILES_DIR/Brewfile" --no-lock
+echo "[2/8] Installing packages..."
+if [[ "$DOTFILES_OS" == "macos" ]]; then
+  echo "  Running Homebrew bundle..."
+  brew bundle install --file="$DOTFILES_DIR/Brewfile" --no-lock
+elif [[ "$DOTFILES_OS" == "linux" ]] && [[ -f "$DOTFILES_DIR/packages-pacman.txt" ]]; then
+  echo "  Installing pacman packages..."
+  # Phase 1 will implement full package parsing here
+  echo "  (Linux package install to be fully implemented in Phase 1)"
+else
+  echo "  Skipping package installation for this platform."
+fi
 echo "  Done."
 
 # --- Step 3: Symlink dotfiles ---
@@ -70,6 +95,13 @@ link_file "$DOTFILES_DIR/zsh/.p10k.zsh" "$HOME/.p10k.zsh"
 
 # Git
 link_file "$DOTFILES_DIR/git/.gitconfig" "$HOME/.gitconfig"
+
+# Optional: Set Git Identity from config.sh
+if [ -n "${DOTFILES_GIT_NAME:-}" ] && [ -n "${DOTFILES_GIT_EMAIL:-}" ]; then
+  echo "  Configuring git identity..."
+  git config --global user.name "$DOTFILES_GIT_NAME"
+  git config --global user.email "$DOTFILES_GIT_EMAIL"
+fi
 
 # Vim
 link_file "$DOTFILES_DIR/vim/.vimrc" "$HOME/.vimrc"
@@ -90,11 +122,11 @@ echo "  Done."
 # --- Step 5: Generate antidote static plugins file ---
 echo ""
 echo "[5/8] Generating antidote plugins..."
-if command -v antidote &>/dev/null || [ -f /opt/homebrew/opt/antidote/share/antidote/antidote.zsh ]; then
-  zsh -c 'source /opt/homebrew/opt/antidote/share/antidote/antidote.zsh && antidote bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.zsh'
+if command -v antidote &>/dev/null || [ -n "$DOTFILES_ANTIDOTE_PATH" ] && [ -f "$DOTFILES_ANTIDOTE_PATH" ]; then
+  zsh -c "source $DOTFILES_ANTIDOTE_PATH && antidote bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.zsh"
   echo "  Done."
 else
-  echo "  WARNING: antidote not found. Run 'brew install antidote' first."
+  echo "  WARNING: antidote not found. Install it first."
 fi
 
 # --- Step 6: Create cache directory ---

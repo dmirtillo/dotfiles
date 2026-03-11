@@ -11,7 +11,7 @@ set -euo pipefail
 # Usage:
 #   ./scripts/sync.sh              # Pull + backup + apply all
 #   ./scripts/sync.sh --no-pull    # Skip git pull (use local repo state)
-#   ./scripts/sync.sh --no-brew    # Skip Brewfile sync
+#   ./scripts/sync.sh --no-brew    # Skip package sync
 #   ./scripts/sync.sh --dry-run    # Show what would change, don't apply
 # =============================================================================
 
@@ -19,6 +19,9 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SCRIPTS_DIR="$DOTFILES_DIR/scripts"
 ECC_DIR="$DOTFILES_DIR/vendor/everything-claude-code"
 OC_CONFIG="$HOME/.config/opencode"
+
+# Load platform detection
+source "$DOTFILES_DIR/scripts/lib/platform.sh"
 
 DO_PULL=true
 DO_BREW=true
@@ -272,18 +275,22 @@ fi
 
 echo ""
 
-# --- Step 5: Brewfile (additive install) ---
+# --- Step 5: Package sync (additive install) ---
 if $DO_BREW; then
-  echo "[5/7] Installing new Brewfile entries (additive)..."
-  if $DRY_RUN; then
-    echo "  (dry-run) Would run: brew bundle install --file=Brewfile --no-lock"
-    echo "  Checking what would be installed:"
-    brew bundle check --file="$DOTFILES_DIR/Brewfile" 2>&1 | sed 's/^/  /' || true
+  echo "[5/7] Installing new packages (additive)..."
+  if [[ "$DOTFILES_OS" == "macos" ]]; then
+    if $DRY_RUN; then
+      echo "  (dry-run) Would run: brew bundle install --file=Brewfile --no-lock"
+      echo "  Checking what would be installed:"
+      brew bundle check --file="$DOTFILES_DIR/Brewfile" 2>&1 | sed 's/^/  /' || true
+    else
+      brew bundle install --file="$DOTFILES_DIR/Brewfile" --no-lock 2>&1 | sed 's/^/  /'
+    fi
   else
-    brew bundle install --file="$DOTFILES_DIR/Brewfile" --no-lock 2>&1 | sed 's/^/  /'
+    echo "  (Linux package sync deferred to Phase 1)"
   fi
 else
-  echo "[5/7] Skipping Brewfile sync (--no-brew)"
+  echo "[5/7] Skipping package sync (--no-brew)"
 fi
 echo ""
 
@@ -297,11 +304,11 @@ if [ ! -f "$PLUGINS_STATIC" ] || [ "$PLUGINS_SRC" -nt "$PLUGINS_STATIC" ]; then
   if $DRY_RUN; then
     echo "  (dry-run) Would regenerate .zsh_plugins.zsh"
   else
-    if [ -f /opt/homebrew/opt/antidote/share/antidote/antidote.zsh ]; then
-      zsh -c 'source /opt/homebrew/opt/antidote/share/antidote/antidote.zsh && antidote bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.zsh' 2>&1 | sed 's/^/  /'
+    if [ -n "$DOTFILES_ANTIDOTE_PATH" ] && [ -f "$DOTFILES_ANTIDOTE_PATH" ]; then
+      zsh -c "source $DOTFILES_ANTIDOTE_PATH && antidote bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.zsh" 2>&1 | sed 's/^/  /'
       echo "  Done."
     else
-      echo "  WARNING: antidote not found. Install with: brew install antidote"
+      echo "  WARNING: antidote not found at $DOTFILES_ANTIDOTE_PATH"
     fi
   fi
 else
