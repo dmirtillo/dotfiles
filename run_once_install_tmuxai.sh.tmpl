@@ -18,9 +18,9 @@ if ! command -v tmuxai &> /dev/null; then
     # or just pipe to bash, knowing it tries /usr/local/bin by default.
     # Actually, the quickest way is their script, but if it tries /usr/local/bin without sudo it fails.
     # Let's use their script and if it fails, we fall back to a manual release curl.
-    # The install script at get.tmuxai.dev supports setting the directory via --dir
+    # The install script at get.tmuxai.dev supports setting the directory via -b
     
-    curl -fsSL https://get.tmuxai.dev | bash -s -- --dir "$INSTALL_DIR" || {
+    curl -fsSL https://get.tmuxai.dev | bash -s -- -b "$INSTALL_DIR" || {
         echo "[install] Fallback manual download..."
         
         {{ if eq .chezmoi.os "darwin" }}
