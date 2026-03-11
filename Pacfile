@@ -110,7 +110,7 @@ openssh
 rsync
 speedtest-cli
 sshpass
-telnet
+# telnet is provided by inetutils on Arch (already listed above)
 wget
 whois
 wireguard-tools
@@ -150,7 +150,7 @@ uv
 # =============================================================================
 # DEVELOPMENT TOOLS
 # =============================================================================
-gh
+github-cli
 
 # =============================================================================
 # MEDIA & FILE TOOLS
@@ -175,7 +175,7 @@ neofetch
 screen
 viu
 dos2unix
-watch
+# watch is provided by procps-ng on Arch (installed by default)
 
 # =============================================================================
 # ARCHIVE / PACKAGE MANAGEMENT
