@@ -10,6 +10,9 @@ set -euo pipefail
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OC_CONFIG="$HOME/.config/opencode"
 
+# Load platform detection
+source "$DOTFILES_DIR/scripts/lib/platform.sh"
+
 echo "Snapshotting current dotfiles into $DOTFILES_DIR ..."
 
 # ZSH files
@@ -41,8 +44,13 @@ if [ -f "$OC_CONFIG/package.json" ]; then
   echo "  [opencode] package.json"
 fi
 
-# Regenerate Brewfile
-brew bundle dump --file="$DOTFILES_DIR/Brewfile" --force
+# Regenerate Brewfile (macOS only)
+if [[ "$DOTFILES_OS" == "macos" ]]; then
+  brew bundle dump --file="$DOTFILES_DIR/Brewfile" --force
+  echo "  [brew] Brewfile regenerated"
+elif [[ "$DOTFILES_OS" == "linux" ]]; then
+  echo "  [linux] Packages snapshot deferred to Phase 1"
+fi
 
 echo ""
 echo "Snapshot complete. Review changes with:"

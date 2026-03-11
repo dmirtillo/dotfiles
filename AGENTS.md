@@ -1,6 +1,6 @@
 # Agent Instructions: Dotfiles Repository
 
-This `AGENTS.md` file defines the rules, conventions, and commands for AI agents operating specifically within this dotfiles repository (`/Users/dmirtillo/projects/software/dotfiles`). 
+This `AGENTS.md` file defines the rules, conventions, and commands for AI agents operating specifically within this dotfiles repository (`$DOTFILES_DIR`). 
 
 **Note:** The file at `opencode/AGENTS.md` contains general-purpose coding rules for *other* projects. This root-level file governs *this* repo.
 

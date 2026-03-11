@@ -11,6 +11,9 @@ set -euo pipefail
 #   ./scripts/backup.sh pre-update   # Backup with custom label (e.g., pre-update)
 # =============================================================================
 
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$DOTFILES_DIR/scripts/lib/platform.sh"
+
 BACKUP_DIR="$HOME/.dotfiles-backups"
 LABEL="${1:-}"
 TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
@@ -116,14 +119,22 @@ if command -v brew &>/dev/null; then
 fi
 
 # --- Metadata ---
+if [[ "$DOTFILES_OS" == "macos" ]]; then
+  OS_VERSION="$(sw_vers -productVersion 2>/dev/null || echo "unknown")"
+elif [[ "$DOTFILES_OS" == "linux" ]]; then
+  OS_VERSION="$(cat /etc/os-release | grep PRETTY_NAME | cut -d= -f2 | tr -d '"' 2>/dev/null || echo "unknown")"
+else
+  OS_VERSION="unknown"
+fi
+
 cat > "$STAGING/MANIFEST.txt" <<EOF
 Dotfiles Backup
 ===============
 Date:     $(date)
 Hostname: $(hostname)
 User:     $(whoami)
-macOS:    $(sw_vers -productVersion 2>/dev/null || echo "unknown")
-Arch:     $(uname -m)
+OS:       $OS_VERSION
+Arch:     $DOTFILES_ARCH
 Label:    ${LABEL:-"(none)"}
 Shell:    $(zsh --version 2>/dev/null || echo "unknown")
 
