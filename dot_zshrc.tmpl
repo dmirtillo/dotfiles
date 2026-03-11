@@ -340,9 +340,9 @@ alias diskspace='duf'
 # macOS Specific
 alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder'
 alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder'
-alias cleanup='sudo rm -rf ~/.Trash/*'
+alias cleanup='rm -rf ~/.Trash/* 2>/dev/null; echo "Trash cleaned."'
 alias flushdns='sudo dscacheutil -flushcache'
-alias emptytrash='sudo rm -rfv ~/.Trash'
+alias emptytrash='rm -rfv ~/.Trash/* 2>/dev/null; echo "Trash emptied."'
 {{ else if eq .chezmoi.os "linux" -}}
 # Linux Specific
 alias flushdns='sudo systemd-resolve --flush-caches 2>/dev/null || sudo resolvectl flush-caches 2>/dev/null'
@@ -378,7 +378,12 @@ kport() {
     fi
 
     echo "Killing processes on port $1: $pids"
-    echo $pids | xargs kill -9
+    echo $pids | xargs kill -15 2>/dev/null
+    sleep 1
+    local remaining=$(lsof -ti:$1 2>/dev/null)
+    if [ -n "$remaining" ]; then
+      echo "$remaining" | xargs kill -9 2>/dev/null
+    fi
     echo "Done!"
 }
 

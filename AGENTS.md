@@ -19,7 +19,7 @@ This repository uses [chezmoi](https://www.chezmoi.io/) for cross-platform dotfi
 - `.chezmoiexternal.toml` - External dependencies (ECC git repo)
 - `.chezmoiignore` - Platform-specific file exclusions
 - `Brewfile` - macOS Homebrew package manifest
-- `opencode/` - OpenCode AI agent config (our customizations)
+- `private_dot_config/private_opencode/` - OpenCode AI agent config (our customizations)
 
 ### Chezmoi Naming Conventions
 - `dot_` prefix -> deploys as `.` (e.g., `dot_zshrc.tmpl` -> `~/.zshrc`)
