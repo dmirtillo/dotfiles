@@ -50,6 +50,9 @@ fi
 # Skip OMZ compaudit security check (safe on single-user machine, saves ~16ms)
 export ZSH_DISABLE_COMPFIX=true
 
+# Disable OMZ auto-update check (saves ~6ms; we manage plugins via antidote, not OMZ)
+export DISABLE_AUTO_UPDATE=true
+
 # Disable OMZ magic functions (url pasting slowdown fix from HN discussion)
 export DISABLE_MAGIC_FUNCTIONS=true
 
