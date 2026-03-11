@@ -9,6 +9,20 @@ README.md
 LICENSE
 Brewfile
 Pacfile
+.ecc-version
+.gitmodules
+
+# Old files (kept for reference during migration, remove later)
+scripts/
+config.sh.example
+config.sh
+opencode/
+git/
+zsh/
+vim/
+ssh/
+vendor/
+iterm2/
 
 {{ if ne .chezmoi.os "darwin" }}
 # macOS-only files
@@ -34,3 +48,8 @@ Documents/PowerShell
 # Ignore binary office files to prevent template corruption
 *.docx
 *.pptx
+
+# Dynamically ignore work Git configuration if not set
+{{ if not .work_email }}
+.gitconfig-work
+{{ end }}

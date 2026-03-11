@@ -20,5 +20,10 @@
 # git config --local user.email "your.work@email.com"
 #
 # Or add conditional includes to your global ~/.gitconfig:
+{{ if .work_email -}}
+[includeIf "gitdir:~/projects/work/"]
+	path = ~/.gitconfig-work
+{{- else -}}
 # [includeIf "gitdir:~/projects/work/"]
 #     path = ~/.gitconfig-work
+{{- end }}
