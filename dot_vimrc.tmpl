@@ -1,3 +1,29 @@
+" =============================================================================
+" Vim Configuration - managed by chezmoi
+" =============================================================================
+
+" Ensure vi-compatibility is off
+set nocompatible
+
+" =============================================================================
+" VIM-PLUG - Plugin Manager (auto-install if missing)
+" =============================================================================
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin()
+  Plug 'junegunn/fzf.vim'          " Full fzf integration (:Files, :Rg, :Buffers)
+  Plug 'tpope/vim-commentary'      " gcc to comment/uncomment lines
+  Plug 'tpope/vim-surround'        " cs\"' to change surrounding quotes/brackets
+  Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+call plug#end()
+
+" =============================================================================
+" FZF - Runtime Path
+" =============================================================================
 {{- if eq .chezmoi.os "darwin" }}
 if isdirectory('/opt/homebrew/opt/fzf')
   set rtp+=/opt/homebrew/opt/fzf
@@ -10,4 +36,200 @@ if isdirectory('/usr/share/fzf')
 endif
 {{- end }}
 
-set mouse-=a
+" =============================================================================
+" GENERAL BEHAVIOR
+" =============================================================================
+set encoding=utf-8
+set fileencoding=utf-8
+set backspace=indent,eol,start     " Backspace works as expected
+set hidden                         " Switch buffers without saving
+set autoread                       " Auto-reload files changed externally
+set confirm                        " Ask to save instead of failing on :q
+set mouse-=a                       " Mouse disabled (your preference)
+set updatetime=250                 " Faster CursorHold events
+set ttimeoutlen=50                 " Reduce key code delay
+filetype plugin indent on          " Detect filetype, load plugins + indent
+
+" =============================================================================
+" CLIPBOARD (OS-specific)
+" =============================================================================
+{{- if eq .chezmoi.os "darwin" }}
+if has('clipboard')
+  set clipboard=unnamed            " macOS: use system clipboard
+endif
+{{- else if eq .chezmoi.os "linux" }}
+if has('clipboard')
+  set clipboard=unnamedplus        " Linux: use system clipboard (X11/Wayland)
+endif
+{{- end }}
+
+" =============================================================================
+" VISUAL / DISPLAY
+" =============================================================================
+syntax enable
+set number                         " Absolute line numbers
+set cursorline                     " Highlight current line
+set showmatch                      " Highlight matching brackets
+set laststatus=2                   " Always show status line
+set ruler                          " Show cursor position in status line
+set showcmd                        " Show partial commands
+set wildmenu                       " Tab-completion menu for commands
+set wildmode=longest:list,full     " Complete longest match, then list, then full
+set scrolloff=8                    " Keep 8 lines above/below cursor
+set sidescrolloff=8                " Keep 8 columns left/right of cursor
+set signcolumn=yes                 " Prevent layout shift
+set colorcolumn=80,120             " Visual guide columns
+set wrap                           " Wrap long lines visually
+set linebreak                      " Wrap at word boundaries
+
+" 24-bit color support (modern terminals)
+if has('termguicolors')
+  set termguicolors
+endif
+
+" Colorscheme (catppuccin, falls back gracefully)
+silent! colorscheme catppuccin_mocha
+
+" Status line (built-in, no plugin needed)
+set statusline=
+set statusline+=\ %f               " File path
+set statusline+=\ %m               " Modified flag
+set statusline+=\ %r               " Readonly flag
+set statusline+=%=                  " Right-align
+set statusline+=\ %y               " Filetype
+set statusline+=\ %l:%c            " Line:Column
+set statusline+=\ %p%%             " Percentage through file
+
+" =============================================================================
+" SEARCH
+" =============================================================================
+set incsearch                      " Search as you type
+set hlsearch                       " Highlight matches
+set ignorecase                     " Case-insensitive search...
+set smartcase                      " ...unless query has uppercase
+
+" Press Enter to clear search highlights
+nnoremap <silent> <CR> :nohlsearch<CR><CR>
+
+" =============================================================================
+" INDENTATION & WHITESPACE
+" =============================================================================
+set autoindent                     " Copy indent from current line
+set smartindent                    " Smart indent for C-like languages
+set expandtab                      " Spaces instead of tabs
+set tabstop=4                      " Tab = 4 spaces
+set shiftwidth=4                   " Indent = 4 spaces
+set softtabstop=4                  " Backspace deletes 4 spaces
+set list                           " Show invisible characters
+set listchars=tab:→\ ,trail:·,extends:»,precedes:«
+
+" Filetype-specific overrides (2-space indent)
+augroup filetypeindent
+  autocmd!
+  autocmd FileType yaml,json,html,css,javascript,typescript,vue setlocal tabstop=2 shiftwidth=2 softtabstop=2
+  autocmd FileType go setlocal noexpandtab tabstop=4 shiftwidth=4
+augroup END
+
+" =============================================================================
+" PERSISTENT UNDO & FILE MANAGEMENT
+" =============================================================================
+if has('persistent_undo')
+  set undofile
+  let &undodir = expand('~/.vim/undodir')
+  if !isdirectory(&undodir)
+    call mkdir(&undodir, 'p', 0700)
+  endif
+endif
+set noswapfile                     " No .swp files cluttering directories
+set nobackup                       " No ~ backup files
+set nowritebackup                  " No backup before overwriting
+
+" =============================================================================
+" LEADER KEY & COMMON MAPPINGS
+" =============================================================================
+let mapleader = " "                " Space as leader key
+
+" Quick save / quit
+nnoremap <leader>w :w<CR>
+nnoremap <leader>q :q<CR>
+nnoremap <leader>x :x<CR>
+
+" File explorer (netrw)
+nnoremap <leader>e :Explore<CR>
+
+" Make Y consistent with D and C (yank to end of line)
+nnoremap Y y$
+
+" Center screen on search navigation
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+" Join lines without moving cursor
+nnoremap J mzJ`z
+
+" =============================================================================
+" BUFFER & SPLIT NAVIGATION
+" =============================================================================
+
+" Navigate buffers
+nnoremap <leader>bn :bnext<CR>
+nnoremap <leader>bp :bprev<CR>
+nnoremap <leader>bd :bdelete<CR>
+
+" Navigate splits with Ctrl+hjkl
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Create splits
+nnoremap <leader>sv :vsplit<CR>
+nnoremap <leader>sh :split<CR>
+
+" =============================================================================
+" VISUAL MODE IMPROVEMENTS
+" =============================================================================
+
+" Stay in visual mode after indent
+vnoremap < <gv
+vnoremap > >gv
+
+" Move selected lines up/down
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
+" =============================================================================
+" TOOL INTEGRATIONS
+" =============================================================================
+
+" Ripgrep as vim's grep engine
+if executable('rg')
+  set grepprg=rg\ --vimgrep\ --smart-case
+  set grepformat=%f:%l:%c:%m
+endif
+
+" Quick grep from vim
+nnoremap <leader>g :grep<Space>
+
+" fzf integration (via fzf.vim plugin)
+nnoremap <leader>f :Files<CR>
+nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>r :Rg<CR>
+nnoremap <leader>l :Lines<CR>
+nnoremap <leader>h :History<CR>
+
+" Use fd for fzf file finding (respects .gitignore)
+if executable('fd')
+  let $FZF_DEFAULT_COMMAND = 'fd --type f --hidden --follow --exclude .git'
+endif
+
+" fzf preview with bat
+if executable('bat')
+  let g:fzf_vim = {}
+  let g:fzf_vim.preview_window = ['right,50%', 'ctrl-/']
+endif
+
+" netrw configuration (built-in file browser)
+let g:netrw_banner = 0             " Hide banner
+let g:netrw_liststyle = 3          " Tree view
+let g:netrw_winsize = 25           " 25% width for side panel
