@@ -18,6 +18,8 @@ mkdir -p "$OC_CONFIG/plugins"
 # --- Symlink ECC directories ---
 link_dir() {
   local src="$1" dst="$2"
+  # Safety: only operate under ~/.config/opencode
+  [[ "$dst" == "$HOME/.config/opencode"* ]] || { echo "  ERROR: refusing to modify $dst"; return 1; }
   if [ -L "$dst" ]; then
     rm "$dst"
   elif [ -d "$dst" ]; then

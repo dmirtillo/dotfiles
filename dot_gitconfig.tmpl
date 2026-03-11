@@ -1,8 +1,16 @@
 [user]
 	name = {{ .git_name }}
 	email = {{ .git_email }}
+{{ if eq .chezmoi.os "darwin" -}}
+[credential]
+	helper = osxkeychain
+{{ else if eq .chezmoi.os "linux" -}}
+[credential]
+	helper = cache --timeout=86400
+{{ else -}}
 [credential]
 	helper = store
+{{ end -}}
 [core]
 	editor = vim
 [init]

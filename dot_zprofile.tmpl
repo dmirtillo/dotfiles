@@ -1,13 +1,27 @@
 {{- if eq .chezmoi.os "darwin" }}
-# Homebrew environment for login shells
-if [ -x /opt/homebrew/bin/brew ]; then
-  eval "$(/opt/homebrew/bin/brew shellenv zsh)"
-elif [ -x /usr/local/bin/brew ]; then
-  eval "$(/usr/local/bin/brew shellenv zsh)"
+# Homebrew environment for login shells (cached for speed)
+_brew_cache="${XDG_CACHE_HOME:-$HOME/.cache}/brew-shellenv.zsh"
+{{-   if eq .chezmoi.arch "arm64" }}
+_brew_bin="/opt/homebrew/bin/brew"
+{{-   else }}
+_brew_bin="/usr/local/bin/brew"
+{{-   end }}
+if [ -x "$_brew_bin" ]; then
+  if [ ! -f "$_brew_cache" ] || [ "$_brew_bin" -nt "$_brew_cache" ]; then
+    "$_brew_bin" shellenv > "$_brew_cache" 2>/dev/null
+  fi
+  . "$_brew_cache"
 fi
+unset _brew_cache _brew_bin
 {{- else if eq .chezmoi.os "linux" }}
-# Linuxbrew (if installed)
+# Linuxbrew (if installed, cached for speed)
 if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
+  _brew_cache="${XDG_CACHE_HOME:-$HOME/.cache}/brew-shellenv.zsh"
+  _brew_bin="/home/linuxbrew/.linuxbrew/bin/brew"
+  if [ ! -f "$_brew_cache" ] || [ "$_brew_bin" -nt "$_brew_cache" ]; then
+    "$_brew_bin" shellenv > "$_brew_cache" 2>/dev/null
+  fi
+  . "$_brew_cache"
+  unset _brew_cache _brew_bin
 fi
 {{- end }}
