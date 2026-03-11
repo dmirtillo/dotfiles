@@ -8,6 +8,10 @@ set -euo pipefail
 # =============================================================================
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+OC_CONFIG="$HOME/.config/opencode"
+
+# Load platform detection
+source "$DOTFILES_DIR/scripts/lib/platform.sh"
 
 echo "Snapshotting current dotfiles into $DOTFILES_DIR ..."
 
@@ -26,8 +30,27 @@ cp ~/.vimrc "$DOTFILES_DIR/vim/.vimrc"
 # SSH config (not keys)
 cp ~/.ssh/config "$DOTFILES_DIR/ssh/config"
 
-# Regenerate Brewfile
-brew bundle dump --file="$DOTFILES_DIR/Brewfile" --force
+# OpenCode config (only files we own -- not ECC submodule content)
+if [ -f "$OC_CONFIG/AGENTS.md" ]; then
+  cp -L "$OC_CONFIG/AGENTS.md" "$DOTFILES_DIR/opencode/AGENTS.md"
+  echo "  [opencode] AGENTS.md"
+fi
+if [ -f "$OC_CONFIG/opencode.json" ]; then
+  cp -L "$OC_CONFIG/opencode.json" "$DOTFILES_DIR/opencode/opencode.json"
+  echo "  [opencode] opencode.json"
+fi
+if [ -f "$OC_CONFIG/package.json" ]; then
+  cp -L "$OC_CONFIG/package.json" "$DOTFILES_DIR/opencode/package.json"
+  echo "  [opencode] package.json"
+fi
+
+# Regenerate Brewfile (macOS only)
+if [[ "$DOTFILES_OS" == "macos" ]]; then
+  brew bundle dump --file="$DOTFILES_DIR/Brewfile" --force
+  echo "  [brew] Brewfile regenerated"
+elif [[ "$DOTFILES_OS" == "linux" ]]; then
+  echo "  [linux] Packages snapshot deferred to Phase 1"
+fi
 
 echo ""
 echo "Snapshot complete. Review changes with:"
