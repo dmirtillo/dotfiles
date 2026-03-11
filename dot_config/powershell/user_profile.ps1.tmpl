@@ -1,0 +1,92 @@
+{{- if eq .chezmoi.os "windows" -}}
+# =============================================================================
+# PowerShell Profile (Windows Parity with Zsh)
+# Mapped to ~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1 via chezmoi
+# =============================================================================
+
+# Require RemoteSigned for scripts
+if ((Get-ExecutionPolicy) -ne 'RemoteSigned' -and (Get-ExecutionPolicy) -ne 'Unrestricted') {
+    Write-Warning "Execution Policy is $((Get-ExecutionPolicy)). Some scripts may not run. Recommend: Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"
+}
+
+# ============================================================================
+# MODERN TOOL INTEGRATIONS
+# ============================================================================
+
+# zoxide: smarter cd
+if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+    Invoke-Expression (& { (zoxide init powershell | Out-String) })
+    Set-Alias -Name cd -Value z -Option AllScope
+    Set-Alias -Name cdi -Value zi -Option AllScope
+}
+
+# mise: fast dev toolchain manager
+if (Get-Command mise -ErrorAction SilentlyContinue) {
+    Invoke-Expression (& { (mise activate powershell | Out-String) })
+}
+
+# oh-my-posh: fast prompt (emulates Powerlevel10k on Windows)
+if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
+    # Using a built-in theme that looks like p10k. 
+    # You can customize this later to a specific JSON file.
+    oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json" | Invoke-Expression
+}
+
+# ============================================================================
+# PRODUCTIVITY ALIASES AND FUNCTIONS (matching Zsh)
+# ============================================================================
+
+# File and Directory Navigation
+function .. { Set-Location .. }
+function ... { Set-Location ..\.. }
+function .... { Set-Location ..\..\.. }
+function ~ { Set-Location ~ }
+
+# Enhanced ls commands (using eza if available)
+if (Get-Command eza -ErrorAction SilentlyContinue) {
+    Set-Alias ls eza
+    function ll { eza -alF --icons --git $args }
+    function la { eza -a --icons $args }
+    function l { eza -F --icons $args }
+    function lt { eza -l --sort=modified $args }
+    function lh { eza -l --icons $args }
+    function lsize { eza -l --sort=size $args }
+    function ltree { eza --tree --level=2 --icons $args }
+}
+
+# Git Enhancements
+function gst { git status $args }
+function gco { git checkout $args }
+function gcb { git checkout -b $args }
+function gp { git push $args }
+function gpl { git pull $args }
+function gf { git fetch $args }
+function gm { git merge $args }
+function gr { git rebase $args }
+function glog { git log --oneline --graph --decorate $args }
+function gb { git branch $args }
+
+# System Utilities
+function myip { Invoke-RestMethod -Uri "https://ipinfo.io/ip" }
+
+# File operations with safety (built-in to PowerShell, just aliasing for muscle memory)
+Set-Alias grep findstr
+
+# bat: syntax-highlighted cat replacement
+if (Get-Command bat -ErrorAction SilentlyContinue) {
+    Set-Alias cat bat
+}
+
+# Quick access to common directories
+function desktop { Set-Location "$env:USERPROFILE\Desktop" }
+function downloads { Set-Location "$env:USERPROFILE\Downloads" }
+function documents { Set-Location "$env:USERPROFILE\Documents" }
+
+# Create and enter directory
+function mkcd {
+    param([string]$path)
+    New-Item -ItemType Directory -Force -Path $path | Out-Null
+    Set-Location $path
+}
+
+{{- end -}}

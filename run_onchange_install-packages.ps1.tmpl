@@ -1,0 +1,19 @@
+{{- if eq .chezmoi.os "windows" -}}
+# =============================================================================
+# Install Windows packages (runs when Wingetfile.json changes)
+# chezmoi:template:hash {{ include "Wingetfile.json" | sha256sum }}
+# =============================================================================
+
+Write-Host "[packages] Installing Windows packages via Winget..." -ForegroundColor Cyan
+
+$WingetFile = Join-Path $env:CHEZMOI_SOURCE_DIR "Wingetfile.json"
+
+if (Get-Command winget -ErrorAction SilentlyContinue) {
+    # Accept source agreements automatically and ignore unknown packages to prevent complete failure
+    winget import -i "$WingetFile" --accept-package-agreements --accept-source-agreements --ignore-unavailable
+} else {
+    Write-Host "  WARNING: winget not found. Are you on a modern Windows 10/11 system?" -ForegroundColor Yellow
+}
+
+Write-Host "  Done." -ForegroundColor Green
+{{- end -}}
