@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# =============================================================================
+# Trust mise configuration
+# chezmoi:template:hash {{ include "dot_mise.toml.tmpl" | sha256sum }}
+# =============================================================================
+
+set -euo pipefail
+
+if command -v mise &> /dev/null; then
+    echo "[mise] Trusting ~/.mise.toml..."
+    mise trust ~/.mise.toml || true
+fi
