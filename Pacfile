@@ -90,7 +90,7 @@ ncdu
 procs
 ripgrep
 thefuck
-tldr
+tealdeer
 tree
 yq
 zoxide
@@ -181,7 +181,7 @@ dos2unix
 # ARCHIVE / PACKAGE MANAGEMENT
 # =============================================================================
 pacman-contrib
-yay
+yay-bin
 
 # =============================================================================
 # FONTS
