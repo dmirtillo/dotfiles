@@ -45,7 +45,8 @@ set backspace=indent,eol,start     " Backspace works as expected
 set hidden                         " Switch buffers without saving
 set autoread                       " Auto-reload files changed externally
 set confirm                        " Ask to save instead of failing on :q
-set mouse-=a                       " Mouse disabled (your preference)
+set mouse=a                        " Mouse enabled in all modes
+set ttymouse=sgr                   " SGR protocol (supports wide terminals)
 set updatetime=250                 " Faster CursorHold events
 set ttimeoutlen=50                 " Reduce key code delay
 filetype plugin indent on          " Detect filetype, load plugins + indent
@@ -84,6 +85,8 @@ set linebreak                      " Wrap at word boundaries
 
 " 24-bit color support (modern terminals)
 if has('termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
   set termguicolors
 endif
 
