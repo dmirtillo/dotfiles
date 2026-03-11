@@ -37,8 +37,11 @@ dotfiles/
 ├── git/
 │   └── .gitconfig           # Git user config, credential helper, editor
 ├── scripts/
-│   ├── install.sh           # Full setup from scratch
-│   └── snapshot.sh          # Sync live dotfiles back into this repo
+│   ├── install.sh           # Full setup from scratch (fresh machine)
+│   ├── sync.sh              # Pull repo changes and apply locally (additive)
+│   ├── backup.sh            # Create tgz backup of current live dotfiles
+│   ├── restore.sh           # Restore dotfiles from a tgz backup
+│   └── snapshot.sh          # Copy live dotfiles back into the repo
 ├── ssh/
 │   └── config               # SSH client config (not keys!)
 ├── vim/
@@ -254,38 +257,156 @@ Plugins are listed in `~/.zsh_plugins.txt` (one per line). Antidote generates a 
 | `fuck` | `thefuck` (auto-correct previous command) |
 | `help` | `tldr` (simplified man pages) |
 
-## Keeping Dotfiles in Sync
+## Workflow: Development and Deployment
 
-### After making changes to your live config:
+The intended workflow is to develop and test changes in the repo, then deploy them to the local machine using the sync script. Every sync creates a backup first so you can always roll back.
+
+```
+  [Edit in repo] --> [git commit + push] --> [sync.sh on target machine]
+                                                    |
+                                              [auto backup.sh]
+                                                    |
+                                              [apply changes]
+```
+
+### Scripts Overview
+
+| Script | Purpose | When to use |
+|--------|---------|-------------|
+| `install.sh` | Full setup from scratch | Fresh machine, first-time setup |
+| `sync.sh` | Pull + backup + apply changes | After pushing changes to the repo |
+| `backup.sh` | Create tgz archive of live config | Before risky changes, periodic safety net |
+| `restore.sh` | Restore from a tgz backup | When something breaks, need to roll back |
+| `snapshot.sh` | Copy live dotfiles into the repo | When you edited live files instead of repo |
+
+### Deploying Changes (sync.sh)
+
+After editing files in the repo and pushing:
 
 ```bash
 cd ~/projects/software/dotfiles
-./scripts/snapshot.sh
-git add -A && git commit -m "update dotfiles"
-git push
+./scripts/sync.sh
 ```
 
-### On another machine:
+This will:
+1. `git pull` the latest changes
+2. Create a tgz backup of your current live dotfiles (automatic)
+3. Compare each dotfile and fix symlinks or replace changed files
+4. Install any new Brewfile entries (additive -- never removes packages)
+5. Regenerate antidote plugins if `.zsh_plugins.txt` changed
+6. Clear stale caches so they auto-regenerate on next shell startup
+
+Options:
 
 ```bash
-git pull
-./scripts/install.sh
+./scripts/sync.sh --dry-run    # Preview what would change, apply nothing
+./scripts/sync.sh --no-pull    # Apply local repo state without pulling
+./scripts/sync.sh --no-brew    # Skip Brewfile install (dotfiles only)
 ```
 
-### If using symlinks (recommended):
+### Backups (backup.sh)
 
-Changes to `~/.zshrc` etc. are automatically reflected in the repo since they're symlinks. Just commit and push:
+Create a backup at any time:
 
 ```bash
+./scripts/backup.sh                    # Auto-timestamped
+./scripts/backup.sh pre-experiment     # With a label
+```
+
+This creates a tgz archive in `~/.dotfiles-backups/` containing:
+- All dotfiles (resolved from symlinks, so you get the actual content)
+- The generated `.zsh_plugins.zsh` static file
+- All tool caches (`~/.cache/*.zsh`)
+- A Brewfile snapshot of currently installed packages
+- A `MANIFEST.txt` with machine info and file list
+
+Backups are lightweight (~100KB) and self-contained.
+
+### Restoring from Backup (restore.sh)
+
+```bash
+./scripts/restore.sh                   # Interactive: pick from a list
+./scripts/restore.sh --latest          # Restore the most recent backup
+./scripts/restore.sh --list            # List all available backups
+./scripts/restore.sh <file.tgz>       # Restore a specific backup
+./scripts/restore.sh --latest --dry-run  # Preview without applying
+```
+
+What restore does:
+- Replaces symlinks with plain file copies from the backup
+- Restores tool caches so the shell is immediately functional
+- Saves the backup's Brewfile to `~/.dotfiles-backups/Brewfile.restored`
+- Does NOT auto-install Brewfile packages (run `brew bundle install --file=<path>` manually)
+
+After restoring, to re-link to the repo:
+
+```bash
+./scripts/sync.sh --no-pull
+```
+
+### Example Workflows
+
+**Normal development cycle:**
+```bash
+# 1. Edit dotfiles in the repo
+vim ~/projects/software/dotfiles/zsh/.zshrc
+
+# 2. Commit and push
 cd ~/projects/software/dotfiles
-git add -A && git commit -m "update config"
+git add -A && git commit -m "add new alias"
 git push
+
+# 3. Changes are live immediately (files are symlinked)
+#    Open a new terminal to reload
+```
+
+**Testing on the same machine (symlinks make this automatic):**
+```bash
+# Edit the repo file -- it IS the live file via symlink
+vim ~/.zshrc    # This edits the repo file directly
+
+# Commit when happy
+cd ~/projects/software/dotfiles
+git add -A && git commit -m "tested and working"
+git push
+```
+
+**Deploying to a second machine:**
+```bash
+git clone git@github.com:dmirtillo/dotfiles.git ~/projects/software/dotfiles
+cd ~/projects/software/dotfiles
+./scripts/install.sh   # First time
+
+# Later, to pull updates:
+./scripts/sync.sh
+```
+
+**Something broke, need to roll back:**
+```bash
+# List backups
+./scripts/restore.sh --list
+
+# Preview what the restore would do
+./scripts/restore.sh --latest --dry-run
+
+# Restore
+./scripts/restore.sh --latest
+
+# Once stable, re-link to repo
+./scripts/sync.sh --no-pull
+```
+
+**Periodic backup (add to crontab or run manually):**
+```bash
+./scripts/backup.sh weekly
 ```
 
 ## Notes
 
-- **SSH keys** are never stored in this repo. Copy them manually.
-- **`.gitconfig`** contains email addresses -- review before pushing to a public repo.
+- **SSH keys** are never stored in this repo. Copy them manually to `~/.ssh/keys/`.
+- **Backups** are stored in `~/.dotfiles-backups/` (not in the repo). Clean old ones manually.
 - **Brewfile** includes VS Code extensions. They install via `brew bundle` automatically.
 - **NVM** is lazy-loaded. First call to `node`, `npm`, or `nvm` triggers the load (~200ms once).
 - **Caches** in `~/.cache/` auto-regenerate. No manual maintenance needed after `brew upgrade`.
+- **sync.sh is additive**: it installs new Brewfile entries but never removes existing packages.
+- **restore.sh replaces symlinks** with plain files. Run `sync.sh --no-pull` after to re-link.
