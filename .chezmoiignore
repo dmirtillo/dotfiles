@@ -8,8 +8,14 @@ AGENTS.md
 README.md
 LICENSE
 Brewfile
+Pacfile
 
 {{ if ne .chezmoi.os "darwin" }}
 # macOS-only files
 Brewfile
+{{ end }}
+
+{{ if ne .chezmoi.os "linux" }}
+# Linux-only files
+Pacfile
 {{ end }}

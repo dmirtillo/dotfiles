@@ -347,10 +347,11 @@ alias emptytrash='rm -rfv ~/.Trash/* 2>/dev/null; echo "Trash emptied."'
 # Linux Specific
 alias flushdns='sudo systemd-resolve --flush-caches 2>/dev/null || sudo resolvectl flush-caches 2>/dev/null'
 if command -v yay &>/dev/null; then
-  alias update='yay -Syu'
+  alias update='yay -Syu && antidote update'
 elif command -v pacman &>/dev/null; then
-  alias update='sudo pacman -Syu'
+  alias update='sudo pacman -Syu && antidote update'
 fi
+alias syslog='journalctl -xe'
 {{ end -}}
 
 # Quick edit common files

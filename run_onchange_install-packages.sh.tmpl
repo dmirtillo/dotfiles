@@ -2,8 +2,8 @@
 set -euo pipefail
 
 # =============================================================================
-# Install packages (runs when Brewfile or packages list changes)
-# chezmoi:template:hash {{ if eq .chezmoi.os "darwin" }}{{ include "Brewfile" | sha256sum }}{{ end }}
+# Install packages (runs when Brewfile or Pacfile changes)
+# chezmoi:template:hash {{ if eq .chezmoi.os "darwin" }}{{ include "Brewfile" | sha256sum }}{{ else if eq .chezmoi.os "linux" }}{{ include "Pacfile" | sha256sum }}{{ end }}
 # =============================================================================
 
 {{ if eq .chezmoi.os "darwin" -}}
@@ -14,11 +14,38 @@ else
   echo "  WARNING: Homebrew not installed. Install from https://brew.sh/"
 fi
 {{ else if eq .chezmoi.os "linux" -}}
-echo "[packages] Linux package installation..."
-if command -v yay &>/dev/null; then
-  echo "  yay is available. Install packages with: yay -S <package>"
-elif command -v pacman &>/dev/null; then
-  echo "  pacman is available. Install packages with: sudo pacman -S <package>"
+echo "[packages] Installing Arch Linux packages from Pacfile..."
+
+PACFILE="{{ .chezmoi.sourceDir }}/Pacfile"
+
+if [ ! -f "$PACFILE" ]; then
+  echo "  ERROR: Pacfile not found at $PACFILE"
+  exit 1
 fi
-echo "  (Automated Linux package installation to be implemented)"
+
+# Parse Pacfile: strip comments and blank lines
+PACKAGES=$(grep -v '^#' "$PACFILE" | grep -v '^$' | tr '\n' ' ')
+
+if [ -z "$PACKAGES" ]; then
+  echo "  No packages to install."
+  exit 0
+fi
+
+if command -v yay &>/dev/null; then
+  # yay handles both official repos and AUR
+  # --needed skips already-installed packages
+  # --noconfirm avoids interactive prompts
+  echo "  Using yay (official + AUR)..."
+  yay -S --needed --noconfirm $PACKAGES 2>&1 | sed 's/^/  /'
+elif command -v pacman &>/dev/null; then
+  # Fallback to pacman (official repos only -- AUR packages will fail)
+  echo "  WARNING: yay not found, using pacman (AUR packages will be skipped)."
+  echo "  Install yay first: https://github.com/Jguer/yay"
+  sudo pacman -S --needed --noconfirm $PACKAGES 2>&1 | sed 's/^/  /' || true
+else
+  echo "  ERROR: Neither yay nor pacman found. Is this Arch Linux?"
+  exit 1
+fi
+
+echo "  Done."
 {{ end -}}
