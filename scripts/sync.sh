@@ -17,6 +17,8 @@ set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SCRIPTS_DIR="$DOTFILES_DIR/scripts"
+ECC_DIR="$DOTFILES_DIR/vendor/everything-claude-code"
+OC_CONFIG="$HOME/.config/opencode"
 
 DO_PULL=true
 DO_BREW=true
@@ -51,20 +53,21 @@ echo ""
 
 # --- Step 1: Pull latest from remote ---
 if $DO_PULL; then
-  echo "[1/5] Pulling latest changes..."
+  echo "[1/7] Pulling latest changes..."
   if $DRY_RUN; then
-    echo "  (dry-run) Would run: git pull"
+    echo "  (dry-run) Would run: git pull --recurse-submodules"
     git -C "$DOTFILES_DIR" fetch --dry-run 2>&1 | sed 's/^/  /'
   else
-    git -C "$DOTFILES_DIR" pull --ff-only 2>&1 | sed 's/^/  /'
+    git -C "$DOTFILES_DIR" pull --ff-only --recurse-submodules 2>&1 | sed 's/^/  /'
+    git -C "$DOTFILES_DIR" submodule update --init --recursive 2>&1 | sed 's/^/  /'
   fi
 else
-  echo "[1/5] Skipping git pull (--no-pull)"
+  echo "[1/7] Skipping git pull (--no-pull)"
 fi
 echo ""
 
 # --- Step 2: Create backup before applying changes ---
-echo "[2/5] Creating backup of current local dotfiles..."
+echo "[2/7] Creating backup of current local dotfiles..."
 if $DRY_RUN; then
   echo "  (dry-run) Would create backup via backup.sh"
 else
@@ -73,7 +76,7 @@ fi
 echo ""
 
 # --- Step 3: Diff and apply dotfiles ---
-echo "[3/5] Syncing dotfiles..."
+echo "[3/7] Syncing dotfiles..."
 
 # Define file mappings: repo_path -> home_path
 declare -a FILE_MAP=(
@@ -145,9 +148,133 @@ echo ""
 echo "  $CHANGES file(s) changed."
 echo ""
 
-# --- Step 4: Brewfile (additive install) ---
+# --- Step 4: Sync OpenCode + ECC configuration ---
+echo "[4/7] Syncing OpenCode + ECC configuration..."
+
+mkdir -p "$OC_CONFIG" "$OC_CONFIG/plugins"
+
+# File symlinks (our customized files)
+declare -a OC_FILE_MAP=(
+  "opencode/AGENTS.md|$OC_CONFIG/AGENTS.md"
+  "opencode/opencode.json|$OC_CONFIG/opencode.json"
+  "opencode/package.json|$OC_CONFIG/package.json"
+)
+
+# File symlink from ECC submodule
+OC_FILE_MAP+=(
+  "vendor/everything-claude-code/.opencode/plugins/ecc-hooks.ts|$OC_CONFIG/plugins/ecc-hooks.ts"
+)
+
+for mapping in "${OC_FILE_MAP[@]}"; do
+  repo_rel="${mapping%%|*}"
+  target_path="${mapping##*|}"
+  repo_path="$DOTFILES_DIR/$repo_rel"
+
+  if [ ! -f "$repo_path" ]; then
+    echo "  [skip] $repo_rel (not in repo)"
+    continue
+  fi
+
+  if [ -L "$target_path" ]; then
+    link_target="$(readlink "$target_path")"
+    if [ "$link_target" = "$repo_path" ]; then
+      echo "  [ok]   $repo_rel (symlinked)"
+      continue
+    else
+      echo "  [fix]  $repo_rel -> $link_target, should be $repo_path"
+      CHANGES=$((CHANGES + 1))
+      if ! $DRY_RUN; then
+        rm "$target_path"
+        ln -s "$repo_path" "$target_path"
+        echo "         Re-linked."
+      fi
+    fi
+  elif [ -f "$target_path" ]; then
+    echo "  [fix]  $repo_rel (replacing file with symlink)"
+    CHANGES=$((CHANGES + 1))
+    if ! $DRY_RUN; then
+      mv "$target_path" "${target_path}.replaced-by-sync"
+      ln -s "$repo_path" "$target_path"
+      echo "         Backed up old file and symlinked to repo."
+    fi
+  else
+    echo "  [new]  $repo_rel (creating symlink)"
+    CHANGES=$((CHANGES + 1))
+    if ! $DRY_RUN; then
+      mkdir -p "$(dirname "$target_path")"
+      ln -s "$repo_path" "$target_path"
+      echo "         Created symlink."
+    fi
+  fi
+done
+
+# Directory symlinks from ECC submodule
+declare -a OC_DIR_MAP=(
+  "vendor/everything-claude-code/.opencode/commands|$OC_CONFIG/commands"
+  "vendor/everything-claude-code/.opencode/prompts|$OC_CONFIG/prompts"
+  "vendor/everything-claude-code/.opencode/instructions|$OC_CONFIG/instructions"
+  "vendor/everything-claude-code/skills|$OC_CONFIG/skills"
+)
+
+for mapping in "${OC_DIR_MAP[@]}"; do
+  repo_rel="${mapping%%|*}"
+  target_path="${mapping##*|}"
+  repo_path="$DOTFILES_DIR/$repo_rel"
+
+  if [ ! -d "$repo_path" ]; then
+    echo "  [skip] $repo_rel (not in repo)"
+    continue
+  fi
+
+  if [ -L "$target_path" ]; then
+    link_target="$(readlink "$target_path")"
+    if [ "$link_target" = "$repo_path" ]; then
+      echo "  [ok]   $repo_rel/ (symlinked)"
+      continue
+    else
+      echo "  [fix]  $repo_rel/ -> $link_target, should be $repo_path"
+      CHANGES=$((CHANGES + 1))
+      if ! $DRY_RUN; then
+        rm "$target_path"
+        ln -s "$repo_path" "$target_path"
+        echo "         Re-linked."
+      fi
+    fi
+  elif [ -d "$target_path" ]; then
+    echo "  [fix]  $repo_rel/ (replacing directory with symlink)"
+    CHANGES=$((CHANGES + 1))
+    if ! $DRY_RUN; then
+      mv "$target_path" "${target_path}.replaced-by-sync"
+      ln -s "$repo_path" "$target_path"
+      echo "         Backed up old directory and symlinked to repo."
+    fi
+  else
+    echo "  [new]  $repo_rel/ (creating symlink)"
+    CHANGES=$((CHANGES + 1))
+    if ! $DRY_RUN; then
+      ln -s "$repo_path" "$target_path"
+      echo "         Created symlink."
+    fi
+  fi
+done
+
+# Install plugin SDK dependencies if needed
+if ! $DRY_RUN && [ ! -d "$OC_CONFIG/node_modules/@opencode-ai" ]; then
+  echo "  Installing OpenCode plugin dependencies..."
+  if command -v bun &>/dev/null; then
+    (cd "$OC_CONFIG" && bun install 2>&1 | sed 's/^/  /')
+  elif command -v npm &>/dev/null; then
+    (cd "$OC_CONFIG" && npm install 2>&1 | sed 's/^/  /')
+  else
+    echo "  WARNING: Neither bun nor npm found. Plugins may not work."
+  fi
+fi
+
+echo ""
+
+# --- Step 5: Brewfile (additive install) ---
 if $DO_BREW; then
-  echo "[4/5] Installing new Brewfile entries (additive)..."
+  echo "[5/7] Installing new Brewfile entries (additive)..."
   if $DRY_RUN; then
     echo "  (dry-run) Would run: brew bundle install --file=Brewfile --no-lock"
     echo "  Checking what would be installed:"
@@ -156,12 +283,12 @@ if $DO_BREW; then
     brew bundle install --file="$DOTFILES_DIR/Brewfile" --no-lock 2>&1 | sed 's/^/  /'
   fi
 else
-  echo "[4/5] Skipping Brewfile sync (--no-brew)"
+  echo "[5/7] Skipping Brewfile sync (--no-brew)"
 fi
 echo ""
 
-# --- Step 5: Regenerate antidote plugins if .zsh_plugins.txt changed ---
-echo "[5/5] Checking antidote plugins..."
+# --- Step 6: Regenerate antidote plugins if .zsh_plugins.txt changed ---
+echo "[6/7] Checking antidote plugins..."
 PLUGINS_SRC="$DOTFILES_DIR/zsh/.zsh_plugins.txt"
 PLUGINS_STATIC="$HOME/.zsh_plugins.zsh"
 
@@ -179,6 +306,20 @@ if [ ! -f "$PLUGINS_STATIC" ] || [ "$PLUGINS_SRC" -nt "$PLUGINS_STATIC" ]; then
   fi
 else
   echo "  Plugins unchanged, no regeneration needed."
+fi
+
+# --- Step 7: Check for ECC submodule updates ---
+echo ""
+echo "[7/7] Checking ECC submodule status..."
+if [ -d "$ECC_DIR/.git" ] || [ -f "$ECC_DIR/.git" ]; then
+  ECC_LOCAL="$(git -C "$ECC_DIR" rev-parse --short HEAD 2>/dev/null || echo "unknown")"
+  echo "  ECC pinned at commit: $ECC_LOCAL"
+  if [ -f "$DOTFILES_DIR/.ecc-version" ]; then
+    echo "  ECC version: $(sed -n '1p' "$DOTFILES_DIR/.ecc-version")"
+  fi
+  echo "  To check for upstream updates: ./scripts/update-ecc.sh --check"
+else
+  echo "  WARNING: ECC submodule not initialized. Run: git submodule update --init"
 fi
 
 # --- Clear stale caches so they regenerate on next shell startup ---

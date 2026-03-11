@@ -14,6 +14,7 @@ set -euo pipefail
 BACKUP_DIR="$HOME/.dotfiles-backups"
 LABEL="${1:-}"
 TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
+OC_CONFIG="$HOME/.config/opencode"
 
 if [ -n "$LABEL" ]; then
   ARCHIVE_NAME="dotfiles-${LABEL}-${TIMESTAMP}.tgz"
@@ -34,7 +35,7 @@ echo ""
 # Collect files into a temp directory to create a clean archive
 TMPDIR="$(mktemp -d)"
 STAGING="$TMPDIR/dotfiles-backup"
-mkdir -p "$STAGING/zsh" "$STAGING/git" "$STAGING/vim" "$STAGING/ssh" "$STAGING/cache"
+mkdir -p "$STAGING/zsh" "$STAGING/git" "$STAGING/vim" "$STAGING/ssh" "$STAGING/cache" "$STAGING/opencode"
 
 # --- ZSH ---
 for f in .zshrc .zsh_plugins.txt .zprofile .p10k.zsh; do
@@ -86,6 +87,18 @@ elif [ -f "$src" ]; then
   cp "$src" "$STAGING/ssh/config"
   echo "  [ssh] config"
 fi
+
+# --- OpenCode config (our customized files only, not submodule content) ---
+for f in AGENTS.md opencode.json package.json; do
+  src="$OC_CONFIG/$f"
+  if [ -L "$src" ]; then
+    cp -L "$src" "$STAGING/opencode/$f"
+    echo "  [opencode] $f (from symlink)"
+  elif [ -f "$src" ]; then
+    cp "$src" "$STAGING/opencode/$f"
+    echo "  [opencode] $f"
+  fi
+done
 
 # --- Tool caches (so restore is immediate, no regen needed) ---
 for cache in brew-shellenv.zsh fzf.zsh zoxide.zsh direnv.zsh thefuck.zsh; do
