@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# =============================================================================
+# Install packages (runs when Brewfile or packages list changes)
+# chezmoi:template:hash {{ if eq .chezmoi.os "darwin" }}{{ include "Brewfile" | sha256sum }}{{ end }}
+# =============================================================================
+
+{{ if eq .chezmoi.os "darwin" -}}
+echo "[packages] Installing Homebrew packages..."
+if command -v brew &>/dev/null; then
+  brew bundle install --file="{{ .chezmoi.sourceDir }}/Brewfile" 2>&1 | sed 's/^/  /'
+else
+  echo "  WARNING: Homebrew not installed. Install from https://brew.sh/"
+fi
+{{ else if eq .chezmoi.os "linux" -}}
+echo "[packages] Linux package installation..."
+if command -v yay &>/dev/null; then
+  echo "  yay is available. Install packages with: yay -S <package>"
+elif command -v pacman &>/dev/null; then
+  echo "  pacman is available. Install packages with: sudo pacman -S <package>"
+fi
+echo "  (Automated Linux package installation to be implemented)"
+{{ end -}}

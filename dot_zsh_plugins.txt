@@ -1,0 +1,26 @@
+# OMZ compatibility layer (required first -- sets up $ZSH, compinit, etc.)
+getantidote/use-omz
+
+# OMZ plugins -- each adds aliases, completions, or functions
+ohmyzsh/ohmyzsh path:plugins/git
+ohmyzsh/ohmyzsh path:plugins/docker
+ohmyzsh/ohmyzsh path:plugins/docker-compose
+ohmyzsh/ohmyzsh path:plugins/kubectl
+ohmyzsh/ohmyzsh path:plugins/helm
+ohmyzsh/ohmyzsh path:plugins/ansible
+ohmyzsh/ohmyzsh path:plugins/iterm2
+ohmyzsh/ohmyzsh path:plugins/macos
+
+# Completions (fpath only, no sourcing)
+zsh-users/zsh-completions path:src kind:fpath
+belak/zsh-utils path:completion
+
+# NVM (deferred loading for speed)
+lukechilds/zsh-nvm kind:defer
+
+# Theme
+romkatv/powerlevel10k
+
+# UX plugins (deferred for speed -- load after prompt)
+zsh-users/zsh-autosuggestions kind:defer
+zdharma-continuum/fast-syntax-highlighting kind:defer

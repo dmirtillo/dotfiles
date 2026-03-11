@@ -1,21 +1,3 @@
-# ============================================================================
-# DOTFILES CONFIGURATION & PLATFORM DETECTION
-# ============================================================================
-
-# Source configuration file if it exists
-if [ -f "$HOME/projects/software/dotfiles/config.sh" ]; then
-  source "$HOME/projects/software/dotfiles/config.sh"
-elif [ -f "${ZDOTDIR:-$HOME}/.config/dotfiles/config.sh" ]; then
-  source "${ZDOTDIR:-$HOME}/.config/dotfiles/config.sh"
-fi
-
-# Basic OS detection
-if [[ "$OSTYPE" == darwin* ]]; then
-  export DOTFILES_OS="macos"
-elif [[ "$OSTYPE" == linux* ]]; then
-  export DOTFILES_OS="linux"
-fi
-
 # Enable Powerlevel10k instant prompt. Should stay at the very top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -36,29 +18,34 @@ typeset -g POWERLEVEL9K_TERM_SHELL_INTEGRATION=true
 
 alias python=python3
 
+{{ if eq .chezmoi.os "darwin" -}}
 # Homebrew environment (cached to ~/.cache/brew-shellenv.zsh for speed)
 # Auto-regenerates when Homebrew is updated -- no manual maintenance needed
-if [[ "$DOTFILES_OS" == "macos" ]] || [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then
+_brew_cache="${XDG_CACHE_HOME:-$HOME/.cache}/brew-shellenv.zsh"
+{{   if eq .chezmoi.arch "arm64" -}}
+_brew_bin="/opt/homebrew/bin/brew"
+{{   else -}}
+_brew_bin="/usr/local/bin/brew"
+{{   end -}}
+if [[ -x "$_brew_bin" ]]; then
+  if [[ ! -f "$_brew_cache" ]] || [[ "$_brew_bin" -nt "$_brew_cache" ]]; then
+    "$_brew_bin" shellenv > "$_brew_cache" 2>/dev/null
+  fi
+  source "$_brew_cache"
+fi
+unset _brew_cache _brew_bin
+{{ else if eq .chezmoi.os "linux" -}}
+# Linuxbrew environment (if installed)
+if [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then
   _brew_cache="${XDG_CACHE_HOME:-$HOME/.cache}/brew-shellenv.zsh"
-  
-  if [[ "$DOTFILES_OS" == "macos" ]]; then
-    if [ "$(uname -m)" = "arm64" ]; then
-      _brew_bin="/opt/homebrew/bin/brew"
-    else
-      _brew_bin="/usr/local/bin/brew"
-    fi
-  else
-    _brew_bin="/home/linuxbrew/.linuxbrew/bin/brew"
+  _brew_bin="/home/linuxbrew/.linuxbrew/bin/brew"
+  if [[ ! -f "$_brew_cache" ]] || [[ "$_brew_bin" -nt "$_brew_cache" ]]; then
+    "$_brew_bin" shellenv > "$_brew_cache" 2>/dev/null
   fi
-  
-  if [[ -x "$_brew_bin" ]]; then
-    if [[ ! -f "$_brew_cache" ]] || [[ "$_brew_bin" -nt "$_brew_cache" ]]; then
-      "$_brew_bin" shellenv > "$_brew_cache" 2>/dev/null
-    fi
-    source "$_brew_cache"
-  fi
+  source "$_brew_cache"
   unset _brew_cache _brew_bin
 fi
+{{ end -}}
 
 # Skip OMZ compaudit security check (safe on single-user machine, saves ~16ms)
 export ZSH_DISABLE_COMPFIX=true
@@ -78,14 +65,17 @@ export NVM_DIR="$HOME/.nvm"
 # ============================================================================
 # ANTIDOTE - Plugin Manager
 # ============================================================================
-# Source antidote dynamically based on OS
-if [[ "$DOTFILES_OS" == "macos" ]] && [ -f /opt/homebrew/opt/antidote/share/antidote/antidote.zsh ]; then
+{{ if eq .chezmoi.os "darwin" -}}
+if [ -f /opt/homebrew/opt/antidote/share/antidote/antidote.zsh ]; then
   source /opt/homebrew/opt/antidote/share/antidote/antidote.zsh
-elif [[ "$DOTFILES_OS" == "macos" ]] && [ -f /usr/local/opt/antidote/share/antidote/antidote.zsh ]; then
+elif [ -f /usr/local/opt/antidote/share/antidote/antidote.zsh ]; then
   source /usr/local/opt/antidote/share/antidote/antidote.zsh
-elif [[ "$DOTFILES_OS" == "linux" ]] && [ -f /usr/share/zsh-antidote/antidote.zsh ]; then
+fi
+{{ else if eq .chezmoi.os "linux" -}}
+if [ -f /usr/share/zsh-antidote/antidote.zsh ]; then
   source /usr/share/zsh-antidote/antidote.zsh
 fi
+{{ end -}}
 
 # Lazy-load: generate static file only when plugins.txt changes
 zsh_plugins=${ZDOTDIR:-$HOME}/.zsh_plugins
@@ -118,20 +108,18 @@ export LANG=en_GB.UTF-8
 # Preferred editor
 export EDITOR='vim'
 
-# curl (using Homebrew on macOS for correct architecture path)
-if [[ "$DOTFILES_OS" == "macos" ]] && [ -n "${HOMEBREW_PREFIX:-}" ]; then
+{{ if eq .chezmoi.os "darwin" -}}
+# curl (using HOMEBREW_PREFIX for correct architecture path)
+if [ -n "${HOMEBREW_PREFIX:-}" ]; then
   export PATH="$HOMEBREW_PREFIX/opt/curl/bin:$PATH"
   export LDFLAGS="-L$HOMEBREW_PREFIX/opt/curl/lib"
   export CPPFLAGS="-I$HOMEBREW_PREFIX/opt/curl/include"
   export PATH="$HOMEBREW_PREFIX/opt/mysql-client/bin:$PATH"
 fi
-
-#azure-cli
-#autoload bashcompinit && bashcompinit
-#source $(brew --prefix)/etc/bash_completion.d/az
+{{ end -}}
 
 # Set up fzf key bindings and fuzzy completion (cached for speed)
-# Auto-regenerates when fzf is updated via Homebrew -- no manual maintenance needed
+# Auto-regenerates when fzf is updated -- no manual maintenance needed
 _fzf_cache="${XDG_CACHE_HOME:-$HOME/.cache}/fzf.zsh"
 _fzf_bin="$(whence -p fzf)"
 if [[ -n "$_fzf_bin" ]] && { [[ ! -f "$_fzf_cache" ]] || [[ "$_fzf_bin" -nt "$_fzf_cache" ]]; }; then
@@ -146,14 +134,14 @@ if [ -z "$SSH_AUTH_SOCK" ]; then
     eval "$(ssh-agent -s)" > /dev/null
 fi
 
-# Function to load default keys (configurable via DOTFILES_SSH_KEYS array in config.sh)
+# Function to load default keys (configured via chezmoi data)
 load_default_ssh_keys() {
-    # Define fallback keys if config.sh didn't specify them
+{{ if ne .ssh_keys "" -}}
+    local default_keys=({{ range $key := splitList "," .ssh_keys }}{{ $key | trim | quote }} {{ end }})
+{{ else -}}
     local default_keys=()
-    if (( ${#DOTFILES_SSH_KEYS[@]} > 0 )); then
-        default_keys=("${DOTFILES_SSH_KEYS[@]}")
-    fi
-    
+{{ end -}}
+
     for key in "${default_keys[@]}"; do
         local key_path="$HOME/.ssh/keys/$key"
         if [ -f "$key_path" ]; then
@@ -169,21 +157,21 @@ load_default_ssh_keys() {
 ssh_add_key() {
     local key_name="$1"
     local key_path
-    
+
     if [ -z "$key_name" ]; then
         echo "Usage: ssh_add_key <key_name>"
         echo "Available keys:"
         ls ~/.ssh/keys/*.key 2>/dev/null | xargs -n1 basename | sed 's/\.key$//'
         return 1
     fi
-    
+
     # Try with .key extension first
     key_path="$HOME/.ssh/keys/${key_name}.key"
     if [ ! -f "$key_path" ]; then
         # Try without extension
         key_path="$HOME/.ssh/keys/$key_name"
     fi
-    
+
     if [ -f "$key_path" ]; then
         ssh-add "$key_path"
         echo "Added key: $key_path"
@@ -207,57 +195,41 @@ load_default_ssh_keys &!
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# >>> conda initialize >>>
-# Uncomment below to enable conda (managed by 'conda init')
-#__conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-#if [ $? -eq 0 ]; then
-#    eval "$__conda_setup"
-#else
-#    if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
-#        . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
-#    else
-#        export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
-#    fi
-#fi
-#unset __conda_setup
-# <<< conda initialize <<<
-
 # JetBrains VM options
 ___MY_VMOPTIONS_SHELL_FILE="${HOME}/.jetbrains.vmoptions.sh"
-if [ -f "${___MY_VMOPTIONS_SHELL_FILE}" ]; then 
+if [ -f "${___MY_VMOPTIONS_SHELL_FILE}" ]; then
   . "${___MY_VMOPTIONS_SHELL_FILE}"
 fi
 
 # VS Code Shell Integration
 if [[ "$TERM_PROGRAM" == "vscode" ]]; then
   _vscode_si=""
-  if [[ "$DOTFILES_OS" == "macos" ]]; then
-    _vscode_si="/Applications/Visual Studio Code.app/Contents/Resources/app/out/vs/workbench/contrib/terminal/common/scripts/shellIntegration-rc.zsh"
-  elif [[ "$DOTFILES_OS" == "linux" ]]; then
-    # Common Linux paths for VS Code
-    if [ -f "/usr/share/code/resources/app/out/vs/workbench/contrib/terminal/common/scripts/shellIntegration-rc.zsh" ]; then
-      _vscode_si="/usr/share/code/resources/app/out/vs/workbench/contrib/terminal/common/scripts/shellIntegration-rc.zsh"
-    elif [ -f "/opt/visual-studio-code/resources/app/out/vs/workbench/contrib/terminal/common/scripts/shellIntegration-rc.zsh" ]; then
-      _vscode_si="/opt/visual-studio-code/resources/app/out/vs/workbench/contrib/terminal/common/scripts/shellIntegration-rc.zsh"
-    fi
-  fi
-  
+{{ if eq .chezmoi.os "darwin" -}}
+  _vscode_si="/Applications/Visual Studio Code.app/Contents/Resources/app/out/vs/workbench/contrib/terminal/common/scripts/shellIntegration-rc.zsh"
+{{ else if eq .chezmoi.os "linux" -}}
+  for _p in \
+    "/usr/share/code/resources/app/out/vs/workbench/contrib/terminal/common/scripts/shellIntegration-rc.zsh" \
+    "/opt/visual-studio-code/resources/app/out/vs/workbench/contrib/terminal/common/scripts/shellIntegration-rc.zsh"; do
+    [ -f "$_p" ] && _vscode_si="$_p" && break
+  done
+  unset _p
+{{ end -}}
+
   if [[ -f "$_vscode_si" ]]; then
     . "$_vscode_si"
   elif command -v code &>/dev/null; then
-    # Fallback to slow electron fork if fast path fails
     . "$(code --locate-shell-integration-path zsh 2>/dev/null)"
   fi
   unset _vscode_si
 fi
 
+{{ if ne .gcloud_project "" -}}
 export GOOGLE_GENAI_USE_VERTEXAI=true
-if [ -n "${DOTFILES_GCLOUD_PROJECT:-}" ]; then
-  export GOOGLE_CLOUD_PROJECT="${DOTFILES_GCLOUD_PROJECT}"
-fi
-if [ -n "${DOTFILES_GCLOUD_LOCATION:-}" ]; then
-  export GOOGLE_CLOUD_LOCATION="${DOTFILES_GCLOUD_LOCATION}"
-fi
+export GOOGLE_CLOUD_PROJECT="{{ .gcloud_project }}"
+{{ end -}}
+{{ if ne .gcloud_location "" -}}
+export GOOGLE_CLOUD_LOCATION="{{ .gcloud_location }}"
+{{ end -}}
 
 # ============================================================================
 # PRODUCTIVITY ALIASES AND FUNCTIONS
@@ -270,7 +242,7 @@ alias ....='cd ../../..'
 alias ~='cd ~'
 alias -- -='cd -'
 
-# Enhanced ls commands (using eza, a modern ls replacement you have installed)
+# Enhanced ls commands (using eza, a modern ls replacement)
 alias ls='eza --color=auto --icons'
 alias ll='eza -alF --icons --git'    # Long listing with git status
 alias la='eza -a --icons'
@@ -284,7 +256,7 @@ alias ltree='eza --tree --level=2 --icons'  # Tree view with eza
 alias md='mkdir -p'
 alias rd='rmdir'
 
-# Tree view (if you have tree installed: brew install tree)
+# Tree view
 alias tree='tree -C'
 alias t1='tree -L 1'
 alias t2='tree -L 2'
@@ -322,8 +294,6 @@ alias gundo='git reset --soft HEAD~1'
 alias py='python3'
 alias pip='pip3'
 alias venv='python3 -m venv'
-#alias activate='source venv/bin/activate'
-#alias deactivate='deactivate'
 alias pipr='pip install -r requirements.txt'
 alias pipf='pip freeze > requirements.txt'
 
@@ -342,13 +312,13 @@ alias drmi='docker rmi'
 alias dprune='docker system prune -f'
 
 # System Utilities
-alias psg='procs --tree'       # procs: modern ps with tree view (grep with procs -W keyword)
+alias psg='procs --tree'       # procs: modern ps with tree view
 alias myip='curl -s https://ipinfo.io/ip'
-if [[ "$DOTFILES_OS" == "macos" ]]; then
-  alias localip='ipconfig getifaddr en0'
-else
-  alias localip='hostname -I | awk "{print \$1}"'
-fi
+{{ if eq .chezmoi.os "darwin" -}}
+alias localip='ipconfig getifaddr en0'
+{{ else -}}
+alias localip='hostname -I | awk "{print \$1}"'
+{{ end -}}
 alias ports='netstat -tuln'
 alias listening='lsof -i -P | grep LISTEN'
 
@@ -360,28 +330,28 @@ alias grep='grep --color=auto'
 alias fgrep='grep -F --color=auto'
 alias egrep='grep -E --color=auto'
 
-# Disk usage (using modern replacements you have installed)
+# Disk usage (using modern replacements)
 alias du='dust'              # dust: intuitive disk usage with bar chart
 alias df='duf'               # duf: colorful disk free with table layout
 alias ducks='dust -r -n 10'  # Show largest directories
 alias diskspace='duf'
 
-# macOS Specific (only load on Darwin)
-if [[ "$DOTFILES_OS" == "macos" ]]; then
-  alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder'
-  alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder'
-  alias cleanup='sudo rm -rf ~/.Trash/*'
-  alias flushdns='sudo dscacheutil -flushcache'
-  alias emptytrash='sudo rm -rfv ~/.Trash'
-elif [[ "$DOTFILES_OS" == "linux" ]]; then
-  # Linux specific aliases
-  alias flushdns='sudo systemd-resolve --flush-caches 2>/dev/null || sudo resolvectl flush-caches 2>/dev/null'
-  if command -v yay &>/dev/null; then
-    alias update='yay -Syu'
-  elif command -v pacman &>/dev/null; then
-    alias update='sudo pacman -Syu'
-  fi
+{{ if eq .chezmoi.os "darwin" -}}
+# macOS Specific
+alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder'
+alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder'
+alias cleanup='sudo rm -rf ~/.Trash/*'
+alias flushdns='sudo dscacheutil -flushcache'
+alias emptytrash='sudo rm -rfv ~/.Trash'
+{{ else if eq .chezmoi.os "linux" -}}
+# Linux Specific
+alias flushdns='sudo systemd-resolve --flush-caches 2>/dev/null || sudo resolvectl flush-caches 2>/dev/null'
+if command -v yay &>/dev/null; then
+  alias update='yay -Syu'
+elif command -v pacman &>/dev/null; then
+  alias update='sudo pacman -Syu'
 fi
+{{ end -}}
 
 # Quick edit common files
 alias zshrc='code ~/.zshrc'
@@ -400,13 +370,13 @@ kport() {
         echo "Example: kport 3000"
         return 1
     fi
-    
+
     local pids=$(lsof -ti:$1)
     if [ -z "$pids" ]; then
         echo "No process found running on port $1"
         return 1
     fi
-    
+
     echo "Killing processes on port $1: $pids"
     echo $pids | xargs kill -9
     echo "Done!"
@@ -446,7 +416,7 @@ extract() {
     fi
 }
 
-# Find files by name (using fd, a modern find replacement you have installed)
+# Find files by name (using fd, a modern find replacement)
 findfile() {
     fd --type f "$1"
 }
@@ -527,11 +497,9 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # ============================================================================
 # MODERN TOOL INTEGRATIONS
-# You have these installed via brew but weren't using them in your shell.
-# Based on your history: heavy use of cat, grep, find, ssh, ansible, terraform
 # ============================================================================
 
-# bat: syntax-highlighted cat replacement (you use cat 31x in history)
+# bat: syntax-highlighted cat replacement
 alias cat='bat --paging=never'
 alias catp='bat'                   # with pager (like less but with syntax highlighting)
 alias batdiff='git diff --name-only --diff-filter=d | xargs bat --diff'
@@ -558,13 +526,13 @@ _cache_eval direnv 'direnv hook zsh'
 # thefuck: correct previous command typos (type 'fuck' after a mistake)
 _cache_eval thefuck 'thefuck --alias'
 
-# lazygit: TUI for git (you use git 83x in history)
+# lazygit: TUI for git
 alias lg='lazygit'
 
-# lazydocker: TUI for docker (you use docker 32x in history)
+# lazydocker: TUI for docker
 alias lzd='lazydocker'
 
-# Terraform shortcuts (you use terraform 48x in history)
+# Terraform shortcuts
 alias tf='terraform'
 alias tfi='terraform init'
 alias tfp='terraform plan'
@@ -574,7 +542,7 @@ alias tfo='terraform output'
 alias tfv='terraform validate'
 alias tfw='terraform workspace'
 
-# Ansible shortcuts (your #1 tool -- 130x in history)
+# Ansible shortcuts
 alias ap='ansible-playbook'
 alias apv='ansible-playbook --ask-vault-pass'
 alias apc='ansible-playbook --check --diff'   # dry run with diff
@@ -585,7 +553,7 @@ alias avv='ansible-vault view'
 alias al='ansible-lint'
 alias ai='ansible-inventory --graph'
 
-# gping: graphical ping (you use ping 4x in history)
+# gping: graphical ping
 alias ping='gping'
 
 # tldr: simplified man pages (quicker than man for common usage)
@@ -598,28 +566,35 @@ alias diskexplore='ncdu'
 alias btm='btm'
 alias sysmon='btm'
 
+{{ if eq .chezmoi.os "darwin" -}}
 # Upgrade everything: brew formulae + casks + antidote plugins in one command
 alias brewup='brew update && brew upgrade && brew upgrade --cask --greedy && brew cleanup && antidote update'
+{{ end -}}
 
 # ============================================================================
-# The next line updates PATH for the Google Cloud SDK.
-if [ -n "${DOTFILES_BREW_PREFIX:-}" ] && [ -f "${DOTFILES_BREW_PREFIX}/share/google-cloud-sdk/path.zsh.inc" ]; then
-  . "${DOTFILES_BREW_PREFIX}/share/google-cloud-sdk/path.zsh.inc"
-elif [ -f '/opt/google-cloud-sdk/path.zsh.inc' ]; then
+# Google Cloud SDK
+{{ if eq .chezmoi.os "darwin" -}}
+if [ -n "${HOMEBREW_PREFIX:-}" ] && [ -f "${HOMEBREW_PREFIX}/share/google-cloud-sdk/path.zsh.inc" ]; then
+  . "${HOMEBREW_PREFIX}/share/google-cloud-sdk/path.zsh.inc"
+fi
+if [ -n "${HOMEBREW_PREFIX:-}" ] && [ -f "${HOMEBREW_PREFIX}/share/google-cloud-sdk/completion.zsh.inc" ]; then
+  . "${HOMEBREW_PREFIX}/share/google-cloud-sdk/completion.zsh.inc"
+fi
+{{ else if eq .chezmoi.os "linux" -}}
+if [ -f '/opt/google-cloud-sdk/path.zsh.inc' ]; then
   . '/opt/google-cloud-sdk/path.zsh.inc'
 fi
-
-# The next line enables shell command completion for gcloud.
-if [ -n "${DOTFILES_BREW_PREFIX:-}" ] && [ -f "${DOTFILES_BREW_PREFIX}/share/google-cloud-sdk/completion.zsh.inc" ]; then
-  . "${DOTFILES_BREW_PREFIX}/share/google-cloud-sdk/completion.zsh.inc"
-elif [ -f '/opt/google-cloud-sdk/completion.zsh.inc' ]; then
+if [ -f '/opt/google-cloud-sdk/completion.zsh.inc' ]; then
   . '/opt/google-cloud-sdk/completion.zsh.inc'
 fi
+{{ end -}}
 export CLOUDSDK_PYTHON_SITEPACKAGES=1
 
-# Added by Antigravity (conditionally loaded via config.sh)
-if [[ "${DOTFILES_ENABLE_ANTIGRAVITY:-false}" == "true" ]]; then
-  export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
-fi
+{{ if .enable_antigravity -}}
+# Antigravity Python environment manager
+export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+{{ end -}}
 
+{{ if eq .chezmoi.os "darwin" -}}
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+{{ end -}}

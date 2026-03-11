@@ -1,0 +1,29 @@
+# =============================================================================
+# Files to ignore per platform
+# chezmoi will not manage these files on the excluded platforms
+# =============================================================================
+
+# Repo metadata and docs (never deploy to home)
+AGENTS.md
+README.md
+Brewfile
+LICENSE
+.ecc-version
+.gitmodules
+
+# Old files (kept for reference during migration, remove later)
+scripts/
+config.sh.example
+config.sh
+opencode/
+git/
+zsh/
+vim/
+ssh/
+vendor/
+iterm2/
+
+{{ if ne .chezmoi.os "darwin" }}
+# macOS-only files
+Brewfile
+{{ end }}

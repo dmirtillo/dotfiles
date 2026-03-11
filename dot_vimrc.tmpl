@@ -1,0 +1,13 @@
+{{- if eq .chezmoi.os "darwin" }}
+if isdirectory('/opt/homebrew/opt/fzf')
+  set rtp+=/opt/homebrew/opt/fzf
+elseif isdirectory('/usr/local/opt/fzf')
+  set rtp+=/usr/local/opt/fzf
+endif
+{{- else if eq .chezmoi.os "linux" }}
+if isdirectory('/usr/share/fzf')
+  set rtp+=/usr/share/fzf
+endif
+{{- end }}
+
+set mouse-=a

@@ -1,84 +1,81 @@
 # Agent Instructions: Dotfiles Repository
 
-This `AGENTS.md` file defines the rules, conventions, and commands for AI agents operating specifically within this dotfiles repository (`$DOTFILES_DIR`). 
+This `AGENTS.md` defines rules and conventions for AI agents operating in this dotfiles repository. It is managed by **chezmoi** for cross-platform deployment (macOS, Arch Linux, CachyOS, Windows).
 
-**Note:** The file at `opencode/AGENTS.md` contains general-purpose coding rules for *other* projects. This root-level file governs *this* repo.
+**Note:** The file at `private_dot_config/private_opencode/AGENTS.md` contains general-purpose coding rules for *other* projects. This root-level file governs *this* repo.
 
 ---
 
 ## 1. Project Architecture
 
-This is a personal dotfiles repository using a symlink architecture. It does not use GNU Stow or Chezmoi. It manages shell configuration, terminal tooling, Homebrew dependencies, and OpenCode/ECC integration.
+This repository uses [chezmoi](https://www.chezmoi.io/) for cross-platform dotfile management with Go templates for OS-specific configuration.
 
 ### Core Structure
-- `scripts/` - Custom bash scripts for lifecycle management
-- `zsh/` - Modular shell configuration
-- `opencode/` - AI agent configuration (OpenCode)
-- `vendor/everything-claude-code/` - Git submodule containing upstream AI tools
-- `Brewfile` - Homebrew package manifest
-- `README.md` - Comprehensive documentation (always keep updated)
+- `dot_*.tmpl` - Templated dotfiles (Go templates with OS/arch conditionals)
+- `dot_*` - Plain dotfiles (copied as-is)
+- `private_dot_*` - Files deployed with restricted permissions
+- `run_onchange_*` - Scripts that run when their dependencies change
+- `.chezmoi.toml.tmpl` - Interactive user configuration (prompted on `chezmoi init`)
+- `.chezmoiexternal.toml` - External dependencies (ECC git repo)
+- `.chezmoiignore` - Platform-specific file exclusions
+- `Brewfile` - macOS Homebrew package manifest
+- `opencode/` - OpenCode AI agent config (our customizations)
+
+### Chezmoi Naming Conventions
+- `dot_` prefix -> deploys as `.` (e.g., `dot_zshrc.tmpl` -> `~/.zshrc`)
+- `private_` prefix -> sets `0700`/`0600` permissions
+- `.tmpl` suffix -> processed as Go template before deployment
+- `run_onchange_` prefix -> script runs when hash in comment changes
 
 ---
 
-## 2. Build, Lint, and Test Commands
+## 2. Commands
 
-**This repository has NO formal test suite, CI/CD pipeline, or linting tools (.shellcheckrc, .editorconfig, etc.).** 
+### Chezmoi Lifecycle
+- **Apply changes:** `chezmoi apply` (renders templates and deploys)
+- **Preview changes:** `chezmoi diff` (show what would change)
+- **Dry run:** `chezmoi apply --dry-run` (simulate without applying)
+- **Edit source:** `chezmoi edit ~/.zshrc` (opens template in editor)
+- **Re-add from live:** `chezmoi re-add` (updates source from live files)
+- **Update externals:** `chezmoi update` (pulls latest ECC + re-applies)
+- **First-time setup:** `chezmoi init <repo-url>` (clones + prompts for config)
 
-Changes must be tested manually by executing the relevant script, often with the `--dry-run` flag first.
-
-### Lifecycle Scripts (Execution)
-Run scripts from the repository root:
-- **Full Install:** `./scripts/install.sh` (Fresh machine setup only)
-- **Sync Changes:** `./scripts/sync.sh` (Pull from repo and symlink, additive only)
-- **Sync Dry Run:** `./scripts/sync.sh --dry-run` (Always use this to test changes safely)
-- **Create Backup:** `./scripts/backup.sh [label]` (Creates timestamped `.tgz`)
-- **Restore:** `./scripts/restore.sh --list` / `./scripts/restore.sh --latest`
-- **Copy Live to Repo:** `./scripts/snapshot.sh` (Inverse of sync)
-- **Update Submodule:** `./scripts/update-ecc.sh --check` / `./scripts/update-ecc.sh`
-
-### Homebrew Management
-- **Install dependencies:** `brew bundle install --file=Brewfile --no-lock`
-- **Update manifest:** `brew bundle dump --file=Brewfile --force` (Do this after adding new formula/cask)
+### Homebrew (macOS only)
+- **Install dependencies:** `brew bundle install --file=Brewfile`
+- **Update manifest:** `brew bundle dump --file=Brewfile --force`
 
 ---
 
-## 3. Shell Script Conventions
+## 3. Go Template Conventions
 
-All files in `scripts/` must strictly adhere to the following conventions, derived from existing code:
+When modifying `.tmpl` files, use chezmoi's Go template syntax:
 
-### Structure & Safety
-- **Shebang:** `#!/usr/bin/env bash`
-- **Strict Mode:** `set -euo pipefail` immediately after the shebang
-- **Base Directory:** Always resolve the repo root dynamically:
-  `DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"`
-- **No Trap:** Do not use `trap` for cleanup. Clean up temporary directories explicitly (e.g., `rm -rf "$TMPDIR"`).
+### OS Conditionals
+```
+{{ "{{" }} if eq .chezmoi.os "darwin" {{ "}}" }}
+# macOS-only content
+{{ "{{" }} else if eq .chezmoi.os "linux" {{ "}}" }}
+# Linux-only content
+{{ "{{" }} end {{ "}}" }}
+```
 
-### Variables & Naming
-- **Constants:** `UPPER_CASE` (e.g., `BACKUP_DIR="$HOME/.dotfiles-backups"`)
-- **Locals:** `snake_case` scoped with `local` (e.g., `local src="$1" dst="$2"`)
-- **Quoting:** ALWAYS double-quote variables. No unquoted expansions (`"$dst"`, not `$dst`).
+### User Data Access
+Data is defined in `.chezmoi.toml.tmpl` and accessed as `.variable_name`:
+```
+{{ "{{" }} .git_name {{ "}}" }}
+{{ "{{" }} .git_email {{ "}}" }}
+{{ "{{" }} .ssh_keys {{ "}}" }}
+```
 
-### Functions & Arguments
-- **Function Style:** `name() { ... }` (Do not use the `function` keyword)
-- **Argument Parsing:** Use `for arg in "$@"; do case "$arg" in ... esac; done` (Do not use `getopts`)
-
-### Logic & Output
-- **Dry-Run Support:** If the script modifies system state, implement a `$DRY_RUN` boolean pattern:
-  ```bash
-  if $DRY_RUN; then
-    echo "  (dry-run) Would link $src -> $dst"
-  else
-    ln -s "$src" "$dst"
-  fi
-  ```
-- **Tests:** Use POSIX `[ ]` for standard checks (`if [ -L "$dst" ]; then`), use Bash `[[ ]]` only for regex matching.
-- **Output:** Use bracket tags for status indicators: `[ok]`, `[skip]`, `[new]`, `[fix]`. Indent subshell/command output with two spaces: `command 2>&1 | sed 's/^/  /'`.
+### Whitespace Control
+Use `-` to trim whitespace around template actions:
+```
+{{ "{{" }}- if eq .chezmoi.os "darwin" {{ "}}" }}
+```
 
 ---
 
 ## 4. Zsh Configuration Conventions
-
-When modifying files in `zsh/` (`.zshrc`, `.zprofile`, `.zsh_plugins.txt`):
 
 ### Performance Principles (Crucial)
 Do not degrade startup time (currently sub-50ms).
@@ -87,24 +84,19 @@ Do not degrade startup time (currently sub-50ms).
 - Background slow operations with `&!` (e.g., loading SSH keys)
 
 ### Organization
-- Keep the Powerlevel10k instant prompt block strictly at the top of `.zshrc`.
-- Group new aliases and functions under their appropriate `# === CATEGORY ===` banner.
-- Add new plugins to `zsh/.zsh_plugins.txt`, not `.zshrc`.
-- Do not modify `.p10k.zsh` manually (it is generated by `p10k configure`).
-
-### Naming
-- **Aliases:** Short, memorable, lowercase.
-- **Functions:** `snake_case` (e.g., `ssh_add_key`) or `kebab-case` for OMZ hooks (`load-tfswitch`).
+- Keep the Powerlevel10k instant prompt block at the top of `.zshrc`.
+- Group aliases under `# ===` banner comments.
+- Add new plugins to `dot_zsh_plugins.txt`, not the zshrc template.
+- Do not modify `dot_p10k.zsh` manually (generated by `p10k configure`).
 
 ---
 
-## 5. File Addition & Modification Rules
+## 5. File Modification Rules
 
-When adding new configuration files:
-1. **Never write secrets.** API keys, tokens, and specific work configuration must stay local or use git-ignored `.env` files.
-2. **Symlink logic:** If adding a new dotfile, you MUST update `scripts/install.sh` and `scripts/sync.sh` to handle its symlinking.
-3. **Brewfile sync:** If installing a new CLI tool via brew, run `snapshot.sh` or manual `brew bundle dump` to persist it to the repo.
-4. **Empty Directories:** Leave placeholder directories (like `iterm2/`) intact.
+1. **Never write secrets.** Use chezmoi's data system or secret manager integration.
+2. **Use templates for OS differences.** Don't use runtime `if [[ "$OSTYPE" ]]` — use Go template `{{ "{{" }} if eq .chezmoi.os {{ "}}" }}` instead.
+3. **Test templates:** Run `chezmoi execute-template < file.tmpl` to verify output.
+4. **Preview before apply:** Always `chezmoi diff` before `chezmoi apply`.
 
 ---
 
@@ -112,5 +104,4 @@ When adding new configuration files:
 
 - Use Conventional Commits format (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`).
 - Keep descriptions lowercase, no trailing period.
-- Group logical changes. If updating a script and the README, commit together.
-- Example: `feat: add support for git-filter-repo in brewfile and aliases`
+- Example: `feat: add windows powershell profile template`

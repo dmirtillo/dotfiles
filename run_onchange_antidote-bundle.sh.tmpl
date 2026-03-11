@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# =============================================================================
+# Regenerate antidote static plugins file when plugins list changes
+# chezmoi:template:hash {{ include "dot_zsh_plugins.txt" | sha256sum }}
+# =============================================================================
+
+echo "[antidote] Regenerating plugin static file..."
+
+{{ if eq .chezmoi.os "darwin" -}}
+ANTIDOTE_PATH=""
+if [ -f /opt/homebrew/opt/antidote/share/antidote/antidote.zsh ]; then
+  ANTIDOTE_PATH="/opt/homebrew/opt/antidote/share/antidote/antidote.zsh"
+elif [ -f /usr/local/opt/antidote/share/antidote/antidote.zsh ]; then
+  ANTIDOTE_PATH="/usr/local/opt/antidote/share/antidote/antidote.zsh"
+fi
+{{ else if eq .chezmoi.os "linux" -}}
+ANTIDOTE_PATH=""
+if [ -f /usr/share/zsh-antidote/antidote.zsh ]; then
+  ANTIDOTE_PATH="/usr/share/zsh-antidote/antidote.zsh"
+fi
+{{ end -}}
+
+if [ -n "$ANTIDOTE_PATH" ] && [ -f "$ANTIDOTE_PATH" ]; then
+  zsh -c "source $ANTIDOTE_PATH && antidote bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.zsh" 2>&1 | sed 's/^/  /'
+  echo "  Done."
+else
+  echo "  WARNING: antidote not found. Install it first."
+fi
