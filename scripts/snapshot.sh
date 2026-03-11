@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# =============================================================================
+# Dotfiles Snapshot
+# Copies current system dotfiles into this repo and regenerates the Brewfile.
+# Run this before committing to keep the repo in sync with your live config.
+# =============================================================================
+
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+echo "Snapshotting current dotfiles into $DOTFILES_DIR ..."
+
+# ZSH files
+cp ~/.zshrc "$DOTFILES_DIR/zsh/.zshrc"
+cp ~/.zsh_plugins.txt "$DOTFILES_DIR/zsh/.zsh_plugins.txt"
+cp ~/.zprofile "$DOTFILES_DIR/zsh/.zprofile"
+cp ~/.p10k.zsh "$DOTFILES_DIR/zsh/.p10k.zsh"
+
+# Git config
+cp ~/.gitconfig "$DOTFILES_DIR/git/.gitconfig"
+
+# Vim config
+cp ~/.vimrc "$DOTFILES_DIR/vim/.vimrc"
+
+# SSH config (not keys)
+cp ~/.ssh/config "$DOTFILES_DIR/ssh/config"
+
+# Regenerate Brewfile
+brew bundle dump --file="$DOTFILES_DIR/Brewfile" --force
+
+echo ""
+echo "Snapshot complete. Review changes with:"
+echo "  cd $DOTFILES_DIR && git diff"
