@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# =============================================================================
+# Set up OpenCode + ECC configuration
+# Creates symlinks from the ECC clone into ~/.config/opencode/
+# Also installs plugin SDK dependencies
+# chezmoi:template:hash {{ include "private_dot_config/private_opencode/package.json" | sha256sum }}
+# =============================================================================
+
+OC_CONFIG="$HOME/.config/opencode"
+ECC_DIR="$HOME/.local/share/ecc"
+
+echo "[opencode] Setting up OpenCode + ECC..."
+
+mkdir -p "$OC_CONFIG/plugins"
+
+# --- Symlink ECC directories ---
+link_dir() {
+  local src="$1" dst="$2"
+  if [ -L "$dst" ]; then
+    rm "$dst"
+  elif [ -d "$dst" ]; then
+    rm -rf "$dst"
+  fi
+  ln -s "$src" "$dst"
+  echo "  Linked $dst -> $src"
+}
+
+if [ -d "$ECC_DIR" ]; then
+  link_dir "$ECC_DIR/.opencode/commands" "$OC_CONFIG/commands"
+  link_dir "$ECC_DIR/.opencode/prompts" "$OC_CONFIG/prompts"
+  link_dir "$ECC_DIR/.opencode/instructions" "$OC_CONFIG/instructions"
+  link_dir "$ECC_DIR/skills" "$OC_CONFIG/skills"
+
+  # Symlink plugin hook file
+  if [ -f "$ECC_DIR/.opencode/plugins/ecc-hooks.ts" ]; then
+    ln -sf "$ECC_DIR/.opencode/plugins/ecc-hooks.ts" "$OC_CONFIG/plugins/ecc-hooks.ts"
+    echo "  Linked ecc-hooks.ts"
+  fi
+else
+  echo "  WARNING: ECC not found at $ECC_DIR. Run 'chezmoi apply' to clone it."
+fi
+
+# --- Install plugin SDK dependencies ---
+if [ -f "$OC_CONFIG/package.json" ]; then
+  if command -v bun &>/dev/null; then
+    echo "  Installing plugin dependencies via bun..."
+    (cd "$OC_CONFIG" && bun install 2>&1 | sed 's/^/  /')
+  elif command -v npm &>/dev/null; then
+    echo "  Installing plugin dependencies via npm..."
+    (cd "$OC_CONFIG" && npm install 2>&1 | sed 's/^/  /')
+  else
+    echo "  WARNING: Neither bun nor npm found. Install Node.js or Bun to use OpenCode plugins."
+  fi
+fi
+
+echo "  Done."

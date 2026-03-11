@@ -1,0 +1,12 @@
+# =============================================================================
+# External Dependencies (pulled by chezmoi)
+# =============================================================================
+
+# Everything Claude Code (ECC) - AI agent configuration
+# Cloned as a full repo under ~/.local/share/ecc/
+# The run_onchange_setup-opencode script creates symlinks from this into ~/.config/opencode/
+[".local/share/ecc"]
+  type = "git-repo"
+  url = "https://github.com/affaan-m/everything-claude-code.git"
+  clone.args = ["--depth", "1"]
+  pull.args = ["origin", "main"]
