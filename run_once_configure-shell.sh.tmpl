@@ -1,0 +1,46 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+
+set -euo pipefail
+
+# Check if zsh is installed
+if ! command -v zsh >/dev/null 2>&1; then
+    echo "zsh not installed. Skipping shell configuration."
+    exit 0
+fi
+
+# Get current shell using getent (more reliable than $SHELL)
+CURRENT_SHELL=$(getent passwd "$USER" | cut -d: -f7)
+TARGET_SHELL=$(command -v zsh)
+
+if [ "$CURRENT_SHELL" != "$TARGET_SHELL" ]; then
+    echo "Current shell is $CURRENT_SHELL. Changing to $TARGET_SHELL..."
+    echo "You may be prompted for your password."
+    chsh -s "$TARGET_SHELL"
+else
+    echo "Default shell is already $TARGET_SHELL."
+fi
+{{ else if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+
+set -euo pipefail
+
+TARGET_SHELL=$(command -v zsh)
+# Use dscl for macOS to get the user shell
+CURRENT_SHELL=$(dscl . -read /Users/"$USER" UserShell | awk '{print $2}')
+
+if [ "$CURRENT_SHELL" != "$TARGET_SHELL" ]; then
+    echo "Current shell is $CURRENT_SHELL. Changing to $TARGET_SHELL..."
+    
+    # Ensure shell is in /etc/shells
+    if ! grep -q "$TARGET_SHELL" /etc/shells; then
+        echo "Adding $TARGET_SHELL to /etc/shells (sudo required)..."
+        echo "$TARGET_SHELL" | sudo tee -a /etc/shells
+    fi
+
+    echo "You may be prompted for your password."
+    chsh -s "$TARGET_SHELL"
+else
+    echo "Default shell is already $TARGET_SHELL."
+fi
+{{ end -}}
