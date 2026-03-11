@@ -455,9 +455,9 @@ Agents are routed to different models based on task complexity:
 
 | Model | Agents | Rationale |
 |---|---|---|
-| **Opus 4.6** | `planner`, `architect` | Deep reasoning for complex planning and architecture |
-| **Sonnet 4.6** (default) | `code-reviewer`, `security-reviewer`, `tdd-guide`, `e2e-runner`, `refactor-cleaner`, `go-reviewer`, `database-reviewer` | Best balance for code generation and review |
-| **Haiku 4.5** | `build-error-resolver`, `doc-updater`, `go-build-resolver` | Mechanical fixes and documentation |
+| **Gemini 3.1 Pro** | `planner`, `architect` | Deep reasoning for complex planning and architecture |
+| **Gemini 3.1 Pro** (default) | `code-reviewer`, `security-reviewer`, `tdd-guide`, `e2e-runner`, `refactor-cleaner`, `go-reviewer`, `database-reviewer` | Best balance for code generation and review |
+| **Gemini 3.1 Flash** | `build-error-resolver`, `doc-updater`, `go-build-resolver` | Mechanical fixes and documentation |
 
 ### Updating ECC
 
