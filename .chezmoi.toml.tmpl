@@ -3,6 +3,7 @@
 {{- $sshKeys := promptStringOnce . "ssh_keys" "SSH key filenames in ~/.ssh/keys/ (comma-separated, leave empty for none)" -}}
 {{- $gcloudProject := promptStringOnce . "gcloud_project" "Google Cloud project (leave empty to skip)" -}}
 {{- $gcloudLocation := promptStringOnce . "gcloud_location" "Google Cloud location (leave empty to skip)" -}}
+{{- $geminiApiKey := promptStringOnce . "gemini_api_key" "Gemini API Key (Google AI Studio, leave empty to skip)" -}}
 
 [data]
   git_name = {{ $gitName | quote }}
@@ -10,3 +11,4 @@
   ssh_keys = {{ $sshKeys | quote }}
   gcloud_project = {{ $gcloudProject | quote }}
   gcloud_location = {{ $gcloudLocation | quote }}
+  gemini_api_key = {{ $geminiApiKey | quote }}

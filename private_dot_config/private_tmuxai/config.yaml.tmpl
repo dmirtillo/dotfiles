@@ -1,0 +1,40 @@
+# =============================================================================
+# TMUXAI CHEAT SHEET & CONFIGURATION
+# =============================================================================
+# RELATED DOCS:
+# - Ghostty: ~/.config/ghostty/config
+# - Tmux: ~/.tmux.conf
+#
+# WHAT IT IS:
+# TmuxAI is an AI assistant that lives in your tmux session. It can read
+# everything currently visible in your other tmux panes automatically.
+#
+# CORE COMMANDS (Type these in the TmuxAI chat pane):
+# - /model                 : List available models and switch between them.
+# - /model <name>          : Switch to a specific model (e.g., /model gemini-pro).
+# - /clear                 : Clear the current chat history.
+# - /reset                 : Clear history and reset all panes.
+# - /info                  : Show system info and context statistics.
+#
+# KEYBOARD SHORTCUTS:
+# - Ctrl+O                 : Open current prompt in an external editor (Vim).
+#                            Useful for writing multi-line prompts.
+# - Alt+E                  : Alternative for multiline editor.
+#
+# OBSERVE MODE:
+# By default, TmuxAI is in observe mode. It watches the execution of commands
+# in your Exec Pane and waits for them to finish before reading the output.
+# =============================================================================
+
+default_model: "gemini-fast"
+
+models:
+  gemini-fast:
+    provider: "gemini"
+    model: "gemini-3.1-flash-preview"
+    api_key: "{{ .gemini_api_key }}"
+    
+  gemini-pro:
+    provider: "gemini"
+    model: "gemini-3.1-pro-preview"
+    api_key: "{{ .gemini_api_key }}"
