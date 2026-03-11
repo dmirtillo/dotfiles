@@ -1,0 +1,20 @@
+# OS files
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Never commit secrets
+*.key
+*.pem
+id_rsa*
+*.env
+credentials.json
+
+# Cache files
+*.zwc
+.zcompdump*
+.zsh_plugins.zsh
+
+# Backup files
+*.backup.*
