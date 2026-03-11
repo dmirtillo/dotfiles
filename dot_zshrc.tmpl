@@ -108,6 +108,10 @@ export LANG=en_GB.UTF-8
 # Preferred editor
 export EDITOR='vim'
 
+# True color (24-bit) support for all tools (bat, eza, vim, etc.)
+# iTerm2 sets this automatically; this ensures SSH and tmux sessions also get it
+export COLORTERM=truecolor
+
 {{ if eq .chezmoi.os "darwin" -}}
 # curl (using HOMEBREW_PREFIX for correct architecture path)
 if [ -n "${HOMEBREW_PREFIX:-}" ]; then
