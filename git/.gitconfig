@@ -1,0 +1,12 @@
+[user]
+	name = Davide Mirtillo
+	email = dmirtillo@alpenite.com
+	user = dmirtillo_alpenite
+[user]
+	name = Davide Mirtillo
+	email = dmirtillo@actabase.com
+	user = dmirtillo
+[credential]
+	helper = store
+[core]
+	editor = vim
