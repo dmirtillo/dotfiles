@@ -1,12 +1,16 @@
 [user]
 	name = Davide Mirtillo
-	email = dmirtillo@alpenite.com
-	user = dmirtillo_alpenite
-[user]
-	name = Davide Mirtillo
-	email = dmirtillo@actabase.com
-	user = dmirtillo
+	email = davide.mirtillo@gmail.com
 [credential]
 	helper = store
 [core]
 	editor = vim
+[init]
+	defaultBranch = main
+
+# Work email overrides -- add these locally per-repo or use includeIf:
+# git config --local user.email "dmirtillo@actabase.com"
+#
+# Or add conditional includes to your global ~/.gitconfig:
+# [includeIf "gitdir:~/projects/actabase/"]
+#     path = ~/.gitconfig-work-actabase
