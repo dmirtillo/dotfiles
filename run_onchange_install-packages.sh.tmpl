@@ -31,6 +31,10 @@ if [ -z "$PACKAGES" ]; then
   exit 0
 fi
 
+# Refresh package database first (avoids stale mirror 404 errors)
+echo "  Refreshing package database..."
+sudo pacman -Sy 2>&1 | sed 's/^/  /'
+
 if command -v yay &>/dev/null; then
   # yay handles both official repos and AUR
   # --needed skips already-installed packages
