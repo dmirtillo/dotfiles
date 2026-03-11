@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# =============================================================================
+# Install TmuxAI (AI Assistant for Tmux)
+# =============================================================================
+
+{{ if or (eq .chezmoi.os "darwin") (eq .chezmoi.os "linux") -}}
+set -euo pipefail
+
+if ! command -v tmuxai &> /dev/null; then
+    echo "[install] Downloading and installing TmuxAI..."
+    
+    # Define the installation directory in the user's home folder to avoid sudo
+    INSTALL_DIR="$HOME/.local/bin"
+    mkdir -p "$INSTALL_DIR"
+    
+    # The official install script allows overriding the path if we export it or pass args,
+    # but to be totally safe without prompting for sudo, let's download the binary directly
+    # or just pipe to bash, knowing it tries /usr/local/bin by default.
+    # Actually, the quickest way is their script, but if it tries /usr/local/bin without sudo it fails.
+    # Let's use their script and if it fails, we fall back to a manual release curl.
+    # The install script at get.tmuxai.dev supports setting the directory via --dir
+    
+    curl -fsSL https://get.tmuxai.dev | bash -s -- --dir "$INSTALL_DIR" || {
+        echo "[install] Fallback manual download..."
+        
+        {{ if eq .chezmoi.os "darwin" }}
+          {{ if eq .chezmoi.arch "arm64" }}
+            ASSET="tmuxai_Darwin_arm64.tar.gz"
+          {{ else }}
+            ASSET="tmuxai_Darwin_x86_64.tar.gz"
+          {{ end }}
+        {{ else if eq .chezmoi.os "linux" }}
+          {{ if eq .chezmoi.arch "arm64" }}
+            ASSET="tmuxai_Linux_arm64.tar.gz"
+          {{ else }}
+            ASSET="tmuxai_Linux_x86_64.tar.gz"
+          {{ end }}
+        {{ end }}
+
+        LATEST_URL=$(curl -s https://api.github.com/repos/alvinunreal/tmuxai/releases/latest | grep "browser_download_url.*$ASSET" | cut -d '"' -f 4)
+        
+        cd /tmp
+        curl -LO "$LATEST_URL"
+        tar -xzf "$ASSET" tmuxai
+        mv tmuxai "$INSTALL_DIR/tmuxai"
+        chmod +x "$INSTALL_DIR/tmuxai"
+        rm "$ASSET"
+    }
+
+    echo "[install] TmuxAI successfully installed to $INSTALL_DIR/tmuxai"
+else
+    echo "  TmuxAI is already installed."
+fi
+{{ end -}}

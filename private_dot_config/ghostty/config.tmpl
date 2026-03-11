@@ -1,0 +1,32 @@
+# =============================================================================
+# GHOSTTY CHEAT SHEET & CONFIGURATION
+# =============================================================================
+# RELATED DOCS:
+# - Tmux: ~/.tmux.conf
+# - TmuxAI: ~/.config/tmuxai/config.yaml
+#
+# WINDOW MANAGEMENT:
+# - Cmd+Shift+N : New Window
+# - Cmd+Shift+T : New Tab
+# - Cmd+W       : Close Window/Tab
+#
+# NOTE: Ghostty is configured to automatically start `tmux`.
+# You should use tmux for all splits and tabs so that TmuxAI can see them!
+#
+# FONT SIZING:
+# - Cmd+=       : Increase Font Size
+# - Cmd+-       : Decrease Font Size
+# - Cmd+0       : Reset Font Size
+# =============================================================================
+
+theme = tokyonight
+font-family = "MesloLGS NF"
+font-size = 13
+window-padding-x = 10
+window-padding-y = 10
+window-theme = ghostty
+macos-titlebar-style = hidden
+
+# Automatically start or attach to the 'main' tmux session
+# This ensures we always have our multiplexer and TmuxAI available natively.
+command = tmux new-session -A -s main

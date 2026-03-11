@@ -51,6 +51,8 @@ texinfo
 # =============================================================================
 zsh
 zsh-completions
+tmux
+ghostty
 
 # AUR: antidote plugin manager (replaces manual plugin sourcing)
 # antidote is managed via AUR: zsh-antidote

@@ -1,0 +1,59 @@
+# =============================================================================
+# TMUX CHEAT SHEET & CONFIGURATION
+# =============================================================================
+# RELATED DOCS:
+# - Ghostty: ~/.config/ghostty/config
+# - TmuxAI: ~/.config/tmuxai/config.yaml
+#
+# PREFIX KEY: Ctrl+b (Default)
+#
+# SESSIONS:
+# - prefix + d       : Detach from session
+# - prefix + $       : Rename session
+# - prefix + s       : List sessions
+#
+# WINDOWS (Tabs):
+# - prefix + c       : Create window
+# - prefix + w       : List windows
+# - prefix + n/p     : Next/Previous window
+# - prefix + ,       : Rename window
+#
+# PANES (Splits):
+# - prefix + %       : Split vertically (left/right)
+# - prefix + "       : Split horizontally (top/bottom)
+# - prefix + h/j/k/l : Navigate panes (Vim style)
+# - prefix + z       : Toggle pane zoom (fullscreen)
+# - prefix + x       : Close pane
+#
+# TMUXAI (Terminal AI Assistant):
+# - prefix + a       : Open TmuxAI in a 35% side pane
+# =============================================================================
+
+# True color support (critical for eza, bat, neovim, and ghostty)
+set -g default-terminal "tmux-256color"
+set -ag terminal-overrides ",xterm-256color:RGB"
+set -ag terminal-overrides ",alacritty:RGB"
+set -ag terminal-overrides ",ghostty:RGB"
+
+# Enable mouse control (clickable windows, panes, resizable panes)
+set -g mouse on
+
+# Start windows and panes at 1, not 0
+set -g base-index 1
+setw -g pane-base-index 1
+
+# Vim style pane selection
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+
+# TmuxAI Integration: bind 'prefix + a' to split window and run tmuxai
+bind a run-shell "tmux split-window -h -p 35 'tmuxai'"
+
+# Status bar customization (Minimalist Tokyo Night style)
+set -g status-style bg=default,fg=white
+set -g status-left-length 40
+set -g status-left "#[fg=green,bold] #S #[fg=white]| "
+set -g window-status-current-format "#[fg=cyan,bold]*#I:#W"
+set -g window-status-format " #I:#W"
