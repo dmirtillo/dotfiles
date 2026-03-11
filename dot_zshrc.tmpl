@@ -60,10 +60,6 @@ export DISABLE_MAGIC_FUNCTIONS=true
 export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 export ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 
-# NVM lazy-loading config (zsh-nvm plugin loads nvm only on first use)
-export NVM_LAZY_LOAD=true
-export NVM_COMPLETION=true
-export NVM_DIR="$HOME/.nvm"
 
 # ============================================================================
 # ANTIDOTE - Plugin Manager
@@ -529,6 +525,9 @@ _cache_eval() {
 }
 
 # zoxide: smarter cd that learns from your habits (replaces OMZ z plugin)
+# mise: fast dev toolchain manager
+_cache_eval mise "mise activate zsh"
+
 _cache_eval zoxide 'zoxide init zsh'
 alias cd='z'                       # seamless replacement, learns directories
 alias cdi='zi'                     # interactive directory picker with fzf
@@ -603,10 +602,6 @@ fi
 {{ end -}}
 export CLOUDSDK_PYTHON_SITEPACKAGES=1
 
-{{ if .enable_antigravity -}}
-# Antigravity Python environment manager
-export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
-{{ end -}}
 
 {{ if eq .chezmoi.os "darwin" -}}
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"

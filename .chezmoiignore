@@ -19,3 +19,8 @@ Brewfile
 # Linux-only files
 Pacfile
 {{ end }}
+
+{{ if ne .chezmoi.os "windows" }}
+# Windows-only files
+Wingetfile.json
+{{ end }}

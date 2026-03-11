@@ -3,7 +3,6 @@
 {{- $sshKeys := promptStringOnce . "ssh_keys" "SSH key filenames in ~/.ssh/keys/ (comma-separated, leave empty for none)" -}}
 {{- $gcloudProject := promptStringOnce . "gcloud_project" "Google Cloud project (leave empty to skip)" -}}
 {{- $gcloudLocation := promptStringOnce . "gcloud_location" "Google Cloud location (leave empty to skip)" -}}
-{{- $enableAntigravity := promptBoolOnce . "enable_antigravity" "Enable Antigravity Python env manager" false -}}
 
 [data]
   git_name = {{ $gitName | quote }}
@@ -11,4 +10,3 @@
   ssh_keys = {{ $sshKeys | quote }}
   gcloud_project = {{ $gcloudProject | quote }}
   gcloud_location = {{ $gcloudLocation | quote }}
-  enable_antigravity = {{ $enableAntigravity }}
