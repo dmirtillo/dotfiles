@@ -1,0 +1,214 @@
+# =============================================================================
+# Pacfile - Arch Linux package manifest (analogous to Brewfile for macOS)
+# Managed by chezmoi - do not edit on target machines
+#
+# Usage: yay -S --needed --noconfirm $(grep -v '^#' Pacfile | grep -v '^$')
+#
+# Note: zsh plugins (autosuggestions, fast-syntax-highlighting, powerlevel10k)
+# are managed by antidote, NOT by system packages.
+# =============================================================================
+
+# =============================================================================
+# SYSTEM / BASE
+# =============================================================================
+base
+base-devel
+linux
+linux-firmware
+sudo
+openssh
+cronie
+fwupd
+grub
+btrfs-progs
+cryptsetup
+lvm2
+mdadm
+xfsprogs
+smartmontools
+haveged
+
+# =============================================================================
+# BUILD TOOLS
+# =============================================================================
+autoconf
+automake
+bison
+debugedit
+fakeroot
+flex
+gcc
+groff
+libtool
+m4
+make
+patch
+pkgconf
+texinfo
+
+# =============================================================================
+# SHELL
+# =============================================================================
+zsh
+zsh-completions
+
+# AUR: antidote plugin manager (replaces manual plugin sourcing)
+# antidote is managed via AUR: zsh-antidote
+zsh-antidote
+
+# =============================================================================
+# VERSION CONTROL
+# =============================================================================
+git
+git-filter-repo
+
+# =============================================================================
+# EDITORS
+# =============================================================================
+vim
+
+# =============================================================================
+# MODERN CLI TOOLS (cross-platform parity with Brewfile)
+# =============================================================================
+bat
+bottom
+btop
+direnv
+duf
+dust
+eza
+fd
+fzf
+gping
+htop
+httpie
+hyperfine
+jq
+lazydocker
+lazygit
+ncdu
+procs
+ripgrep
+thefuck
+tldr
+tree
+yq
+zoxide
+
+# =============================================================================
+# NETWORKING
+# =============================================================================
+bind
+curl
+inetutils
+iperf3
+mosh
+mtr
+net-tools
+nmap
+openssh
+rsync
+speedtest-cli
+sshpass
+telnet
+wget
+whois
+wireguard-tools
+
+# =============================================================================
+# CONTAINERS & ORCHESTRATION
+# =============================================================================
+docker
+docker-compose
+helm
+kubectl
+minikube
+skaffold
+
+# =============================================================================
+# CLOUD & INFRASTRUCTURE
+# =============================================================================
+ansible
+terraform
+packer
+
+# Google Cloud SDK (AUR)
+google-cloud-cli
+
+# AWS CLI
+aws-cli-v2
+
+# =============================================================================
+# LANGUAGES & RUNTIMES
+# =============================================================================
+python
+nodejs
+npm
+nvm
+uv
+
+# =============================================================================
+# DEVELOPMENT TOOLS
+# =============================================================================
+gh
+
+# =============================================================================
+# MEDIA & FILE TOOLS
+# =============================================================================
+7zip
+ffmpeg
+imagemagick
+unace
+unarj
+unrar
+unzip
+zip
+cdrtools
+
+# =============================================================================
+# SYSTEM MONITORING & UTILITIES
+# =============================================================================
+iotop
+lsof
+mc
+neofetch
+screen
+viu
+dos2unix
+watch
+
+# =============================================================================
+# ARCHIVE / PACKAGE MANAGEMENT
+# =============================================================================
+pacman-contrib
+yay
+
+# =============================================================================
+# FONTS
+# =============================================================================
+awesome-terminal-fonts
+powerline-fonts
+ttf-meslo-nerd-font-powerlevel10k
+
+# =============================================================================
+# AI / LLM TOOLS
+# =============================================================================
+ollama
+
+# AUR
+gemini-cli-git
+openspec
+
+# =============================================================================
+# MAIL
+# =============================================================================
+postfix
+s-nail
+
+# =============================================================================
+# MISC (frocetti-specific, kept for compatibility)
+# =============================================================================
+ex-vi-compat
+gptfdisk
+mkinitcpio-firmware
+python-crcmod

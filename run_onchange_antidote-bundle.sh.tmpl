@@ -3,7 +3,7 @@ set -euo pipefail
 
 # =============================================================================
 # Regenerate antidote static plugins file when plugins list changes
-# chezmoi:template:hash {{ include "dot_zsh_plugins.txt" | sha256sum }}
+# chezmoi:template:hash {{ include "dot_zsh_plugins.txt.tmpl" | sha256sum }}
 # =============================================================================
 
 echo "[antidote] Regenerating plugin static file..."

@@ -8,8 +8,13 @@ ohmyzsh/ohmyzsh path:plugins/docker-compose
 ohmyzsh/ohmyzsh path:plugins/kubectl
 ohmyzsh/ohmyzsh path:plugins/helm
 ohmyzsh/ohmyzsh path:plugins/ansible
+{{ if eq .chezmoi.os "darwin" -}}
 ohmyzsh/ohmyzsh path:plugins/iterm2
 ohmyzsh/ohmyzsh path:plugins/macos
+{{ else if eq .chezmoi.os "linux" -}}
+ohmyzsh/ohmyzsh path:plugins/systemd
+ohmyzsh/ohmyzsh path:plugins/archlinux
+{{ end -}}
 
 # Completions (fpath only, no sourcing)
 zsh-users/zsh-completions path:src kind:fpath
