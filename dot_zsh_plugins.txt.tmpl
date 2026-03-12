@@ -2,12 +2,15 @@
 getantidote/use-omz
 
 # OMZ plugins -- each adds aliases, completions, or functions
+# git/docker load eagerly (aliases used immediately at prompt)
 ohmyzsh/ohmyzsh path:plugins/git
 ohmyzsh/ohmyzsh path:plugins/docker
 ohmyzsh/ohmyzsh path:plugins/docker-compose
-ohmyzsh/ohmyzsh path:plugins/kubectl
-ohmyzsh/ohmyzsh path:plugins/helm
-ohmyzsh/ohmyzsh path:plugins/ansible
+# kubectl/helm/ansible deferred: their compdef calls cost ~3ms each at startup
+# and are never needed before the first prompt is shown
+ohmyzsh/ohmyzsh path:plugins/kubectl kind:defer
+ohmyzsh/ohmyzsh path:plugins/helm kind:defer
+ohmyzsh/ohmyzsh path:plugins/ansible kind:defer
 {{ if eq .chezmoi.os "darwin" -}}
 ohmyzsh/ohmyzsh path:plugins/iterm2
 ohmyzsh/ohmyzsh path:plugins/macos

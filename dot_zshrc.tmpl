@@ -524,9 +524,17 @@ _cache_eval() {
   [[ -f "$cache" ]] && source "$cache"
 }
 
+# mise: dev toolchain manager via shims (faster than full hook activation)
+# WHY --shims: `mise activate zsh` installs a chpwd+precmd hook (_mise_hook)
+# that runs on every prompt/directory change, costing ~14ms per shell start.
+# --shims instead prepends ~/.local/share/mise/shims to PATH — zero hook
+# overhead. Tradeoff: no automatic per-directory version switching on `cd`;
+# use `mise shell <version>` for one-off overrides in a session.
+if command -v mise &>/dev/null; then
+  export PATH="$HOME/.local/share/mise/shims:$PATH"
+fi
+
 # zoxide: smarter cd that learns from your habits (replaces OMZ z plugin)
-# mise: fast dev toolchain manager
-_cache_eval mise "mise activate zsh"
 
 _cache_eval zoxide 'zoxide init zsh'
 alias cd='z'                       # seamless replacement, learns directories
