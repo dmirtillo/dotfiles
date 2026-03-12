@@ -14,7 +14,7 @@
 #                       • ~/.config/opencode/opencode.json (direct google/ provider)
 #                       • ~/.config/tmuxai/config.yaml   (direct Gemini access)
 # =============================================================================
-{{- $gitName := promptStringOnce . "git_name" "Git user name" -}}
+{{ $gitName := promptStringOnce . "git_name" "Git user name" -}}
 {{- $gitEmail := promptStringOnce . "git_email" "Git email address" -}}
 {{- $sshKeys := promptStringOnce . "ssh_keys" "SSH key filenames in ~/.ssh/keys/ (comma-separated, leave empty for none)" -}}
 {{- $gcloudProject := promptStringOnce . "gcloud_project" "Google Cloud project (leave empty to skip)" -}}
