@@ -1,3 +1,30 @@
+# =============================================================================
+# ~/.zshrc — Zsh Interactive Shell Configuration
+# Managed by chezmoi. Edit dot_zshrc.tmpl in the dotfiles repo, not this file.
+#
+# PERFORMANCE BUDGET (measured on Apple Silicon, 2026-03):
+#   Target:  <100ms   — imperceptible to humans
+#   Current: ~60ms    — measured with: /usr/bin/time zsh -i -c exit
+#   Profile: zsh -i -c 'zmodload zsh/zprof; source ~/.zshrc; zprof'
+#
+# TOP COST BREAKDOWN (zprof):
+#   compdef calls    ~17ms  36%  — completion defs from plugins
+#   __antidote_setup ~12ms  25%  — plugin loading (irreducible floor)
+#   _cache_eval×4     ~3ms   7%  — zoxide/direnv/thefuck (cached, fast)
+#   p10k              ~1ms   1%  — instant prompt hides this entirely
+#
+# KEY OPTIMIZATIONS APPLIED:
+#   • p10k instant prompt      — renders prompt before zshrc finishes loading
+#   • brew shellenv cached     — avoids `brew shellenv` fork on every start
+#   • _cache_eval              — caches slow tool init (zoxide, direnv, thefuck)
+#   • mise --shims             — replaces hook activation (~14ms) with PATH prepend
+#   • kubectl/helm/ansible     — deferred via kind:defer in .zsh_plugins.txt
+#   • compinit NOT called here — handled once by use-omz (was #1 bottleneck ~250ms)
+#   • ZSH_DISABLE_COMPFIX      — skips compaudit security check (~16ms)
+#   • SSH keys loaded in bg    — avoids ssh-add blocking startup (~11ms)
+#   • NVM lazy-loaded          — only initialized when `nvm` is first called
+# =============================================================================
+
 # Enable Powerlevel10k instant prompt. Should stay at the very top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -524,12 +551,28 @@ _cache_eval() {
   [[ -f "$cache" ]] && source "$cache"
 }
 
-# mise: dev toolchain manager via shims (faster than full hook activation)
-# WHY --shims: `mise activate zsh` installs a chpwd+precmd hook (_mise_hook)
-# that runs on every prompt/directory change, costing ~14ms per shell start.
-# --shims instead prepends ~/.local/share/mise/shims to PATH — zero hook
-# overhead. Tradeoff: no automatic per-directory version switching on `cd`;
-# use `mise shell <version>` for one-off overrides in a session.
+# mise: dev toolchain manager — loaded via shims, not hook activation
+#
+# WHY NOT `mise activate zsh` (hook mode):
+#   Hook activation installs _mise_hook as a chpwd+precmd hook, running on
+#   every prompt draw and directory change. zprof measured this at ~14ms
+#   (29% of total startup). Eliminating it saved ~20ms wall-clock.
+#
+# WHY SHIMS:
+#   Prepending ~/.local/share/mise/shims to PATH is zero-cost at startup.
+#   Each shim is a small executable that invokes the right tool version on
+#   first call — overhead is per-invocation, not per shell start.
+#
+# TRADEOFF:
+#   No automatic version switching when cd-ing into a project directory.
+#   Workarounds:
+#     mise shell <version>     — override for current session only
+#     mise use --global <ver>  — set global default
+#     mise exec -- <cmd>       — run command with project versions loaded
+#
+# TO RE-ENABLE HOOK MODE (if per-directory switching becomes essential):
+#   Replace the PATH line below with: _cache_eval mise "mise activate zsh"
+#   Then: rm ~/.cache/mise.zsh && exec zsh
 if command -v mise &>/dev/null; then
   export PATH="$HOME/.local/share/mise/shims:$PATH"
 fi

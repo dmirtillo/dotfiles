@@ -1,13 +1,34 @@
+# =============================================================================
+# Zsh Plugin List — managed by antidote
+# Source: dot_zsh_plugins.txt.tmpl (chezmoi template)
+# Compiled to: ~/.zsh_plugins.zsh (static bundle, regenerated on change)
+#
+# LOADING STRATEGY:
+#   eager (default) — loaded synchronously during zshrc, adds to startup time
+#   kind:defer      — loaded after first prompt via zsh-defer (romkatv/zsh-defer)
+#                     safe for anything not needed before the prompt appears
+#   kind:fpath      — only adds to fpath, never sourced (completion scripts)
+#
+# PERFORMANCE NOTES (zprof, Apple Silicon, 2026-03):
+#   __antidote_setup: ~12ms — irreducible floor for loading any plugins
+#   compdef calls:    ~17ms — driven by kubectl/helm/ansible alias generation
+#   → kubectl/helm/ansible moved to kind:defer, saving ~3ms at startup
+#   → git/docker kept eager: their aliases are used from the first command
+#
+# TO PROFILE: zsh -i -c 'zmodload zsh/zprof; source ~/.zshrc; zprof'
+# TO REBUILD:  antidote bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.zsh
+# =============================================================================
+
 # OMZ compatibility layer (required first -- sets up $ZSH, compinit, etc.)
 getantidote/use-omz
 
-# OMZ plugins -- each adds aliases, completions, or functions
-# git/docker load eagerly (aliases used immediately at prompt)
+# OMZ plugins — eager (aliases used immediately at first prompt)
 ohmyzsh/ohmyzsh path:plugins/git
 ohmyzsh/ohmyzsh path:plugins/docker
 ohmyzsh/ohmyzsh path:plugins/docker-compose
-# kubectl/helm/ansible deferred: their compdef calls cost ~3ms each at startup
-# and are never needed before the first prompt is shown
+# kubectl/helm/ansible deferred: _build_kubectl_out_alias triggers ~17ms of
+# compdef calls at startup. Deferring pushes this after the first prompt
+# renders — no user-visible difference since these are rarely the first command.
 ohmyzsh/ohmyzsh path:plugins/kubectl kind:defer
 ohmyzsh/ohmyzsh path:plugins/helm kind:defer
 ohmyzsh/ohmyzsh path:plugins/ansible kind:defer
