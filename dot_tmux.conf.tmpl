@@ -52,8 +52,10 @@ bind k select-pane -U
 bind l select-pane -R
 
 # TmuxAI Integration: bind 'prefix + a' to split window and run tmuxai
-# Use absolute path: tmux run-shell uses a minimal PATH that excludes ~/.local/bin
-bind a run-shell "tmux split-window -h -p 35 '{{ .chezmoi.homeDir }}/.local/bin/tmuxai'"
+# WHY no run-shell wrapper: run-shell + split-window causes exit 127 because
+# the inner command runs without a shell. Using split-window directly with
+# an explicit shell invocation is more reliable.
+bind a split-window -h -p 35 "{{ .chezmoi.homeDir }}/.local/bin/tmuxai"
 
 # Status bar customization (p10k classic dark powerline match)
 set-option -g status-position bottom
