@@ -39,10 +39,10 @@ macos-titlebar-style = hidden
 #   darwin  → /opt/homebrew/bin/tmux  (Apple Silicon Homebrew prefix)
 #   linux   → /usr/bin/tmux           (pacman-installed tmux)
 #   other   → tmux                    (fallback, assumes tmux is on PATH)
-{{ if eq .chezmoi.os "darwin" -}}
+{{ if eq .chezmoi.os "darwin" }}
 command = /opt/homebrew/bin/tmux new-session -A -s main
-{{- else if eq .chezmoi.os "linux" -}}
+{{ else if eq .chezmoi.os "linux" }}
 command = /usr/bin/tmux new-session -A -s main
-{{- else -}}
+{{ else }}
 command = tmux new-session -A -s main
-{{- end }}
+{{ end -}}
