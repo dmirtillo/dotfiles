@@ -633,7 +633,11 @@ alias sysmon='btm'
 # Upgrade everything: brew formulae + casks + antidote plugins in one command
 alias brewup='brew update && brew upgrade && brew upgrade --cask --greedy && brew cleanup && antidote update'
 
-# Zscaler VPN controls
+# Zscaler VPN controls (macOS only)
+# zscaler-start: opens the Zscaler.app hidden then loads all system LaunchDaemons
+#                (sudo required — daemons run as root)
+# zscaler-kill:  unloads user LaunchAgents AND system LaunchDaemons, fully
+#                stopping all Zscaler processes without rebooting
 alias zscaler-start="open -a /Applications/Zscaler/Zscaler.app --hide; sudo find /Library/LaunchDaemons -name '*zscaler*' -exec launchctl load {} \;"
 alias zscaler-kill="find /Library/LaunchAgents -name '*zscaler*' -exec launchctl unload {} \;; sudo find /Library/LaunchDaemons -name '*zscaler*' -exec launchctl unload {} \;"
 {{ end -}}
