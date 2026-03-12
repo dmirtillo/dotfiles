@@ -27,9 +27,18 @@ window-padding-y = 10
 window-theme = ghostty
 macos-titlebar-style = hidden
 
-# Automatically start or attach to the 'main' tmux session
+# Automatically start or attach to the 'main' tmux session on every Ghostty launch.
 # This ensures we always have our multiplexer and TmuxAI available natively.
-# Use absolute path to avoid PATH issues when Ghostty launches bash with --noprofile --norc
+#
+# WHY ABSOLUTE PATH:
+#   Ghostty spawns its initial shell with `bash --noprofile --norc`, which means
+#   ~/.zshrc is never sourced and PATH does not include Homebrew (/opt/homebrew/bin)
+#   or the system bin. Using the platform-specific absolute path avoids a "command
+#   not found: tmux" error at startup.
+#
+#   darwin  → /opt/homebrew/bin/tmux  (Apple Silicon Homebrew prefix)
+#   linux   → /usr/bin/tmux           (pacman-installed tmux)
+#   other   → tmux                    (fallback, assumes tmux is on PATH)
 {{ if eq .chezmoi.os "darwin" -}}
 command = /opt/homebrew/bin/tmux new-session -A -s main
 {{- else if eq .chezmoi.os "linux" -}}

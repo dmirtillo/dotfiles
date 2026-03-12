@@ -13,7 +13,13 @@ if command -v brew &>/dev/null; then
 else
   echo "  WARNING: Homebrew not installed. Install from https://brew.sh/"
 fi
-# Install litellm proxy via pipx
+# Install LiteLLM proxy via pipx.
+# WHY pipx: isolates litellm and its heavy dependency tree from the system Python.
+# WHY python3.13: litellm's grpcio wheel is prebuilt for 3.13 on macOS arm64;
+#   older Python versions require a source build that fails without Xcode headers.
+# WHY google-cloud-aiplatform inject: litellm's [proxy] extra does not pull in the
+#   Vertex AI SDK automatically; it is required for Claude models via Vertex.
+# IDEMPOTENT: only installs if litellm is not already listed by pipx.
 if command -v pipx &>/dev/null; then
   if ! pipx list --short 2>/dev/null | grep -q '^litellm '; then
     echo "[packages] Installing litellm proxy..."
@@ -24,10 +30,14 @@ else
   echo "  WARNING: pipx not found. Install litellm manually: pipx install 'litellm[proxy]'"
 fi
 
-# Ensure litellm log directory exists
+# Ensure the log directory exists before launchd starts the service.
+# Logs: stdout → proxy.log, stderr → proxy.err (configured in the plist).
 mkdir -p "$HOME/.local/share/litellm"
 
-# Load/reload litellm launchd service
+# (Re)load the LiteLLM launchd service so config changes take effect immediately.
+# The plist is deployed by chezmoi to ~/Library/LaunchAgents/ and starts the proxy
+# at login. We unload first (|| true so it does not fail on first-ever install)
+# then reload to pick up any updated config.yaml or plist changes.
 if [ -f "$HOME/Library/LaunchAgents/com.litellm.proxy.plist" ]; then
   launchctl unload "$HOME/Library/LaunchAgents/com.litellm.proxy.plist" 2>/dev/null || true
   launchctl load "$HOME/Library/LaunchAgents/com.litellm.proxy.plist" 2>&1 | sed 's/^/  /'
