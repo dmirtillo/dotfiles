@@ -28,13 +28,23 @@
 
 default_model: "gemini-fast"
 
+# MODEL NOTES:
+#   gemini provider: use bare model names (no "google/" prefix — that's OpenRouter syntax)
+#   Valid model IDs: https://ai.google.dev/gemini-api/docs/models
+#   openrouter provider: use base_url + openrouter-style model names for Claude via LiteLLM
 models:
   gemini-fast:
     provider: "gemini"
-    model: "google/gemini-3.1-flash-preview"
+    model: "gemini-2.0-flash"
     api_key: "{{ .gemini_api_key }}"
-    
+
   gemini-pro:
     provider: "gemini"
-    model: "google/gemini-3.1-pro-preview"
+    model: "gemini-2.5-pro-preview-05-06"
     api_key: "{{ .gemini_api_key }}"
+
+  claude-sonnet:
+    provider: "openrouter"
+    model: "claude-sonnet-4-6"
+    api_key: "placeholder"
+    base_url: "http://localhost:4000/v1"
