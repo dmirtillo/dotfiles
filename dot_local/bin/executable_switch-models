@@ -2,15 +2,36 @@
 set -euo pipefail
 
 # =============================================================================
-# switch-models - Switch OpenCode between Gemini and Anthropic models
+# switch-models — Hot-swap OpenCode's active LLM provider
 #
 # Usage:
-#   switch-models gemini     Set all pro agents to Gemini 3.1 Pro
-#   switch-models anthropic  Set all pro agents to Claude Sonnet 4.6
+#   switch-models gemini     Set all pro agents to Gemini 3.1 Pro (direct)
+#   switch-models anthropic  Set all pro agents to Claude Sonnet 4.6 (via LiteLLM)
 #   switch-models status     Show current model configuration (default)
 #
-# Note: Flash/small model stays as Gemini 3.1 Flash in both modes
-#       (no Haiku 4.6 equivalent available).
+# WHAT IT DOES:
+#   Edits ~/.config/opencode/opencode.json in-place using jq, updating:
+#     .model           — the default/main model
+#     .small_model     — the fast/cheap model
+#     .agent[*].model  — per-agent model overrides (pro → pro, flash → flash)
+#
+# NOTE — opencode.json is now a chezmoi template (opencode.json.tmpl):
+#   `chezmoi apply` will overwrite any changes made by this script.
+#   This script is useful for quick session-level swaps, but changes are NOT
+#   persisted across `chezmoi apply` runs. To make a permanent change, edit
+#   private_dot_config/private_opencode/opencode.json.tmpl in the dotfiles repo.
+#
+# ROUTING CONTEXT:
+#   gemini     → google/ provider (@ai-sdk/google, direct Google AI Studio)
+#   anthropic  → litellm/ provider (@ai-sdk/openai-compatible, localhost:4000)
+#                LiteLLM proxies to Vertex AI using gcloud ADC.
+#
+# DEPENDENCIES:
+#   jq  (brew install jq)
+#
+# FLASH MODEL:
+#   The small_model always stays as Gemini Flash in both modes — there is no
+#   Haiku equivalent available via Vertex AI at the time of writing.
 # =============================================================================
 
 CONFIG="${OPENCODE_CONFIG:-$HOME/.config/opencode/opencode.json}"
