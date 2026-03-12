@@ -29,9 +29,11 @@
 default_model: "gemini-fast"
 
 # MODEL NOTES:
-#   gemini provider: use bare model names (no "google/" prefix — that's OpenRouter syntax)
-#   Valid model IDs: https://ai.google.dev/gemini-api/docs/models
-#   openrouter provider: use base_url + openrouter-style model names for Claude via LiteLLM
+#   gemini provider:    native Google AI SDK, bare model names (no "google/" prefix)
+#                       Valid model IDs: https://ai.google.dev/gemini-api/docs/models
+#   openrouter provider: OpenAI-compatible chat completions — override base_url to point
+#                       at local LiteLLM proxy (localhost:4000) instead of openrouter.ai
+#                       LiteLLM then forwards to Vertex AI using gcloud ADC (no API key)
 models:
   gemini-fast:
     provider: "gemini"
@@ -46,5 +48,6 @@ models:
   claude-sonnet:
     provider: "openrouter"
     model: "claude-sonnet-4-6"
-    api_key: "placeholder"
+    api_key: "noop"
     base_url: "http://localhost:4000/v1"
+    # Routes via local LiteLLM proxy → Vertex AI (gcloud ADC, no real API key needed)
