@@ -13,6 +13,7 @@ Pacfile
 {{ if ne .chezmoi.os "darwin" }}
 # macOS-only files
 Brewfile
+private_Library
 {{ end }}
 
 {{ if ne .chezmoi.os "linux" }}

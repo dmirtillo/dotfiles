@@ -299,6 +299,29 @@
       "template": "{file:commands/setup-pm.md}\n\n$ARGUMENTS"
     }
   },
+  "provider": {
+    "litellm": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LiteLLM (Vertex Proxy)",
+      "options": {
+        "baseURL": "http://localhost:4000/v1"
+      },
+      "models": {
+        "gemini-3.1-pro-preview": {
+          "name": "Gemini 3.1 Pro (LiteLLM)"
+        },
+        "gemini-3.1-flash-preview": {
+          "name": "Gemini 3.1 Flash (LiteLLM)"
+        },
+        "claude-sonnet-4-6": {
+          "name": "Claude Sonnet 4.6 (LiteLLM)"
+        },
+        "claude-opus-4-6": {
+          "name": "Claude Opus 4.6 (LiteLLM)"
+        }
+      }
+    }
+  },
   "permission": {
     "mcp_*": "ask"
   }

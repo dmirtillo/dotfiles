@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# =============================================================================
+# switch-models - Switch OpenCode between Gemini and Anthropic models
+#
+# Usage:
+#   switch-models gemini     Set all pro agents to Gemini 3.1 Pro
+#   switch-models anthropic  Set all pro agents to Claude Sonnet 4.6
+#   switch-models status     Show current model configuration (default)
+#
+# Note: Flash/small model stays as Gemini 3.1 Flash in both modes
+#       (no Haiku 4.6 equivalent available).
+# =============================================================================
+
+CONFIG="${OPENCODE_CONFIG:-$HOME/.config/opencode/opencode.json}"
+
+GEMINI_PRO="google/gemini-3.1-pro-preview"
+GEMINI_FLASH="google/gemini-3.1-flash-preview"
+ANTHROPIC_PRO="google-vertex-anthropic/claude-sonnet-4-6"
+
+readonly CONFIG GEMINI_PRO GEMINI_FLASH ANTHROPIC_PRO
+
+usage() {
+  echo "Usage: switch-models [gemini|anthropic|status]"
+  echo ""
+  echo "  gemini     Use Gemini models (pro + flash)"
+  echo "  anthropic  Use Anthropic models (sonnet 4.6 for pro, keep flash)"
+  echo "  status     Show current model configuration (default)"
+  exit 1
+}
+
+check_deps() {
+  if ! command -v jq &>/dev/null; then
+    echo "ERROR: jq is required but not found. Install with: brew install jq"
+    exit 1
+  fi
+  if [ ! -f "$CONFIG" ]; then
+    echo "ERROR: OpenCode config not found at $CONFIG"
+    exit 1
+  fi
+}
+
+status() {
+  local main_model small_model
+  main_model=$(jq -r '.model' "$CONFIG")
+  small_model=$(jq -r '.small_model' "$CONFIG")
+
+  # Determine current mode
+  local mode="unknown"
+  case "$main_model" in
+    *gemini*)    mode="gemini" ;;
+    *anthropic*|*claude*) mode="anthropic" ;;
+  esac
+
+  echo "Mode: $mode"
+  echo ""
+  echo "  model:       $main_model"
+  echo "  small_model: $small_model"
+  echo ""
+  echo "  Agents:"
+  jq -r '
+    .agent | to_entries[] |
+    "    \(.key): \(.value.model // "(inherits main model)")"
+  ' "$CONFIG"
+}
+
+switch_models() {
+  local pro="$1"
+  local flash="$2"
+  local label="$3"
+  local tmp="${CONFIG}.tmp.$$"
+
+  jq \
+    --arg pro "$pro" \
+    --arg flash "$flash" \
+    '
+    .model = $pro |
+    .small_model = $flash |
+    .agent |= with_entries(
+      if .value.model then
+        if (.value.model | test("flash|haiku")) then
+          .value.model = $flash
+        else
+          .value.model = $pro
+        end
+      else
+        .
+      end
+    )
+    ' "$CONFIG" > "$tmp" && mv "$tmp" "$CONFIG"
+
+  echo "Switched to $label mode."
+  echo ""
+  status
+
+  # Notify user if OpenCode is running
+  if pgrep -f "opencode" >/dev/null 2>&1; then
+    echo ""
+    echo "OpenCode is running. Restart it for changes to take effect."
+  fi
+}
+
+check_deps
+
+case "${1:-status}" in
+  gemini)    switch_models "$GEMINI_PRO" "$GEMINI_FLASH" "Gemini" ;;
+  anthropic) switch_models "$ANTHROPIC_PRO" "$GEMINI_FLASH" "Anthropic" ;;
+  status)    status ;;
+  -h|--help) usage ;;
+  *)         usage ;;
+esac
