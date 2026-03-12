@@ -4,6 +4,7 @@
 {{- $gcloudProject := promptStringOnce . "gcloud_project" "Google Cloud project (leave empty to skip)" -}}
 {{- $gcloudLocation := promptStringOnce . "gcloud_location" "Google Cloud location (leave empty to skip)" -}}
 {{- $geminiApiKey := promptStringOnce . "gemini_api_key" "Gemini API Key (Google AI Studio, leave empty to skip)" -}}
+{{- $litellmMasterKey := promptStringOnce . "litellm_master_key" "LiteLLM master key (e.g. sk-xxxx, leave empty to skip)" -}}
 
 [data]
   git_name = {{ $gitName | quote }}
@@ -12,3 +13,4 @@
   gcloud_project = {{ $gcloudProject | quote }}
   gcloud_location = {{ $gcloudLocation | quote }}
   gemini_api_key = {{ $geminiApiKey | quote }}
+  litellm_master_key = {{ $litellmMasterKey | quote }}
