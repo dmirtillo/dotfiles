@@ -1,0 +1,45 @@
+# =============================================================================
+# LiteLLM Proxy Configuration
+# Proxies requests to Vertex AI (Anthropic) and Google AI Studio (Gemini)
+# Deployed to ~/.config/litellm/config.yaml by chezmoi
+# =============================================================================
+
+model_list:
+  # --- Gemini models (via Google AI Studio) ---
+  - model_name: gemini-3.1-pro-preview
+    litellm_params:
+      model: gemini/gemini-3.1-pro-preview
+      api_key: "{{ .gemini_api_key }}"
+
+  - model_name: gemini-3.1-flash-preview
+    litellm_params:
+      model: gemini/gemini-3.1-flash-preview
+      api_key: "{{ .gemini_api_key }}"
+
+  # --- Anthropic models (via Vertex AI, us-east5) ---
+  - model_name: claude-sonnet-4-6
+    litellm_params:
+      model: vertex_ai/claude-sonnet-4-6
+      vertex_project: "{{ .gcloud_project }}"
+      vertex_location: "us-east5"
+
+  - model_name: claude-opus-4-6
+    litellm_params:
+      model: vertex_ai/claude-opus-4-6
+      vertex_project: "{{ .gcloud_project }}"
+      vertex_location: "us-east5"
+
+  - model_name: claude-sonnet-4
+    litellm_params:
+      model: vertex_ai/claude-sonnet-4
+      vertex_project: "{{ .gcloud_project }}"
+      vertex_location: "us-east5"
+
+  - model_name: claude-opus-4
+    litellm_params:
+      model: vertex_ai/claude-opus-4
+      vertex_project: "{{ .gcloud_project }}"
+      vertex_location: "us-east5"
+
+general_settings:
+  master_key: null

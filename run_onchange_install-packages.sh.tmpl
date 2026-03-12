@@ -13,6 +13,25 @@ if command -v brew &>/dev/null; then
 else
   echo "  WARNING: Homebrew not installed. Install from https://brew.sh/"
 fi
+# Install litellm proxy via pipx
+if command -v pipx &>/dev/null; then
+  if ! pipx list --short 2>/dev/null | grep -q '^litellm '; then
+    echo "[packages] Installing litellm proxy..."
+    pipx install 'litellm[proxy]' 2>&1 | sed 's/^/  /'
+  fi
+else
+  echo "  WARNING: pipx not found. Install litellm manually: pipx install 'litellm[proxy]'"
+fi
+
+# Ensure litellm log directory exists
+mkdir -p "$HOME/.local/share/litellm"
+
+# Load/reload litellm launchd service
+if [ -f "$HOME/Library/LaunchAgents/com.litellm.proxy.plist" ]; then
+  launchctl unload "$HOME/Library/LaunchAgents/com.litellm.proxy.plist" 2>/dev/null || true
+  launchctl load "$HOME/Library/LaunchAgents/com.litellm.proxy.plist" 2>&1 | sed 's/^/  /'
+  echo "[packages] LiteLLM proxy service loaded."
+fi
 {{ else if eq .chezmoi.os "linux" -}}
 echo "[packages] Installing Arch Linux packages from Pacfile..."
 
