@@ -17,7 +17,8 @@ fi
 if command -v pipx &>/dev/null; then
   if ! pipx list --short 2>/dev/null | grep -q '^litellm '; then
     echo "[packages] Installing litellm proxy..."
-    pipx install 'litellm[proxy]' 2>&1 | sed 's/^/  /'
+    pipx install 'litellm[proxy]' --python python3.13 2>&1 | sed 's/^/  /'
+    pipx inject litellm 'google-cloud-aiplatform>=1.38' 2>&1 | sed 's/^/  /'
   fi
 else
   echo "  WARNING: pipx not found. Install litellm manually: pipx install 'litellm[proxy]'"
