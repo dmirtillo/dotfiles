@@ -29,4 +29,11 @@ macos-titlebar-style = hidden
 
 # Automatically start or attach to the 'main' tmux session
 # This ensures we always have our multiplexer and TmuxAI available natively.
+# Use absolute path to avoid PATH issues when Ghostty launches bash with --noprofile --norc
+{{ if eq .chezmoi.os "darwin" -}}
+command = /opt/homebrew/bin/tmux new-session -A -s main
+{{- else if eq .chezmoi.os "linux" -}}
+command = /usr/bin/tmux new-session -A -s main
+{{- else -}}
 command = tmux new-session -A -s main
+{{- end }}
