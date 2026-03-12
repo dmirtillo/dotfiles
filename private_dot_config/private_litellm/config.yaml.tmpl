@@ -1,7 +1,30 @@
 # =============================================================================
 # LiteLLM Proxy Configuration
-# Proxies requests to Vertex AI (Anthropic) and Google AI Studio (Gemini)
 # Deployed to ~/.config/litellm/config.yaml by chezmoi
+#
+# PURPOSE:
+#   Acts as a local OpenAI-compatible proxy exclusively for Anthropic Claude
+#   models via Vertex AI. Runs on http://localhost:4000.
+#
+# ROUTING:
+#   - claude-*  →  Vertex AI (gcloud ADC, no API key needed)
+#   - gemini-*  →  Google AI Studio (kept for potential direct use / tmuxai)
+#
+# NO DATABASE:
+#   Runs completely DB-free (no PostgreSQL). master_key is null so the proxy
+#   accepts all requests without authentication — safe because it only listens
+#   on localhost (macOS LaunchAgent binds to 127.0.0.1 by default).
+#   The /ui endpoint is available but shows login errors without a DB; use
+#   `tail -f ~/.local/share/litellm/proxy.log` to monitor live traffic instead.
+#
+# OPENCODE:
+#   OpenCode routes Gemini models DIRECTLY to Google AI Studio via @ai-sdk/google
+#   (not through this proxy) to avoid agent loop issues with the LiteLLM
+#   OpenAI-compatible translation layer. Only Claude models go through LiteLLM.
+#
+# LOGS:
+#   stdout → ~/.local/share/litellm/proxy.log
+#   stderr → ~/.local/share/litellm/proxy.err
 # =============================================================================
 
 model_list:

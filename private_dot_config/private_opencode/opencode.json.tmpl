@@ -1,4 +1,20 @@
 {
+  // ============================================================================
+  // OpenCode Configuration
+  // Deployed to ~/.config/opencode/opencode.json by chezmoi (as .tmpl)
+  //
+  // MODEL ROUTING:
+  //   Gemini models  →  google/ provider (@ai-sdk/google, direct Google AI Studio)
+  //                     Bypasses LiteLLM to avoid agent loop breakage caused by
+  //                     the OpenAI-compatible translation layer.
+  //   Claude models  →  litellm/ provider (@ai-sdk/openai-compatible, localhost:4000)
+  //                     LiteLLM proxies to Vertex AI using gcloud ADC.
+  //
+  // PROVIDERS:
+  //   google   - @ai-sdk/google, apiKey from chezmoi .gemini_api_key
+  //   litellm  - @ai-sdk/openai-compatible, baseURL http://localhost:4000/v1
+  //              No apiKey required (LiteLLM runs without master_key / DB).
+  // ============================================================================
   "$schema": "https://opencode.ai/config.json",
   "model": "google/gemini-3.1-pro-preview",
   "small_model": "google/gemini-3.1-flash-lite-preview",
@@ -300,6 +316,8 @@
     }
   },
   "provider": {
+    // Direct Google AI Studio — used for all Gemini models.
+    // Bypasses LiteLLM to avoid the OpenAI-compat layer breaking agent loops.
     "google": {
       "npm": "@ai-sdk/google",
       "name": "Google AI Studio",
@@ -315,6 +333,8 @@
         }
       }
     },
+    // LiteLLM local proxy — used for Claude models only (Vertex AI via gcloud ADC).
+    // Runs at localhost:4000 as a macOS LaunchAgent, no DB / no auth required.
     "litellm": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "LiteLLM (Vertex Proxy)",

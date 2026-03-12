@@ -1,3 +1,19 @@
+# =============================================================================
+# Chezmoi Interactive Configuration
+# Prompted once on `chezmoi init`, then stored in ~/.config/chezmoi/chezmoi.toml.
+# Re-run `chezmoi init` to add new variables; existing values are never re-asked.
+#
+# VARIABLES:
+#   git_name        - Used in ~/.gitconfig
+#   git_email       - Used in ~/.gitconfig
+#   ssh_keys        - Filenames in ~/.ssh/keys/ to load into ssh-agent at login
+#   gcloud_project  - GCP project for Vertex AI (Claude models via LiteLLM proxy)
+#   gcloud_location - GCP region (currently overridden to us-east5 in litellm config)
+#   gemini_api_key  - Google AI Studio key; used by:
+#                       • ~/.config/litellm/config.yaml  (Gemini models in proxy)
+#                       • ~/.config/opencode/opencode.json (direct google/ provider)
+#                       • ~/.config/tmuxai/config.yaml   (direct Gemini access)
+# =============================================================================
 {{- $gitName := promptStringOnce . "git_name" "Git user name" -}}
 {{- $gitEmail := promptStringOnce . "git_email" "Git email address" -}}
 {{- $sshKeys := promptStringOnce . "ssh_keys" "SSH key filenames in ~/.ssh/keys/ (comma-separated, leave empty for none)" -}}
