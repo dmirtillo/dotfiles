@@ -2,7 +2,7 @@
 
 This `AGENTS.md` defines rules and conventions for AI agents operating in this dotfiles repository. It is managed by **chezmoi** for cross-platform deployment (macOS, Arch Linux, CachyOS, Windows).
 
-**Note:** The file at `private_dot_config/private_opencode/AGENTS.md` contains general-purpose coding rules for *other* projects. This root-level file governs *this* repo.
+**Note:** The file at `private_dot_config/private_opencode/GSD.md` contains the core AI operating philosophy (Get Shit Done). This root-level file governs *this* repo specifically.
 
 ---
 
@@ -16,7 +16,7 @@ This repository uses [chezmoi](https://www.chezmoi.io/) for cross-platform dotfi
 - `private_dot_*` - Files deployed with restricted permissions
 - `run_onchange_*` - Scripts that run when their dependencies change
 - `.chezmoi.toml.tmpl` - Interactive user configuration (prompted on `chezmoi init`)
-- `.chezmoiexternal.toml` - External dependencies (ECC git repo)
+- `.chezmoiexternal.toml` - External dependencies
 - `.chezmoiignore` - Platform-specific file exclusions
 - `Brewfile` - macOS Homebrew package manifest
 - `private_dot_config/private_opencode/` - OpenCode AI agent config (our customizations)
@@ -37,7 +37,6 @@ This repository uses [chezmoi](https://www.chezmoi.io/) for cross-platform dotfi
 - **Dry run:** `chezmoi apply --dry-run` (simulate without applying)
 - **Edit source:** `chezmoi edit ~/.zshrc` (opens template in editor)
 - **Re-add from live:** `chezmoi re-add` (updates source from live files)
-- **Update externals:** `chezmoi update` (pulls latest ECC + re-applies)
 - **First-time setup:** `chezmoi init <repo-url>` (clones + prompts for config)
 
 ### Homebrew (macOS only)
