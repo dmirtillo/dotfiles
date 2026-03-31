@@ -645,6 +645,7 @@ alias zscaler-kill="find /Library/LaunchAgents -name '*zscaler*' -exec launchctl
 # ============================================================================
 # Google Cloud SDK
 {{ if eq .chezmoi.os "darwin" -}}
+export CLOUDSDK_PYTHON="${HOMEBREW_PREFIX:-/opt/homebrew}/bin/python3"
 if [ -n "${HOMEBREW_PREFIX:-}" ] && [ -f "${HOMEBREW_PREFIX}/share/google-cloud-sdk/path.zsh.inc" ]; then
   . "${HOMEBREW_PREFIX}/share/google-cloud-sdk/path.zsh.inc"
 fi
@@ -652,6 +653,7 @@ if [ -n "${HOMEBREW_PREFIX:-}" ] && [ -f "${HOMEBREW_PREFIX}/share/google-cloud-
   . "${HOMEBREW_PREFIX}/share/google-cloud-sdk/completion.zsh.inc"
 fi
 {{ else if eq .chezmoi.os "linux" -}}
+export CLOUDSDK_PYTHON="/usr/bin/python3"
 if [ -f '/opt/google-cloud-sdk/path.zsh.inc' ]; then
   . '/opt/google-cloud-sdk/path.zsh.inc'
 fi
