@@ -631,7 +631,22 @@ alias sysmon='btm'
 
 {{ if eq .chezmoi.os "darwin" -}}
 # Upgrade everything: brew formulae + casks + antidote plugins in one command
-alias brewup='brew update && brew upgrade && brew upgrade --cask --greedy && brew cleanup && antidote update && npm install -g @fission-ai/openspec@latest'
+brewup() {
+  brew update
+  brew upgrade
+  brew upgrade --cask --greedy
+  brew cleanup
+  
+  # brew cleanup deletes old antidote versions, breaking its autoload functions.
+  # Re-source it so 'antidote update' works in the same shell session.
+  local antidote_path="${HOMEBREW_PREFIX:-/opt/homebrew}/opt/antidote/share/antidote/antidote.zsh"
+  if [[ -f "$antidote_path" ]]; then
+    source "$antidote_path"
+  fi
+  
+  antidote update
+  npm install -g @fission-ai/openspec@latest
+}
 
 # Zscaler VPN controls (macOS only)
 # zscaler-start: opens the Zscaler.app hidden then loads all system LaunchDaemons
