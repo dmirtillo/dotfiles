@@ -65,6 +65,20 @@ fi
 echo "  Refreshing package database..."
 sudo pacman -Sy 2>&1 | sed 's/^/  /'
 
+# Ensure required locales are generated to prevent perl warnings
+echo "  Ensuring locales are generated..."
+if grep -q '^#en_GB.UTF-8 UTF-8' /etc/locale.gen 2>/dev/null; then
+  sudo sed -i 's/^#en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen
+  LOCALE_CHANGED=1
+fi
+if grep -q '^#it_IT.UTF-8 UTF-8' /etc/locale.gen 2>/dev/null; then
+  sudo sed -i 's/^#it_IT.UTF-8 UTF-8/it_IT.UTF-8 UTF-8/' /etc/locale.gen
+  LOCALE_CHANGED=1
+fi
+if [ "${LOCALE_CHANGED:-0}" -eq 1 ]; then
+  sudo locale-gen 2>&1 | sed 's/^/  /'
+fi
+
 if command -v yay &>/dev/null; then
   # yay handles both official repos and AUR
   # --needed skips already-installed packages
