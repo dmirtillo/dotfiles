@@ -4,7 +4,7 @@ Cross-platform development environment configuration managed by [chezmoi](https:
 
 **Platforms:** macOS (Apple Silicon/Intel) | Arch Linux | CachyOS | Windows  
 **Shell:** zsh + antidote + Powerlevel10k  
-**AI:** OpenCode + Everything Claude Code (ECC)
+**AI:** OpenCode + Get Shit Done (GSD)
 
 ---
 
@@ -23,7 +23,7 @@ Cross-platform development environment configuration managed by [chezmoi](https:
 - [Daily Workflow](#daily-workflow)
 - [Making Changes](#making-changes)
 - [Shell Architecture](#shell-architecture)
-- [OpenCode + ECC Integration](#opencode--ecc-integration)
+- [OpenCode + GSD Integration](#opencode--gsd-integration)
 - [Homebrew (macOS)](#homebrew-macos)
 - [Troubleshooting](#troubleshooting)
 
@@ -143,10 +143,10 @@ When you run `chezmoi init --apply`, the following happens automatically in orde
    - `~/.ssh/config` (with private permissions)
    - `~/.config/opencode/` (OpenCode agent config)
    - `~/.zsh_plugins.txt` (antidote plugin list)
-5. **Clone ECC** — the Everything Claude Code repo is cloned to `~/.local/share/ecc/`
+5. **Install GSD** — Get Shit Done agentic framework is installed globally via `npx`
 6. **Run setup scripts** (in order):
    - `install-packages.sh` — runs `brew bundle install` (macOS) or prints guidance (Linux)
-   - `setup-opencode.sh` — creates symlinks from ECC into `~/.config/opencode/`, installs plugin SDK
+   - `setup-opencode.sh` — installs OpenCode plugin SDK and Get Shit Done globally
    - `antidote-bundle.sh` — regenerates the antidote static plugins file
 
 ---
@@ -233,7 +233,7 @@ If you want to automate setup without interactive prompts (e.g., in a script or 
 ```
 dotfiles/
 ├── .chezmoi.toml.tmpl                    Config template (prompts on init)
-├── .chezmoiexternal.toml                 External deps (ECC git repo)
+├── .chezmoiexternal.toml                 External deps
 ├── .chezmoiignore                        Platform-specific exclusions
 │
 ├── dot_zshrc.tmpl                        ~/.zshrc (Go template)
@@ -253,7 +253,7 @@ dotfiles/
 │       └── package.json                  Plugin SDK dependency
 │
 ├── run_onchange_install-packages.sh.tmpl Runs brew/pacman when Brewfile changes
-├── run_onchange_setup-opencode.sh.tmpl   Creates ECC symlinks + npm install
+├── run_onchange_setup-opencode.sh.tmpl   Installs GSD and plugin dependencies
 ├── run_onchange_antidote-bundle.sh.tmpl  Regenerates antidote static plugins
 │
 ├── Brewfile                              macOS Homebrew manifest
@@ -434,20 +434,14 @@ The `.zshrc` template includes ~100 aliases organized by category. Highlights:
 
 ---
 
-## OpenCode + ECC Integration
+## OpenCode + GSD Integration
 
-[Everything Claude Code](https://github.com/affaan-m/everything-claude-code) (ECC) provides AI agent prompts, commands, skills, and plugins for OpenCode.
+[Get Shit Done](https://github.com/affaan-m/get-shit-done-cc) (GSD) provides AI agent prompts, commands, skills, and workflows for OpenCode.
 
 ### How It Works
 
-1. **`.chezmoiexternal.toml`** tells chezmoi to clone ECC into `~/.local/share/ecc/`
-2. **`run_onchange_setup-opencode.sh`** creates symlinks from the clone into `~/.config/opencode/`:
-   - `commands/` -> ECC commands
-   - `prompts/` -> ECC agent prompts
-   - `instructions/` -> ECC instructions
-   - `skills/` -> ECC skills
-   - `plugins/ecc-hooks.ts` -> ECC plugin hooks
-3. **Our customizations** (`opencode.json`, `AGENTS.md`, `package.json`) are deployed directly by chezmoi from `private_dot_config/private_opencode/`
+1. **`run_onchange_setup-opencode.sh`** installs GSD globally via `npx get-shit-done-cc@latest --opencode --global`
+2. **Our customizations** (`opencode.json`, `AGENTS.md`, `package.json`) are deployed directly by chezmoi from `private_dot_config/private_opencode/`
 
 ### Model Routing
 
@@ -455,17 +449,17 @@ Agents are routed to different models based on task complexity:
 
 | Model | Agents | Rationale |
 |---|---|---|
-| **Gemini 3.1 Pro** | `planner`, `architect` | Deep reasoning for complex planning and architecture |
-| **Gemini 3.1 Pro** (default) | `code-reviewer`, `security-reviewer`, `tdd-guide`, `e2e-runner`, `refactor-cleaner`, `go-reviewer`, `database-reviewer` | Best balance for code generation and review |
-| **Gemini 3.1 Flash** | `build-error-resolver`, `doc-updater`, `go-build-resolver` | Mechanical fixes and documentation |
+| **Gemini 3.1 Pro** | `planner`, `architect`, `gsd-*` | Deep reasoning for complex planning and architecture |
+| **Gemini 3.1 Pro** (default) | `code-reviewer`, `security-reviewer`, `tdd-guide`, `e2e-runner`, `refactor-cleaner` | Best balance for code generation and review |
+| **Gemini 3.1 Flash** | `build-error-resolver`, `doc-updater` | Mechanical fixes and documentation |
 
-### Updating ECC
+### Updating GSD
 
 ```bash
-chezmoi update
+chezmoi apply
 ```
 
-This pulls the latest ECC from GitHub and re-runs the setup script.
+This triggers the setup script to run `npx get-shit-done-cc@latest` again, ensuring you have the latest features and fixes.
 
 ---
 
