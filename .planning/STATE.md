@@ -4,6 +4,10 @@
 {
   "status": "active",
   "progress": 0,
+  "session": {
+    "stopped_at": "Phase 1 context gathered",
+    "resume_file": ".planning/phases/01-consolidation-audit/01-CONTEXT.md"
+  },
   "phases": {
     "1": {
       "name": "Consolidation & Audit",
