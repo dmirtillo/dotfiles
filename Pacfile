@@ -96,6 +96,7 @@ tealdeer
 tree
 yq
 zoxide
+chezmoi
 
 # =============================================================================
 # NETWORKING
@@ -116,6 +117,7 @@ sshpass
 wget
 whois
 wireguard-tools
+aria2
 
 # =============================================================================
 # CONTAINERS & ORCHESTRATION
@@ -161,6 +163,7 @@ github-cli
 7zip
 ffmpeg
 imagemagick
+yt-dlp
 unace
 unarj
 unrar
@@ -178,6 +181,7 @@ neofetch
 screen
 viu
 dos2unix
+goaccess
 # watch is provided by procps-ng on Arch (installed by default)
 
 # =============================================================================
