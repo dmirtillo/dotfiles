@@ -19,6 +19,10 @@
 1. `Brewfile` and `Pacfile` provide the exact same CLI experience (missing packages added to their respective lists).
 2. `README.md` and internal docs accurately reflect all currently managed tools and the new GSD workflows.
 
+**Plans:** 2 plans
+- [ ] 01-consolidation-audit-01-PLAN.md — Align Brewfile and Pacfile for exact tool parity
+- [ ] 01-consolidation-audit-02-PLAN.md — Break out the monolithic README into a structured docs directory
+
 ### Phase 2: Windows Toolchain
 **Goal:** Set up the native Windows package management execution flow via `chezmoi`.  
 **Requirements:** WIN-02  
