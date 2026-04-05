@@ -3,17 +3,19 @@
 ```json
 {
   "status": "active",
-  "progress": 0,
+  "progress": 50,
   "session": {
-    "stopped_at": "Phase 1 context gathered",
-    "resume_file": ".planning/phases/01-consolidation-audit/01-CONTEXT.md"
+    "stopped_at": "Completed 01-01-PLAN.md",
+    "resume_file": "None"
   },
   "phases": {
     "1": {
       "name": "Consolidation & Audit",
-      "status": "pending",
-      "progress": 0,
-      "plans": {}
+      "status": "in-progress",
+      "progress": 50,
+      "plans": {
+        "01": "complete"
+      }
     },
     "2": {
       "name": "Windows Toolchain",

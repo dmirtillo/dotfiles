@@ -14,7 +14,7 @@ These requirements are already satisfied by the existing codebase.
 
 ### Documentation & Hygiene
 - [ ] **DOCS-01**: Implement a strict documentation update workflow for any feature/tool addition to prevent drift.
-- [ ] **TOOL-01**: Audit existing tools across `Brewfile` and `Pacfile` to ensure exact cross-OS parity where missing.
+- [x] **TOOL-01**: Audit existing tools across `Brewfile` and `Pacfile` to ensure exact cross-OS parity where missing.
 
 ### Windows Expansion
 - [ ] **WIN-01**: Establish PowerShell profile parity with the existing Zsh aliases and functions (using cross-platform OSS tools where applicable).
@@ -29,6 +29,6 @@ These requirements are already satisfied by the existing codebase.
 | Requirement ID | Phase | Status |
 |----------------|-------|--------|
 | DOCS-01 | Phase 1 | Pending |
-| TOOL-01 | Phase 1 | Pending |
+| TOOL-01 | Phase 1 | Complete |
 | WIN-02 | Phase 2 | Pending |
 | WIN-01 | Phase 3 | Pending |
