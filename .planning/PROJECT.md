@@ -23,10 +23,10 @@ Zero-friction provisioning of a high-performance (sub-50ms) shell environment an
 - Davide Mirtillo (Primary Developer)
 
 ## Current State
-This is a brownfield project transitioning to GSD management. The core macOS and Arch Linux flows are functional and highly optimized. The next major frontier is achieving Windows parity and ensuring ongoing configuration and documentation hygiene.
+Phase 01 complete — Consolidation & Audit finished. The documentation has been broken out into a `/docs` directory for better maintainability, and strict CLI tool parity has been established between macOS (`Brewfile`) and Linux (`Pacfile`). The next major frontier is achieving Windows parity.
 
 ---
-*Last updated: 2026-04-05 after initialization*
+*Last updated: 2026-04-05*
 
 ## Evolution
 
