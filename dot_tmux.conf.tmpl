@@ -52,10 +52,9 @@ bind k select-pane -U
 bind l select-pane -R
 
 # TmuxAI Integration: bind 'prefix + a' to split window and run tmuxai
-# WHY no run-shell wrapper: run-shell + split-window causes exit 127 because
-# the inner command runs without a shell. Using split-window directly with
-# an explicit shell invocation is more reliable.
-bind a split-window -h -p 35 "{{ .chezmoi.homeDir }}/.local/bin/tmuxai"
+# We use run-shell so that #{pane_id} is evaluated to the active pane before the split.
+# This allows tmuxai to use the correct pane for command execution.
+bind a run-shell 'tmux split-window -h -p 35 "{{ .chezmoi.homeDir }}/.local/bin/tmuxai --exec-pane #{pane_id}"'
 
 # Status bar customization (p10k classic dark powerline match)
 set-option -g status-position bottom
