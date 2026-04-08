@@ -54,7 +54,9 @@ bind l select-pane -R
 # TmuxAI Integration: bind 'prefix + a' to split window and run tmuxai
 # We use run-shell so that #{pane_id} is evaluated to the active pane before the split.
 # This allows tmuxai to use the correct pane for command execution.
-bind a run-shell 'tmux split-window -h -p 35 "{{ .chezmoi.homeDir }}/.local/bin/tmuxai --exec-pane #{pane_id}"'
+# Note: We explicitly add Homebrew/Linuxbrew bin paths because run-shell's sh environment
+# might not include them, leading to 'tmux: command not found' (exit 127).
+bind a run-shell 'PATH=$PATH:/opt/homebrew/bin:/usr/local/bin:/home/linuxbrew/.linuxbrew/bin tmux split-window -h -p 35 "{{ .chezmoi.homeDir }}/.local/bin/tmuxai --exec-pane #{pane_id}"'
 
 # Status bar customization (p10k classic dark powerline match)
 set-option -g status-position bottom
