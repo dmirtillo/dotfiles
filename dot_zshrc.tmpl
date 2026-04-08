@@ -103,12 +103,20 @@ if [ -f /usr/share/zsh-antidote/antidote.zsh ]; then
 fi
 {{ end -}}
 
+{{ if eq .chezmoi.os "darwin" -}}
+_antidote_home="$HOME/Library/Caches/antidote"
+{{ else -}}
+_antidote_home="${XDG_CACHE_HOME:-$HOME/.cache}/antidote"
+{{ end -}}
+
 # Lazy-load: generate static file only when plugins.txt changes
+# We also check if the antidote cache directory is missing (e.g. wiped by macOS/CleanMyMac)
 zsh_plugins=${ZDOTDIR:-$HOME}/.zsh_plugins
-if [[ ! ${zsh_plugins}.zsh -nt ${zsh_plugins}.txt ]]; then
+if [[ ! ${zsh_plugins}.zsh -nt ${zsh_plugins}.txt ]] || [[ ! -d "$_antidote_home" ]]; then
   antidote bundle <${zsh_plugins}.txt >${zsh_plugins}.zsh
 fi
 source ${zsh_plugins}.zsh
+unset _antidote_home
 
 # NOTE: compinit is handled by getantidote/use-omz (deferred compinit).
 # Do NOT call compinit again here -- it was the #1 bottleneck (~250ms).
