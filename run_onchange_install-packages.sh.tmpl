@@ -26,6 +26,16 @@ if command -v pipx &>/dev/null; then
     pipx install 'litellm[proxy]' --python python3.13 2>&1 | sed 's/^/  /'
     pipx inject litellm 'google-cloud-aiplatform>=1.38' 2>&1 | sed 's/^/  /'
   fi
+
+  # Patch LiteLLM to drop top_p when temperature is also present for Vertex Claude models.
+  # Vertex AI rejects requests specifying both parameters, and AI-SDK passes both by default.
+  LITELLM_TRANSFORM="$HOME/.local/pipx/venvs/litellm/lib/python3.13/site-packages/litellm/llms/vertex_ai/vertex_ai_partner_models/anthropic/transformation.py"
+  if [ -f "$LITELLM_TRANSFORM" ]; then
+    if ! grep -q 'data.pop("top_p", None)' "$LITELLM_TRANSFORM"; then
+      echo "  [packages] Patching LiteLLM Vertex AI transformation to drop top_p..."
+      sed -i '' 's/data\.pop("output_format", None)/data.pop("output_format", None)\n        if "temperature" in data and "top_p" in data:\n            data.pop("top_p", None)/' "$LITELLM_TRANSFORM"
+    fi
+  fi
 else
   echo "  WARNING: pipx not found. Install litellm manually: pipx install 'litellm[proxy]'"
 fi
