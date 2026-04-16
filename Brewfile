@@ -123,7 +123,6 @@ brew "akamai"
 brew "cloud-sql-proxy"
 brew "hashicorp/tap/packer"
 brew "localstack/tap/localstack-cli"
-brew "warrensbox/tap/tfswitch", link: false
 brew "ansible"
 brew "ansible-lint"
 brew "awscli"
