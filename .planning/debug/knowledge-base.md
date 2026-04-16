@@ -4,10 +4,10 @@ Resolved debug sessions. Used by `gsd-debugger` to surface known-pattern hypothe
 
 ---
 
-## litellm-vertex-temperature-top-p — Vertex AI returns 400 error when AionUI passes both temperature and top_p to Claude
-- **Date:** 2026-04-15T00:00:00Z
-- **Error patterns:** temperature, top_p, 400, BadRequestError, Vertex_aiException, invalid_request_error, claude-opus-4-6
-- **Root cause:** Vertex AI's Claude 3.5 Sonnet / 3.6 Opus endpoint returns a 400 error if both `temperature` and `top_p` are specified in the request. AionUI passes both by default, and LiteLLM's `drop_params: true` does not drop `top_p` because it is technically a supported parameter for the Vertex AI endpoint, just not in combination with temperature.
-- **Fix:** Patched `litellm` in `run_onchange_install-packages.sh.tmpl` to explicitly drop `top_p` during Anthropic/Vertex AI request transformation if `temperature` is also present.
-- **Files changed:** run_onchange_install-packages.sh.tmpl
+## litellm-anthropic-tool-calling-error — 400 UnsupportedParamsError from LiteLLM Anthropic proxy
+- **Date:** 2026-04-15
+- **Error patterns:** 400 litellm.UnsupportedParamsError, Anthropic doesn't support tool calling without tools= param, modify_params, litellm_settings
+- **Root cause:** LiteLLM proxying request to Anthropic with tool choice but no tools defined.
+- **Fix:** Add `litellm_settings: modify_params: true` to litellm proxy `config.yaml`.
+- **Files changed:** private_dot_config/private_litellm/config.yaml.tmpl
 ---
