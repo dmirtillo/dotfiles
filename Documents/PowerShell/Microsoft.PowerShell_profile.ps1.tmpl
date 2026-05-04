@@ -156,13 +156,13 @@ function ports { netstat -ano @args }
 function listening { netstat -ano | Select-String "LISTENING" }
 
 # Disk usage
-Set-Alias -Name du -Value dust
-Set-Alias -Name df -Value duf
+Set-Alias -Name du -Value dust -Force
+Set-Alias -Name df -Value duf -Force
 function ducks { dust -r -n 10 @args }
 Set-Alias -Name diskspace -Value duf
 
 # History aliases
-Set-Alias -Name h -Value history
+Set-Alias -Name h -Value history -Force
 function hg { history | Select-String @args }
 function hs { history | Select-String @args }
 
@@ -239,7 +239,7 @@ function sizeof { (Get-Item $args[0]).Length }
 # ============================================================================
 # MODERN TOOL INTEGRATIONS
 # ============================================================================
-Set-Alias -Name cat -Value bat
+Set-Alias -Name cat -Value bat -Force
 function catp { bat @args }
 function batdiff { git diff --name-only --diff-filter=d | ForEach-Object { bat --diff $_ } }
 
