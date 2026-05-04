@@ -1,18 +1,48 @@
 {{- if eq .chezmoi.os "windows" -}}
 # =============================================================================
-# Install Windows packages (runs when Wingetfile.json changes)
-# chezmoi:template:hash {{ include "Wingetfile.json" | sha256sum }}
+# Install Windows packages (runs when Winfile changes)
+# chezmoi:template:hash {{ include "Winfile" | sha256sum }}
 # =============================================================================
 
-Write-Host "[packages] Installing Windows packages via Winget..." -ForegroundColor Cyan
+# Request UAC elevation if not running as Administrator
+if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Host "[packages] Requesting elevation to install packages..." -ForegroundColor Cyan
+    Start-Process -Verb RunAs -FilePath powershell.exe -ArgumentList "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "`"$PSCommandPath`""
+    exit
+}
 
-$WingetFile = Join-Path $env:CHEZMOI_SOURCE_DIR "Wingetfile.json"
+Write-Host "[packages] Installing Windows packages from Winfile..." -ForegroundColor Cyan
 
-if (Get-Command winget -ErrorAction SilentlyContinue) {
-    # Accept source agreements automatically and ignore unknown packages to prevent complete failure
-    winget import -i "$WingetFile" --accept-package-agreements --accept-source-agreements --ignore-unavailable
+$Winfile = Join-Path $env:CHEZMOI_SOURCE_DIR "Winfile"
+
+if (Test-Path $Winfile) {
+    # Read lines, skipping empty ones and comments
+    $packages = Get-Content $Winfile | Where-Object { $_ -match '\S' -and $_ -notmatch '^\s*#' } | ForEach-Object { $_.Trim() }
+
+    foreach ($pkg in $packages) {
+        Write-Host "  Installing $pkg..." -ForegroundColor Cyan
+        
+        # Try Chocolatey first
+        $chocoSuccess = $false
+        if (Get-Command choco -ErrorAction SilentlyContinue) {
+            choco install $pkg -y
+            if ($LASTEXITCODE -eq 0) {
+                $chocoSuccess = $true
+            }
+        }
+
+        # Fallback to Winget if choco fails or is missing
+        if (-not $chocoSuccess) {
+            if (Get-Command winget -ErrorAction SilentlyContinue) {
+                Write-Host "  Falling back to winget for $pkg..." -ForegroundColor Yellow
+                winget install --exact $pkg --accept-source-agreements --accept-package-agreements
+            } else {
+                Write-Host "  WARNING: Neither choco nor winget found to install $pkg." -ForegroundColor Red
+            }
+        }
+    }
 } else {
-    Write-Host "  WARNING: winget not found. Are you on a modern Windows 10/11 system?" -ForegroundColor Yellow
+    Write-Host "  WARNING: Winfile not found at $Winfile" -ForegroundColor Yellow
 }
 
 Write-Host "  Done." -ForegroundColor Green
