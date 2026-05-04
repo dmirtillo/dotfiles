@@ -4,7 +4,7 @@
 
 | # | Phase | Goal | Requirements | Success Criteria |
 |---|-------|------|--------------|------------------|
-| 1 | Consolidation & Audit | Clean up documentation and ensure macOS/Linux tool parity. | DOCS-01, TOOL-01 | 2 |
+| 1 | Consolidation & Audit | Clean up documentation and ensure macOS/Linux tool parity. | Complete    | 2026-05-04 |
 | 2 | Windows Toolchain | Set up native Windows package management execution via chezmoi. | WIN-02 | 1 |
 | 3 | PowerShell Parity | Port Zsh aliases, functions, and cross-platform OSS configurations to Windows. | WIN-01 | 2 |
 
@@ -19,15 +19,18 @@
 1. `Brewfile` and `Pacfile` provide the exact same CLI experience (missing packages added to their respective lists).
 2. `README.md` and internal docs accurately reflect all currently managed tools and the new GSD workflows.
 
-**Plans:** 2 plans
-- [ ] 01-consolidation-audit-01-PLAN.md — Align Brewfile and Pacfile for exact tool parity
-- [ ] 01-consolidation-audit-02-PLAN.md — Break out the monolithic README into a structured docs directory
+**Plans:** 2/2 plans complete
+- [x] 01-consolidation-audit-01-PLAN.md — Align Brewfile and Pacfile for exact tool parity
+- [x] 01-consolidation-audit-02-PLAN.md — Break out the monolithic README into a structured docs directory
 
 ### Phase 2: Windows Toolchain
 **Goal:** Set up the native Windows package management execution flow via `chezmoi`.  
 **Requirements:** WIN-02  
 **Success criteria:**
 1. `run_onchange_install-packages.ps1.tmpl` correctly parses and installs required OSS tools seamlessly using Chocolatey and Winget.
+
+**Plans:** 1 plan
+- [ ] 02-01-PLAN.md — Implement Winfile manifest and native Windows execution script
 
 ### Phase 3: PowerShell Parity
 **Goal:** Port Zsh aliases, functions, and cross-platform OSS configurations to Windows.  
