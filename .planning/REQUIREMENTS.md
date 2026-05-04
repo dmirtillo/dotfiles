@@ -18,7 +18,7 @@ These requirements are already satisfied by the existing codebase.
 
 ### Windows Expansion
 - [ ] **WIN-01**: Establish PowerShell profile parity with the existing Zsh aliases and functions (using cross-platform OSS tools where applicable).
-- [ ] **WIN-02**: Finalize Windows package management strategy combining `Chocolatey` and `Winget` into a seamless `run_onchange` chezmoi execution.
+- [x] **WIN-02**: Finalize Windows package management strategy combining `Chocolatey` and `Winget` into a seamless `run_onchange` chezmoi execution.
 
 ## Out of Scope
 
@@ -30,5 +30,5 @@ These requirements are already satisfied by the existing codebase.
 |----------------|-------|--------|
 | DOCS-01 | Phase 1 | Complete |
 | TOOL-01 | Phase 1 | Complete |
-| WIN-02 | Phase 2 | Pending |
+| WIN-02 | Phase 2 | Complete |
 | WIN-01 | Phase 3 | Pending |

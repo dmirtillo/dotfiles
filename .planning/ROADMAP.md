@@ -30,7 +30,7 @@
 1. `run_onchange_install-packages.ps1.tmpl` correctly parses and installs required OSS tools seamlessly using Chocolatey and Winget.
 
 **Plans:** 1 plan
-- [ ] 02-01-PLAN.md — Implement Winfile manifest and native Windows execution script
+- [x] 02-01-PLAN.md — Implement Winfile manifest and native Windows execution script
 
 ### Phase 3: PowerShell Parity
 **Goal:** Port Zsh aliases, functions, and cross-platform OSS configurations to Windows.  
