@@ -1,0 +1,62 @@
+# =============================================================================
+# PowerShell Profile
+# Managed by chezmoi
+# =============================================================================
+
+# Function to aggressively cache tool initializations for fast startup
+function Invoke-CachedEval {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Name,
+
+        [Parameter(Mandatory=$true)]
+        [string]$Command
+    )
+
+    $cacheDir = "$env:TEMP\ps_cache"
+    if (!(Test-Path $cacheDir)) {
+        New-Item -ItemType Directory -Force -Path $cacheDir | Out-Null
+    }
+
+    $cacheFile = "$cacheDir\$Name.ps1"
+    
+    # Try to find the executable to check its modification time
+    $bin = Get-Command $Name -ErrorAction SilentlyContinue
+
+    if ($bin) {
+        $binPath = $bin.Source
+        if ($binPath) {
+            $binAge = (Get-Item $binPath).LastWriteTime
+        } else {
+            # For built-ins or aliases where Source might be empty, just use a fallback or force update
+            $binAge = (Get-Date).AddYears(-1)
+        }
+
+        $needsUpdate = $true
+        if (Test-Path $cacheFile) {
+            $cacheAge = (Get-Item $cacheFile).LastWriteTime
+            if ($cacheAge -gt $binAge) {
+                $needsUpdate = $false
+            }
+        }
+
+        if ($needsUpdate) {
+            Invoke-Expression $Command | Out-File -FilePath $cacheFile -Encoding utf8
+        }
+
+        . $cacheFile
+    }
+}
+
+# =============================================================================
+# Tool Initializations
+# =============================================================================
+
+# Oh My Posh
+Invoke-CachedEval "oh-my-posh" "oh-my-posh init pwsh --config ~/AppData/Local/Programs/oh-my-posh/themes/jandedobbeleer.omp.json"
+
+# Zoxide
+Invoke-CachedEval "zoxide" "zoxide init powershell"
+
+# fzf
+Invoke-CachedEval "fzf" "fzf --powershell"
