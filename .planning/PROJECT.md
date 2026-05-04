@@ -26,7 +26,7 @@ Zero-friction provisioning of a high-performance (sub-50ms) shell environment an
 Phase 01 complete — Consolidation & Audit finished. The documentation has been broken out into a `/docs` directory for better maintainability, and strict CLI tool parity has been established between macOS (`Brewfile`) and Linux (`Pacfile`). The next major frontier is achieving Windows parity.
 
 ---
-*Last updated: 2026-04-05*
+*Last updated: 2026-05-04 after Phase 1*
 
 ## Evolution
 
