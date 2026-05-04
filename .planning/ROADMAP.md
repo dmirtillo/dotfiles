@@ -40,5 +40,5 @@
 2. The PowerShell profile provides the exact same core workflow (e.g., `lazygit`, `zoxide`, `fzf`) as the Linux/macOS setup.
 
 **Plans:** 0/2 plans complete
-- [ ] 03-01-PLAN.md — Establish PowerShell profile and caching foundation
+- [x] 03-01-PLAN.md — Establish PowerShell profile and caching foundation
 - [ ] 03-02-PLAN.md — Port Zsh aliases and functions to PowerShell
