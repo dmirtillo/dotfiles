@@ -5,7 +5,7 @@
 | # | Phase | Goal | Requirements | Success Criteria |
 |---|-------|------|--------------|------------------|
 | 1 | Consolidation & Audit | Clean up documentation and ensure macOS/Linux tool parity. | Complete    | 2026-05-04 |
-| 2 | Windows Toolchain | Set up native Windows package management execution via chezmoi. | WIN-02 | 1 |
+| 2 | Windows Toolchain | Set up native Windows package management execution via chezmoi. | Complete    | 2026-05-04 |
 | 3 | PowerShell Parity | Port Zsh aliases, functions, and cross-platform OSS configurations to Windows. | WIN-01 | 2 |
 
 ---
@@ -29,7 +29,7 @@
 **Success criteria:**
 1. `run_onchange_install-packages.ps1.tmpl` correctly parses and installs required OSS tools seamlessly using Chocolatey and Winget.
 
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 - [x] 02-01-PLAN.md — Implement Winfile manifest and native Windows execution script
 
 ### Phase 3: PowerShell Parity
