@@ -60,3 +60,215 @@ Invoke-CachedEval "zoxide" "zoxide init powershell"
 
 # fzf
 Invoke-CachedEval "fzf" "fzf --powershell"
+
+# ============================================================================
+# PATH MODIFICATIONS
+# ============================================================================
+
+# Prepend mise shims to PATH
+$env:PATH = "$HOME\.local\share\mise\shims;" + $env:PATH
+
+# ============================================================================
+# PRODUCTIVITY ALIASES AND FUNCTIONS
+# ============================================================================
+
+# File and Directory Navigation
+function .. { Set-Location .. }
+function ... { Set-Location ..\.. }
+function .... { Set-Location ..\..\.. }
+function ~ { Set-Location ~ }
+
+# Enhanced ls commands (using eza, a modern ls replacement)
+function ls { eza --color=auto --icons @args }
+function ll { eza -alF --icons --git @args }
+function la { eza -a --icons @args }
+function l { eza -F --icons @args }
+function lt { eza -l --sort=modified @args }
+function lh { eza -l --icons @args }
+function lsize { eza -l --sort=size @args }
+function ltree { eza --tree --level=2 --icons @args }
+
+# Directory operations
+function md { New-Item -ItemType Directory -Force -Path $args }
+# PowerShell has internal aliases for rd, tree
+
+function t1 { eza --tree --level=1 @args }
+function t2 { eza --tree --level=2 @args }
+function t3 { eza --tree --level=3 @args }
+
+# Quick access to common directories
+function desktop { Set-Location "$HOME\Desktop" }
+function downloads { Set-Location "$HOME\Downloads" }
+function documents { Set-Location "$HOME\Documents" }
+function projects { Set-Location "$HOME\projects" }
+
+# Git Enhancements
+function gst { git status @args }
+function gco { git checkout @args }
+function gcb { git checkout -b @args }
+function gp { git push @args }
+function gpl { git pull @args }
+function gf { git fetch @args }
+function gm { git merge @args }
+function gr { git rebase @args }
+function glog { git log --oneline --graph --decorate @args }
+function gclean { git clean -fd @args }
+function greset { git reset --hard HEAD @args }
+function gb { git branch @args }
+function gbd { git branch -d @args }
+function gbD { git branch -D @args }
+function gba { git branch -a @args }
+function gwip { git add -A; git commit -m "WIP" }
+function gunwip { 
+    $lastLog = git log -n 1
+    if ($lastLog -match "WIP") {
+        git reset HEAD~1
+    }
+}
+function gundo { git reset --soft HEAD~1 @args }
+
+# Python shortcuts
+function py { python @args }
+# pip is already an exe
+function venv { python -m venv @args }
+function pipr { pip install -r requirements.txt }
+function pipf { pip freeze > requirements.txt }
+
+# Docker shortcuts
+Set-Alias -Name d -Value docker
+function dc { docker compose @args }
+function dcu { docker compose up @args }
+function dcd { docker compose down @args }
+function dcb { docker compose build @args }
+function dcr { docker compose restart @args }
+function dps { docker ps @args }
+function dpsa { docker ps -a @args }
+function di { docker images @args }
+function drm { docker rm @args }
+function drmi { docker rmi @args }
+function dprune { docker system prune -f @args }
+
+# System Utilities
+function psg { procs --tree @args }
+function myip { (Invoke-RestMethod -Uri "https://ipinfo.io/ip").Trim() }
+function localip { (Test-Connection -ComputerName $env:COMPUTERNAME -Count 1).IPv4Address.IPAddressToString }
+function ports { netstat -ano @args }
+function listening { netstat -ano | Select-String "LISTENING" }
+
+# Disk usage
+Set-Alias -Name du -Value dust
+Set-Alias -Name df -Value duf
+function ducks { dust -r -n 10 @args }
+Set-Alias -Name diskspace -Value duf
+
+# History aliases
+Set-Alias -Name h -Value history
+function hg { history | Select-String @args }
+function hs { history | Select-String @args }
+
+# Process management
+function kport {
+    param([Parameter(Mandatory=$true)][string]$Port)
+    $Matches = (netstat -ano | Select-String ":$Port\s+.*\s+(\d+)")
+    if ($Matches) {
+        $Pids = $Matches | ForEach-Object { $_.Matches.Groups[1].Value } | Select-Object -Unique
+        Write-Host "Killing processes on port $Port: $Pids"
+        foreach ($p in $Pids) { Stop-Process -Id $p -Force -ErrorAction SilentlyContinue }
+    } else {
+        Write-Host "No process found running on port $Port"
+    }
+}
+Set-Alias -Name killport -Value kport
+
+# ============================================================================
+# USEFUL FUNCTIONS
+# ============================================================================
+
+# Create and enter directory
+function mkcd {
+    param([Parameter(Mandatory=$true)][string]$Path)
+    New-Item -ItemType Directory -Force -Path $Path | Out-Null
+    Set-Location $Path
+}
+
+# Extract various archive formats (simplified for Windows)
+function extract {
+    param([Parameter(Mandatory=$true)][string]$Path)
+    if (Test-Path $Path) {
+        if ($Path -match '\.zip$') { Expand-Archive -Path $Path -DestinationPath . }
+        elseif ($Path -match '\.tar\.gz$|\.tgz$|\.tar$') { tar xf $Path }
+        else { Write-Host "Format not supported by extract function natively in PowerShell. Use 7z manually." }
+    } else {
+        Write-Host "'$Path' is not a valid file"
+    }
+}
+
+# Find files and directories (using fd)
+function findfile { fd --type f @args }
+function finddir { fd --type d @args }
+
+# Weather function
+function weather {
+    param([string]$Location = "Rome")
+    $url = "wttr.in/$Location"
+    # Invoke-RestMethod parses, so curl.exe is better for terminal output here
+    curl.exe $url
+}
+
+# Quick backup function
+function backup {
+    param([Parameter(Mandatory=$true)][string]$Path)
+    $DateStr = Get-Date -Format "yyyyMMdd_HHmmss"
+    Copy-Item -Path $Path -Destination "$Path.backup.$DateStr"
+}
+
+# Git clone and cd
+function gclone {
+    param([Parameter(Mandatory=$true)][string]$Url)
+    git clone $Url
+    $DirName = ($Url -split '/')[-1] -replace '\.git$',''
+    Set-Location $DirName
+}
+
+# Quick search in files
+function search { rg $args[0] . }
+
+# Show file size
+function sizeof { (Get-Item $args[0]).Length }
+
+# ============================================================================
+# MODERN TOOL INTEGRATIONS
+# ============================================================================
+Set-Alias -Name cat -Value bat
+function catp { bat @args }
+function batdiff { git diff --name-only --diff-filter=d | ForEach-Object { bat --diff $_ } }
+
+Set-Alias -Name lg -Value lazygit
+Set-Alias -Name lzd -Value lazydocker
+
+# Terraform shortcuts
+Set-Alias -Name tf -Value terraform
+function tfi { terraform init @args }
+function tfp { terraform plan @args }
+function tfa { terraform apply @args }
+function tfs { terraform show @args }
+function tfo { terraform output @args }
+function tfv { terraform validate @args }
+function tfw { terraform workspace @args }
+
+# Ansible shortcuts
+function ap { ansible-playbook @args }
+function apv { ansible-playbook --ask-vault-pass @args }
+function apc { ansible-playbook --check --diff @args }
+function av { ansible-vault @args }
+function ave { ansible-vault encrypt @args }
+function avd { ansible-vault decrypt @args }
+function avv { ansible-vault view @args }
+function al { ansible-lint @args }
+function ai { ansible-inventory --graph @args }
+
+Set-Alias -Name ping -Value gping
+Set-Alias -Name help -Value tldr
+Set-Alias -Name diskexplore -Value ncdu
+Set-Alias -Name btm -Value btm
+Set-Alias -Name sysmon -Value btm
