@@ -23,10 +23,10 @@ Zero-friction provisioning of a high-performance (sub-50ms) shell environment an
 - Davide Mirtillo (Primary Developer)
 
 ## Current State
-Phase 02 complete — Windows Toolchain finished. The native Windows package management execution flow has been set up via a dotfiles-friendly `Winfile`, successfully migrating away from rigid JSON exports. UAC elevation and fallback logic have been implemented. The final major frontier is achieving full PowerShell Parity.
+Phase 04 complete — Dependency Bump finished. The latest versions of `opencode` (v1.14.35) and `litellm` (v1.83.14) have been enforced.
 
 ---
-*Last updated: 2026-05-04*
+*Last updated: 2026-05-05*
 
 ## Evolution
 
