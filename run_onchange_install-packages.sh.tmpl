@@ -21,9 +21,9 @@ fi
 #   Vertex AI SDK automatically; it is required for Claude models via Vertex.
 # IDEMPOTENT: only installs if litellm is not already listed by pipx.
 if command -v pipx &>/dev/null; then
-  if ! pipx list --short 2>/dev/null | grep -q '^litellm '; then
+  if ! pipx list --short 2>/dev/null | grep -q '^litellm 1\.83\.14'; then
     echo "[packages] Installing litellm proxy..."
-    pipx install 'litellm[proxy]' --python python3.13 2>&1 | sed 's/^/  /'
+    pipx install --force 'litellm[proxy]==1.83.14' --python python3.13 2>&1 | sed 's/^/  /'
     pipx inject litellm 'google-cloud-aiplatform>=1.38' 2>&1 | sed 's/^/  /'
   fi
 
