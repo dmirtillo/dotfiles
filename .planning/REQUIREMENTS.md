@@ -12,6 +12,9 @@ These requirements are already satisfied by the existing codebase.
 
 ## Active
 
+### Dependencies
+- [x] **DEP-01**: Bump opencode to `v1.14.35` and litellm to `v1.83.14` across repository tracking files.
+
 ### Documentation & Hygiene
 - [x] **DOCS-01**: Implement a strict documentation update workflow for any feature/tool addition to prevent drift.
 - [x] **TOOL-01**: Audit existing tools across `Brewfile` and `Pacfile` to ensure exact cross-OS parity where missing.
@@ -32,3 +35,4 @@ These requirements are already satisfied by the existing codebase.
 | TOOL-01 | Phase 1 | Complete |
 | WIN-02 | Phase 2 | Complete |
 | WIN-01 | Phase 3 | Complete |
+| DEP-01 | Phase 4 | Complete |

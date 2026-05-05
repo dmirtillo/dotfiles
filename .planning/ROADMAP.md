@@ -52,4 +52,4 @@
   1. `Brewfile` ensures opencode is tracking version `v1.14.35`.
   2. `run_onchange_install-packages.sh.tmpl` enforces the litellm pipx install to target version `v1.83.14`.
 **Plans**: 0/1 plans complete
-- [ ] 04-01-PLAN.md — Update Brewfile and install script versions
+- [x] 04-01-PLAN.md — Update Brewfile and install script versions
