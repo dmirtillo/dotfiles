@@ -1,12 +1,13 @@
 # Project Roadmap
 
-**3 phases** | **4 requirements mapped** | All v1 requirements covered ✓
+**4 phases** | **5 requirements mapped** | All v1 requirements covered ✓
 
 | # | Phase | Goal | Requirements | Success Criteria |
 |---|-------|------|--------------|------------------|
 | 1 | Consolidation & Audit | Clean up documentation and ensure macOS/Linux tool parity. | Complete    | 2026-05-04 |
 | 2 | Windows Toolchain | Set up native Windows package management execution via chezmoi. | Complete    | 2026-05-04 |
 | 3 | PowerShell Parity | Port Zsh aliases, functions, and cross-platform OSS configurations to Windows. | WIN-01 | 2 |
+| 4 | Dependency Bump | Update opencode and litellm versions to match binary environments. | DEP-01 | 2 |
 
 ---
 
@@ -42,3 +43,13 @@
 **Plans:** 0/2 plans complete
 - [x] 03-01-PLAN.md — Establish PowerShell profile and caching foundation
 - [ ] 03-02-PLAN.md — Port Zsh aliases and functions to PowerShell
+
+### Phase 4: Dependency Bump
+**Goal**: Update opencode and litellm versions to match binary environments.
+**Depends on**: Phase 3
+**Requirements**: DEP-01
+**Success Criteria** (what must be TRUE):
+  1. `Brewfile` ensures opencode is tracking version `v1.14.35`.
+  2. `run_onchange_install-packages.sh.tmpl` enforces the litellm pipx install to target version `v1.83.14`.
+**Plans**: 0/1 plans complete
+- [ ] 04-01-PLAN.md — Update Brewfile and install script versions
