@@ -55,6 +55,14 @@
     "gcp-cost": {
       "type": "local",
       "command": ["/opt/homebrew/bin/gcp-cost-mcp-server"]
+    },
+    "aws-pricing": {
+      "type": "local",
+      "command": ["/opt/homebrew/bin/uvx", "awslabs.aws-pricing-mcp-server@latest"],
+      "env": {
+        "AWS_PROFILE": "default",
+        "AWS_REGION": "us-east-1"
+      }
     }
   }
 }
