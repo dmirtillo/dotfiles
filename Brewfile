@@ -206,7 +206,7 @@ cask "font-hack-nerd-font"
 # =============================================================================
 # AI / LLM TOOLS
 # =============================================================================
-brew "anomalyco/tap/opencode" # tracks v1.14.35
+brew "anomalyco/tap/opencode" # tracks v1.14.48
 brew "gemini-cli"
 cask "boltai"
 
