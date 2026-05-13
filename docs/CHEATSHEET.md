@@ -42,3 +42,25 @@ chezmoi update
 This does `git pull` on the source repo and then `chezmoi apply` in one step.
 
 ---
+
+## Services & AI
+
+### LiteLLM Proxy
+The LiteLLM proxy runs as a macOS Launch Agent on port 4000. It handles routing for Claude models via Vertex AI.
+
+| Task | Command |
+|---|---|
+| **Restart (Quickest)** | `launchctl kickstart -k gui/$(id -u)/com.litellm.proxy` |
+| **Stop** | `launchctl unload ~/Library/LaunchAgents/com.litellm.proxy.plist` |
+| **Start** | `launchctl load ~/Library/LaunchAgents/com.litellm.proxy.plist` |
+| **Tail Logs** | `tail -f ~/.local/share/litellm/proxy.log` |
+| **Tail Errors** | `tail -f ~/.local/share/litellm/proxy.err` |
+
+### OpenCode Models
+Switch between Gemini (Direct) and Anthropic (via LiteLLM Proxy) modes:
+
+| Task | Command |
+|---|---|
+| **Switch to Gemini** | `switch-models gemini` |
+| **Switch to Anthropic** | `switch-models anthropic` |
+| **Check Status** | `switch-models status` |

@@ -62,3 +62,28 @@ ls -la ~/.cache/{brew-shellenv,fzf,zoxide,direnv,thefuck}.zsh
 ```
 
 If missing, open a new terminal — they regenerate automatically on first load.
+
+## LiteLLM Proxy Issues
+
+### LiteLLM is not responding
+If Claude models in OpenCode are failing, verify if the proxy is running:
+
+```bash
+# Check if the process is active
+pgrep -fl litellm
+
+# Restart the service
+launchctl kickstart -k gui/$(id -u)/com.litellm.proxy
+```
+
+### Permission Denied / ADC Errors
+LiteLLM uses Google Cloud Application Default Credentials (ADC) for Vertex AI. If you see auth errors:
+
+```bash
+gcloud auth application-default login
+```
+
+### Log Locations
+If the proxy starts but fails to route requests, check the logs:
+- Output: `~/.local/share/litellm/proxy.log`
+- Errors: `~/.local/share/litellm/proxy.err`
