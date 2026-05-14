@@ -92,7 +92,7 @@ Do not degrade startup time (currently sub-50ms).
 
 ## 5. File Modification Rules
 
-1. **Never write secrets.** Use chezmoi's data system or secret manager integration.
+1. **Never write secrets or personal accounts.** Use chezmoi's data system or secret manager integration. Do NOT hardcode usernames, logins, passwords, AWS accounts, or personal aliases (e.g., `my-personal-alias`).
 2. **Use templates for OS differences.** Don't use runtime `if [[ "$OSTYPE" ]]` — use Go template `{{ "{{" }} if eq .chezmoi.os {{ "}}" }}` instead.
 3. **Test templates:** Run `chezmoi execute-template < file.tmpl` to verify output.
 4. **Preview before apply:** Always `chezmoi diff` before `chezmoi apply`.
