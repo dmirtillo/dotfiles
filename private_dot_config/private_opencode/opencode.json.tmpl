@@ -55,12 +55,12 @@
     "gcp-cost": {
       "type": "local",
       "command": ["/opt/homebrew/bin/gcp-cost-mcp-server"]
-    },
+    }{{- if .aws_profile }},
     "aws-pricing": {
       "type": "local",
       "command": [
         "/usr/bin/env",
-        "AWS_PROFILE=aws-companyname",
+        "AWS_PROFILE={{ .aws_profile }}",
         "AWS_REGION=us-east-1",
         "HOME={{ .chezmoi.homeDir }}",
         "AWS_SHARED_CREDENTIALS_FILE={{ .chezmoi.homeDir }}/.aws/credentials",
@@ -68,11 +68,12 @@
         "awslabs.aws-pricing-mcp-server@latest"
       ],
       "env": {
-        "AWS_PROFILE": "aws-companyname",
+        "AWS_PROFILE": "{{ .aws_profile }}",
         "AWS_REGION": "us-east-1",
         "HOME": "{{ .chezmoi.homeDir }}",
         "AWS_SHARED_CREDENTIALS_FILE": "{{ .chezmoi.homeDir }}/.aws/credentials"
       }
     }
+    {{- end }}
   }
 }
