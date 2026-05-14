@@ -58,10 +58,20 @@
     },
     "aws-pricing": {
       "type": "local",
-      "command": ["/opt/homebrew/bin/uvx", "awslabs.aws-pricing-mcp-server@latest"],
+      "command": [
+        "/usr/bin/env",
+        "AWS_PROFILE=aws-companyname",
+        "AWS_REGION=us-east-1",
+        "HOME={{ .chezmoi.homeDir }}",
+        "AWS_SHARED_CREDENTIALS_FILE={{ .chezmoi.homeDir }}/.aws/credentials",
+        "/opt/homebrew/bin/uvx",
+        "awslabs.aws-pricing-mcp-server@latest"
+      ],
       "env": {
         "AWS_PROFILE": "aws-companyname",
-        "AWS_REGION": "us-east-1"
+        "AWS_REGION": "us-east-1",
+        "HOME": "{{ .chezmoi.homeDir }}",
+        "AWS_SHARED_CREDENTIALS_FILE": "{{ .chezmoi.homeDir }}/.aws/credentials"
       }
     }
   }
