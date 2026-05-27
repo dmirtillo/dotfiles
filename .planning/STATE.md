@@ -3,13 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.14.35
 milestone_name: milestone
 status: Milestone complete
-last_updated: "2026-05-05T07:05:59.355Z"
-last_activity: 2026-05-05
+last_updated: "2026-05-27T14:37:39.463Z"
+last_activity: 2026-05-27
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 3
-  total_plans: 6
+  total_plans: 7
   completed_plans: 5
+  percent: 71
 ---
 
 # Project State
@@ -59,5 +60,8 @@ progress:
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260416-p1m | install this skill for opencode: curl -fsSL https://officecli.ai/SKILL.md | 2026-04-16 | ec7ce6a | [260416-p1m-install-this-skill-for-opencode-curl-fss](./quick/260416-p1m-install-this-skill-for-opencode-curl-fss/) |
+| 260527-o1u | what happened to the aws cost mcp server? | 2026-05-27 | - | [260527-o1u-what-happened-to-the-aws-cost-mcp-server](./quick/260527-o1u-what-happened-to-the-aws-cost-mcp-server/) |
 
-Last activity: 2026-05-05
+Last activity: 2026-05-27 - Completed quick task 260527-o1u: what happened to the aws cost mcp server?
+| 2026-05-27 | fast | Change tmuxai plugin to gemini 3.5 | ✅ |
+| 2026-05-27 | fast | Revert tmuxai gemini-pro to 3.1-pro-preview | ✅ |
