@@ -55,7 +55,7 @@
     "gcp-cost": {
       "type": "local",
       "command": ["/opt/homebrew/bin/gcp-cost-mcp-server"]
-    }{{- if .aws_profile }},
+    }{{- if hasKey . "aws_profile" }},
     "aws-pricing": {
       "type": "local",
       "command": [
@@ -64,7 +64,8 @@
         "AWS_REGION=us-east-1",
         "HOME={{ .chezmoi.homeDir }}",
         "AWS_SHARED_CREDENTIALS_FILE={{ .chezmoi.homeDir }}/.aws/credentials",
-        "/opt/homebrew/bin/uvx",
+        "npx",
+        "-y",
         "awslabs.aws-pricing-mcp-server@latest"
       ],
       "env": {
