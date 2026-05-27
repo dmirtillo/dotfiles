@@ -16,3 +16,4 @@ Would it be possible to move the mcp servers into litellm? how would that work t
 | 003 | gemini-cli-litellm-connection | standard | Given Gemini CLI, when pointed to the LiteLLM proxy, then it can use the MCP tools | ✗ INVALIDATED | gemini-cli, litellm, mcp |
 | 004 | brew-list-parsing | standard | Given local brew state, when parsed, then extract list of explicitly installed formulae/casks | ✓ VALIDATED | homebrew, bash, parsing |
 | 005 | brewfile-sync | standard | Given parsed local list and existing Brewfile, when synced, then update Brewfile accurately | ✓ VALIDATED | homebrew, bash, parsing, script |
+| 006 | brewfile-sync-preserve-comments | standard | Given a brew bundle dump and a target Brewfile with comments, when synced via a merge script, then new dependencies are added without destroying comments | ✓ VALIDATED | homebrew, bash, parsing, script, merge |
