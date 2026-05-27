@@ -8,6 +8,7 @@
 | 2 | Windows Toolchain | Set up native Windows package management execution via chezmoi. | Complete    | 2026-05-04 |
 | 3 | PowerShell Parity | Port Zsh aliases, functions, and cross-platform OSS configurations to Windows. | WIN-01 | 2 |
 | 4 | Dependency Bump | Update opencode and litellm versions to match binary environments. | DEP-01 | 2 |
+| 5 | Brewfile Sync Automation | Implement automated local package tracking in Brewfile preserving structure. | BREW-01 | 2 |
 
 ---
 
@@ -51,5 +52,16 @@
 **Success Criteria** (what must be TRUE):
   1. `Brewfile` ensures opencode is tracking version `v1.14.35`.
   2. `run_onchange_install-packages.sh.tmpl` enforces the litellm pipx install to target version `v1.83.14`.
-**Plans**: 0/1 plans complete
+**Plans**: 1/1 plans complete
 - [x] 04-01-PLAN.md — Update Brewfile and install script versions
+
+### Phase 5: Brewfile Sync Automation
+**Goal**: Implement automated local package tracking in Brewfile preserving structure.
+**Depends on**: Phase 4
+**Requirements**: BREW-01
+**Success Criteria** (what must be TRUE):
+  1. A bash script exists that merges `brew bundle dump --file=-` with `Brewfile`.
+  2. The script adds missing dependencies to a `# NEWLY INSTALLED (UNCATEGORIZED)` section.
+  3. The script does NOT destroy existing comments or structural headers in the `Brewfile`.
+**Plans**: 1 plans complete
+- [ ] 05-01-PLAN.md — Implement sync-brewfile automation script
