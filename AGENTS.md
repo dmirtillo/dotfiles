@@ -103,4 +103,8 @@ Do not degrade startup time (currently sub-50ms).
 
 - Use Conventional Commits format (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`).
 - Keep descriptions lowercase, no trailing period.
-- Example: `feat: add windows powershell profile template`
+---
+
+## 7. Auto-Loaded Skills
+
+- **Spike findings for dotfiles** (implementation patterns, constraints, gotchas) → `Skill("spike-findings-dotfiles")`
