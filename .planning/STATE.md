@@ -68,3 +68,4 @@ progress:
 Last activity: 2026-05-29 - Completed quick task 260529-hvy: can you restart litellm or check if now it responds correctly?
 | 2026-05-27 | fast | Change tmuxai plugin to gemini 3.5 | ✅ |
 | 2026-05-27 | fast | Revert tmuxai gemini-pro to 3.1-pro-preview | ✅ |
+| 2026-05-29 | fast | claude opus 4.8 should be the only available, is it working? i dont care for older versions of the model | ✅ |
