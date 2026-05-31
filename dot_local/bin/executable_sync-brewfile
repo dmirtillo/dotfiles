@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+set -e
+
+BREWFILE="$(chezmoi source-path)/Brewfile"
+
+if [ ! -f "$BREWFILE" ]; then
+    echo "Error: Brewfile not found at $BREWFILE"
+    exit 1
+fi
+
+DUMP_FILE=$(mktemp)
+MISSING_FILE=$(mktemp)
+
+trap 'rm -f "$DUMP_FILE" "$MISSING_FILE"' EXIT
+
+echo "Generating current system dump..."
+brew bundle dump --file=- 2>/dev/null > "$DUMP_FILE"
+
+echo "Comparing system state against tracked Brewfile..."
+awk '
+  # Pass 1: read existing identities from tracked Brewfile
+  NR==FNR {
+    line = $0
+    sub(/#.*/, "", line)
+    if (match(line, /^[ \t]*(tap|brew|cask|mas|vscode)[ \t]+("|\047)([^"\047]+)("|\047)/)) {
+       type = $1
+       match(line, /("|\047)([^"\047]+)("|\047)/)
+       name = substr(line, RSTART+1, RLENGTH-2)
+       identities[type ":" name] = 1
+    }
+    next
+  }
+  # Pass 2: read from system dump, output missing
+  {
+    if (match($0, /^(tap|brew|cask|mas|vscode)[ \t]+("|\047)([^"\047]+)("|\047)/)) {
+       type = $1
+       match($0, /("|\047)([^"\047]+)("|\047)/)
+       name = substr($0, RSTART+1, RLENGTH-2)
+       if (!(type ":" name in identities)) {
+         print $0
+       }
+    }
+  }
+' "$BREWFILE" "$DUMP_FILE" > "$MISSING_FILE"
+
+if [ -s "$MISSING_FILE" ]; then
+    echo "Found missing packages. Appending to Brewfile..."
+    
+    if ! grep -q "# NEWLY INSTALLED (UNCATEGORIZED)" "$BREWFILE"; then
+        echo "" >> "$BREWFILE"
+        echo "# =============================================================================" >> "$BREWFILE"
+        echo "# NEWLY INSTALLED (UNCATEGORIZED)" >> "$BREWFILE"
+        echo "# =============================================================================" >> "$BREWFILE"
+    fi
+    
+    cat "$MISSING_FILE" >> "$BREWFILE"
+    echo "Missing packages appended successfully:"
+    cat "$MISSING_FILE"
+else
+    echo "Brewfile is already up to date with the system."
+fi
