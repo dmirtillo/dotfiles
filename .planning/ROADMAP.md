@@ -63,5 +63,5 @@
   1. A bash script exists that merges `brew bundle dump --file=-` with `Brewfile`.
   2. The script adds missing dependencies to a `# NEWLY INSTALLED (UNCATEGORIZED)` section.
   3. The script does NOT destroy existing comments or structural headers in the `Brewfile`.
-**Plans**: 1 plans complete
-- [ ] 05-01-PLAN.md — Implement sync-brewfile automation script
+**Plans**: 1/1 plans complete
+- [x] 05-01-PLAN.md — Implement sync-brewfile automation script
