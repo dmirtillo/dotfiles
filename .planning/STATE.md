@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.14.35
 milestone_name: milestone
-status: Milestone complete
-last_updated: "2026-05-29T12:00:00.000Z"
-last_activity: 2026-05-29
+status: Phase 05 complete
+last_updated: "2026-05-31T11:12:26.106Z"
+last_activity: 2026-05-31
 progress:
   total_phases: 5
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 7
-  completed_plans: 5
-  percent: 71
+  completed_plans: 6
+  percent: 80
 ---
 
 # Project State
@@ -65,7 +65,7 @@ progress:
 | 260529-hvy | can you check for the availability of claude-opus 4.8 and substitute it wherever necessary? | 2026-05-29 | c15454a | [260529-hvy-can-you-check-for-the-availability-of-cl](./quick/260529-hvy-can-you-check-for-the-availability-of-cl/) |
 | 260529-hvy | can you restart litellm or check if now it responds correctly? | 2026-05-29 | 6d773c8 | [260529-hvy-restart-litellm-or-check-if-it-responds-correctly](./quick/260529-hvy-restart-litellm-or-check-if-it-responds-correctly/) |
 
-Last activity: 2026-05-29 - Completed quick task 260529-hvy: can you restart litellm or check if now it responds correctly?
+Last activity: 2026-05-31
 | 2026-05-27 | fast | Change tmuxai plugin to gemini 3.5 | ✅ |
 | 2026-05-27 | fast | Revert tmuxai gemini-pro to 3.1-pro-preview | ✅ |
 | 2026-05-29 | fast | claude opus 4.8 should be the only available, is it working? i dont care for older versions of the model | ✅ |
