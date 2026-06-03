@@ -74,3 +74,4 @@ Last activity: 2026-06-03 - Completed quick task 260603-fj7: can you copy all th
 | 2026-06-01 | fast | fix aws mcp using uvx instead of npx | ✅ |
 | 2026-06-01 | fast | fix aws mcp using uvx instead of npx in gemini settings | ✅ |
 | 2026-06-01 | fast | add OPENCODE_DANGEROUSLY_SKIP_PERMISSIONS=true to env vars | ✅ |
+| 2026-06-03 | fast | force apply antigravity-cli config via chezmoi apply | ✅ |
