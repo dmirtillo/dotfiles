@@ -352,6 +352,13 @@ alias drm='docker rm'
 alias drmi='docker rmi'
 alias dprune='docker system prune -f'
 
+{{ if eq .chezmoi.os "darwin" -}}
+# Colima aliases (macOS container runtime replacement for Docker Desktop)
+alias colima-start='colima start'
+alias colima-stop='colima stop'
+export DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock"
+{{ end -}}
+
 # System Utilities
 alias psg='procs --tree'       # procs: modern ps with tree view
 alias myip='curl -s https://ipinfo.io/ip'
