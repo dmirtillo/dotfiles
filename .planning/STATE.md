@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.14.35
 milestone_name: milestone
 status: Phase 05 complete
-last_updated: "2026-06-24T10:30:00.000Z"
-last_activity: "2026-06-24 - Completed quick task 260624-eco: can you help me figure out if there is a way to install https://github.com/DietrichGebert/ponytail in this repo?"
+last_updated: "2026-06-10T09:30:00.000Z"
+last_activity: "2026-06-10 - Completed quick task 260610-fy2: can you replace update script for openspec on mac with npm install -g @fission-ai/openspec@latest --dangerously-allow-all-scripts ?"
 progress:
   total_phases: 5
   completed_phases: 4
@@ -68,9 +68,8 @@ progress:
 | 260604-hmr | replace docker and docker-desktop brewfile with colima? and add necessary aliases for mac os on zsh | 2026-06-04 | 6bedd29 | [260604-hmr-replace-docker-and-docker-desktop-brewfi](./quick/260604-hmr-replace-docker-and-docker-desktop-brewfi/) |
 | 260604-hr1 | Stop and remove docker desktop and install colima | 2026-06-04 | - | [260604-hr1-stop-and-remove-docker-docker-desktop-an](./quick/260604-hr1-stop-and-remove-docker-docker-desktop-an/) |
 | 260610-fy2 | can you replace update script for openspec on mac with npm install -g @fission-ai/openspec@latest --dangerously-allow-all-scripts ? | 2026-06-10 | c5de714 | [260610-fy2-can-you-replace-update-script-for-opensp](./quick/260610-fy2-can-you-replace-update-script-for-opensp/) |
-| 260624-eco | can you help me figure out if there is a way to install https://github.com/DietrichGebert/ponytail in this repo? | 2026-06-24 | 36cafd3 | [260624-eco-can-you-help-me-figure-out-if-there-is-a](./quick/260624-eco-can-you-help-me-figure-out-if-there-is-a/) |
 
-Last activity: 2026-06-24 - Completed quick task 260624-eco: can you help me figure out if there is a way to install https://github.com/DietrichGebert/ponytail in this repo?
+Last activity: 2026-06-10 - Completed quick task 260610-fy2: can you replace update script for openspec on mac with npm install -g @fission-ai/openspec@latest --dangerously-allow-all-scripts ?
 | 2026-05-27 | fast | Change tmuxai plugin to gemini 3.5 | ✅ |
 | 2026-05-27 | fast | Revert tmuxai gemini-pro to 3.1-pro-preview | ✅ |
 | 2026-05-29 | fast | claude opus 4.8 should be the only available, is it working? i dont care for older versions of the model | ✅ |
