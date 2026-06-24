@@ -14,4 +14,8 @@ else
   echo "  WARNING: npm not found. Install Node.js to use get-shit-done-cc."
 fi
 
+if command -v agy &>/dev/null; then
+  agy plugin install https://github.com/DietrichGebert/ponytail
+fi
+
 echo "  Done."
