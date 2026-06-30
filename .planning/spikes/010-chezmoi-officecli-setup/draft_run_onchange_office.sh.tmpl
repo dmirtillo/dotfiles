@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# hash: {{ include "draft_run_onchange_office.sh.tmpl" | sha256sum }}
+
+set -euo pipefail
+
+echo "Setting up Office document tools (officecli + markitdown)..."
+
+# 1. Install OfficeCLI
+if ! command -v officecli &> /dev/null; then
+    echo "Installing officecli..."
+    {{ if eq .chezmoi.os "darwin" "linux" }}
+    curl -fsSL https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/main/install.sh | bash
+    {{ end }}
+else
+    echo "officecli is already installed."
+fi
+
+# 2. Install Markitdown via uv tool
+# We assume uv is already installed (likely via Brewfile or similar)
+if command -v uv &> /dev/null; then
+    echo "Installing markitdown via uv tool..."
+    uv tool install "markitdown[all]" --force
+else
+    echo "uv is not installed. Please install uv first to setup markitdown."
+    exit 1
+fi
+
+echo "Office tools setup complete."
