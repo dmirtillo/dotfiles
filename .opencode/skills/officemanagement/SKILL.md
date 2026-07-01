@@ -1,5 +1,5 @@
 ---
-name: spike-findings-dotfiles
+name: officemanagement
 description: Implementation blueprint from spike experiments. Requirements, proven patterns, and verified knowledge for building dotfiles. Auto-loaded during implementation work.
 ---
 

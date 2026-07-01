@@ -3,7 +3,7 @@
 **Date:** 2026-07-01
 **Spikes processed:** 8
 **Feature areas:** Hybrid OfficeCLI+MarkItDown Workflow
-**Skill output:** `./.opencode/skills/spike-findings-dotfiles/`
+**Skill output:** `./.opencode/skills/officemanagement/`
 
 ## Processed Spikes
 | # | Name | Type | Verdict | Feature Area |
