@@ -30,3 +30,10 @@ Patterns and stack choices established across spike sessions. New spikes follow 
 - `brew bundle dump --file=-` for extracting cleanly-formatted local brew state.
 - `markitdown[all]` via `uv run` for generating semantically accurate Markdown representations of Office documents.
 - `officecli` for read/write document manipulation via DOM XML addressing or text-match replace.
+
+## Markitdown Hybrid Read/Write Patterns (Spikes 007, 011-014)
+- When executing `markitdown`, always use the `[all]` extra (e.g., `uv tool install markitdown[all]`) to ensure complex formats like `.pptx` are supported without throwing `MissingDependencyException`.
+- `markitdown` perfectly serializes multi-slide PPTX documents, demarcating them with HTML comments like `<!-- Slide number: 1 -->`.
+- Both `officecli set ... --find ... --replace` (text-replacement) and `officecli set ... /body/paragraph[1]` (DOM targeting) are fully compatible with `markitdown` extraction.
+- The `officecli close <file>` command is **mandatory** before passing the document to `markitdown`, otherwise Resident Mode in-memory edits will not be visible to the python read script.
+- For multimodal OCR (images), `markitdown` can be pointed to alternative LLM endpoints (like local Ollama or Gemini's OpenAI-compatible layer) by passing an instantiated `openai.OpenAI` client with a custom `base_url` to `MarkItDown(llm_client=...)`.
