@@ -1,20 +1,17 @@
 # Spike Wrap-Up Summary
 
-**Date:** 2026-05-27
-**Spikes processed:** 6
-**Feature areas:** LiteLLM MCP Integration, Brewfile Syncing
+**Date:** 2026-07-01
+**Spikes processed:** 4
+**Feature areas:** Hybrid OfficeCLI+MarkItDown Workflow
 **Skill output:** `./.opencode/skills/spike-findings-dotfiles/`
 
 ## Processed Spikes
 | # | Name | Type | Verdict | Feature Area |
 |---|------|------|---------|--------------|
-| 001 | litellm-mcp-integration | standard | ✓ VALIDATED | LiteLLM MCP Integration |
-| 002 | opencode-litellm-connection | standard | ✗ INVALIDATED | LiteLLM MCP Integration |
-| 003 | gemini-cli-litellm-connection | standard | ✗ INVALIDATED | LiteLLM MCP Integration |
-| 004 | brew-list-parsing | standard | ✓ VALIDATED | Brewfile Syncing |
-| 005 | brewfile-sync | standard | ✓ VALIDATED | Brewfile Syncing |
-| 006 | brewfile-sync-preserve-comments | standard | ✓ VALIDATED | Brewfile Syncing |
+| 007 | hybrid-targeting | standard | ✓ VALIDATED | Hybrid OfficeCLI+MarkItDown Workflow |
+| 008 | markitdown-baseline | standard | ✓ VALIDATED | Hybrid OfficeCLI+MarkItDown Workflow |
+| 009 | markitdown-multimodal | standard | ✓ VALIDATED | Hybrid OfficeCLI+MarkItDown Workflow |
+| 010 | chezmoi-officecli-setup | standard | ✓ VALIDATED | Hybrid OfficeCLI+MarkItDown Workflow |
 
 ## Key Findings
-- **LiteLLM MCP:** Standard AI CLI tools (OpenCode, Gemini CLI) cannot automatically discover or inherit MCP tools hosted on a LiteLLM proxy. The client *must* be modified to inject LiteLLM's custom `{"type": "mcp", "server_url": "litellm_proxy"}` syntax into the outgoing request's tools array.
-- **Brewfile Syncing:** `brew bundle dump --force` is a destructive operation that completely wipes out inline comments and manual structural grouping in a `Brewfile`. To safely auto-append missing local dependencies, a bash merge script reading from `brew bundle dump --file=-` should be used to isolate and append new lines without touching existing formatting.
+We successfully validated a hybrid approach combining the semantic read capabilities of `markitdown` with the precise DOM manipulation of `officecli`. The major breakthrough was realizing that we don't need XML paths to edit documents if we use `officecli`'s text-matching features (`--find` / `--replace`). The critical constraint discovered is that `officecli`'s Resident Mode holds changes in memory, so `officecli close <file>` MUST be run before reading the file with `markitdown` to ensure changes are flushed to disk. The setup is easily manageable within a `chezmoi` dotfiles setup using a standard `run_onchange` script and a global `uv` tool install.
