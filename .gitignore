@@ -19,3 +19,4 @@ credentials.json
 # Backup files
 *.backup.*
 *.pre-update
+.planning/scripts/
