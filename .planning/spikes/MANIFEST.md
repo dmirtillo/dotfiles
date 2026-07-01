@@ -26,4 +26,4 @@
 | 011 | pptx-hybrid-integration | standard | Given a multi-slide PPTX, when edited via `officecli` text replacement, then `markitdown` accurately reflects changes across slide boundaries | ✓ VALIDATED | officecli, markitdown, pptx |
 | 012 | dom-targeting-sync | standard | Given a document modified via `officecli` DOM targeting, when flushed to disk, then `markitdown` perfectly extracts the updated structure | ✓ VALIDATED | officecli, markitdown, dom |
 | 013 | markitdown-performance | standard | Given a large 50+ page Office file, when parsed by `markitdown`, then extraction completes quickly without risking agent timeouts | ✓ VALIDATED | markitdown, performance |
-| 014 | markitdown-images-local | comparison | Given an embedded image, when parsed by `markitdown` using a local/free LLM vs OpenAI, then OCR quality remains sufficient for the agent | PENDING | markitdown, ocr, local-llm |
+| 014 | markitdown-images-local | comparison | Given an embedded image, when parsed by `markitdown` using a local/free LLM vs OpenAI, then OCR quality remains sufficient for the agent | ✓ VALIDATED | markitdown, ocr, local-llm |
