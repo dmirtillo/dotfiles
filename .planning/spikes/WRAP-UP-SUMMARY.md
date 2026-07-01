@@ -1,7 +1,7 @@
 # Spike Wrap-Up Summary
 
 **Date:** 2026-07-01
-**Spikes processed:** 4
+**Spikes processed:** 8
 **Feature areas:** Hybrid OfficeCLI+MarkItDown Workflow
 **Skill output:** `./.opencode/skills/spike-findings-dotfiles/`
 
@@ -12,6 +12,10 @@
 | 008 | markitdown-baseline | standard | ✓ VALIDATED | Hybrid OfficeCLI+MarkItDown Workflow |
 | 009 | markitdown-multimodal | standard | ✓ VALIDATED | Hybrid OfficeCLI+MarkItDown Workflow |
 | 010 | chezmoi-officecli-setup | standard | ✓ VALIDATED | Hybrid OfficeCLI+MarkItDown Workflow |
+| 011 | pptx-hybrid-integration | standard | ✓ VALIDATED | Hybrid OfficeCLI+MarkItDown Workflow |
+| 012 | dom-targeting-sync | standard | ✓ VALIDATED | Hybrid OfficeCLI+MarkItDown Workflow |
+| 013 | markitdown-performance | standard | ✓ VALIDATED | Hybrid OfficeCLI+MarkItDown Workflow |
+| 014 | markitdown-images-local | comparison | ✓ VALIDATED | Hybrid OfficeCLI+MarkItDown Workflow |
 
 ## Key Findings
-We successfully validated a hybrid approach combining the semantic read capabilities of `markitdown` with the precise DOM manipulation of `officecli`. The major breakthrough was realizing that we don't need XML paths to edit documents if we use `officecli`'s text-matching features (`--find` / `--replace`). The critical constraint discovered is that `officecli`'s Resident Mode holds changes in memory, so `officecli close <file>` MUST be run before reading the file with `markitdown` to ensure changes are flushed to disk. The setup is easily manageable within a `chezmoi` dotfiles setup using a standard `run_onchange` script and a global `uv` tool install.
+Combining `officecli` (for write operations via DOM/text matching) with `markitdown` (for high-fidelity read operations) is highly viable and extremely performant (~150ms for large documents). `markitdown[all]` must be used to support complex formats like PPTX. The critical workflow requirement is that `officecli close <file>` must be called after edits to flush the Resident Mode daemon to disk before `markitdown` reads the file. `markitdown`'s multimodal OCR feature seamlessly supports custom local LLMs (like Gemini via LiteLLM) by overriding the OpenAI client's `base_url`.

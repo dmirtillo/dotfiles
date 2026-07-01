@@ -6,57 +6,83 @@
 
 ## How to Build It
 
-1. **Deploy Dependencies:** Use a `run_onchange_*.sh.tmpl` script in chezmoi to install the required tools globally so the agent can access them natively from the shell.
-   
-   ```bash
-   #!/bin/bash
-   # hash: {{ include "run_onchange_install-office-tools.sh.tmpl" | sha256sum }}
-   
-   set -euo pipefail
-   
-   # Install OfficeCLI (Write engine)
-   if ! command -v officecli &> /dev/null; then
-       {{ if eq .chezmoi.os "darwin" "linux" }}
-       curl -fsSL https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/main/install.sh | bash
-       {{ end }}
-   fi
-   
-   # Install MarkItDown (Read engine)
-   if command -v uv &> /dev/null; then
-       uv tool install "markitdown[all]" --force
-   fi
-   ```
+This approach merges the reliable DOM manipulation of `officecli` with the highly accurate text-rendering of `markitdown`.
 
-2. **Update the SKILL.md:** Modify the existing `officecli` skill configuration file to explicitly state the hybrid interaction model for the agent.
+### 1. Installation
+Install both tools to be available globally:
+```bash
+# Install officecli (usually via standard setup script)
+# Install markitdown with all extras for complex doc support
+uv tool install "markitdown[all]"
+```
 
-   ```markdown
-   ## Strategy (The Hybrid Workflow)
+### 2. Reading Documents
+Always use `markitdown` for viewing content. It handles PPTX, DOCX, and XLSX perfectly.
+```python
+from markitdown import MarkItDown
+md = MarkItDown()
+result = md.convert('document.pptx')
+print(result.text_content)
+```
 
-   **READ with `markitdown`, WRITE with `officecli`.**
+### 3. Modifying Documents
+Use `officecli` for all writes. Both DOM addressing and text replacement work flawlessly and seamlessly persist across XML boundaries (like slides in PPTX).
 
-   1. **Read/Inspect:** ALWAYS use `markitdown <file>` to extract document content to Markdown. This provides the highest fidelity for LLM understanding, especially for tables and embedded images.
-   2. **Edit/Mutate:** Use `officecli set <file> / --find "<target_text>" --replace "<new_text>"` to target edits based on the Markdown output.
-   3. **Resident Mode Gotcha (CRITICAL):** `officecli` keeps files open in memory. If you use `officecli` to edit a file, you **MUST** run `officecli close <file>` to flush the changes to disk *before* running `markitdown <file>` again, otherwise `markitdown` will read stale data.
-   ```
+**Via DOM Targeting:**
+```bash
+officecli set sample.docx /body/paragraph[1] --prop bold=true
+```
 
-3. **Hybrid Workflow Loop:**
-   - Run `markitdown mydoc.docx` to get the context.
-   - Run `officecli set mydoc.docx / --find "old_text" --replace "new_text" --prop bold=true`.
-   - Run `officecli close mydoc.docx`.
-   - Re-run `markitdown mydoc.docx` to verify.
+**Via Text Replacement:**
+```bash
+officecli set sample.pptx / --find "old text" --replace "new text"
+```
+
+### 4. The Sync Loop (Critical)
+After applying writes with `officecli`, you **MUST** flush to disk before reading with `markitdown`.
+```bash
+# 1. Edit
+officecli set sample.docx / --find "A" --replace "B"
+# 2. Flush
+officecli close sample.docx
+# 3. Read
+uv run -q --with "markitdown[all]" python -c "from markitdown import MarkItDown; print(MarkItDown().convert('sample.docx').text_content)"
+```
+
+### 5. Multimodal (Images)
+If the document has images, `markitdown` can perform OCR using any OpenAI-compatible API (OpenAI, Gemini, Ollama) by overriding the `base_url`:
+
+```python
+from markitdown import MarkItDown
+from openai import OpenAI
+import os
+
+# Example: Pointing to a local/custom proxy
+client = OpenAI(
+    api_key=os.environ.get("GEMINI_API_KEY", "dummy"),
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+)
+md = MarkItDown(llm_client=client, llm_model="gemini-2.0-flash")
+result = md.convert('document_with_images.pptx')
+```
 
 ## What to Avoid
-
-- **DO NOT** use `officecli view text` or `officecli view html` for extracting document content for the LLM to read. `markitdown` produces much cleaner, structured output that preserves table structures perfectly.
-- **DO NOT** forget to call `officecli close <file>` after making a modification. The LLM will get confused when it runs `markitdown` and sees the old content because `officecli`'s Resident Mode has not flushed the changes.
-- **DO NOT** try to use XML paths (like `/body/p[3]`) to make edits if the read context came from `markitdown`. `markitdown` outputs plain Markdown and discards XML structure. You must use `officecli set --find` to target edits based on text matching.
+- Do not use `markitdown` without the `[all]` or `[pptx]` extra if you expect to process PowerPoint files. It will throw a `MissingDependencyException`.
+- Do not assume `markitdown` can see `officecli` edits immediately. `officecli` caches changes in a background daemon for speed. You must `officecli close` or `officecli save`.
 
 ## Constraints
-
-- `markitdown` requires Python `>=3.12`. It is best installed globally via `uv tool install markitdown[all]`.
-- Image extraction requires configuring the `llm_client` within the Python API of `markitdown`, but the CLI `markitdown` currently handles basic extraction. If full multimodal OCR is needed via CLI, a wrapper script might be necessary (this is a constraint of the current CLI).
+- Performance is stellar: extracting 100-slide PPTX or 50-page DOCX takes ~150ms. It will not cause agent timeouts.
+- DOM targeting syncs perfectly: Structural changes (like `bold=true`) made by `officecli` are fully parsed into Markdown formatting (`**text**`) by `markitdown`.
 
 ## Origin
 
-Synthesized from spikes: 007, 008, 009, 010
-Source files available in: `sources/007-hybrid-targeting/`, `sources/008-markitdown-baseline/`, `sources/009-markitdown-multimodal/`, `sources/010-chezmoi-officecli-setup/`
+Synthesized from spikes: 007, 008, 009, 010, 011, 012, 013, 014
+Source files available in: 
+- `sources/007-hybrid-targeting/`
+- `sources/008-markitdown-baseline/`
+- `sources/009-markitdown-multimodal/`
+- `sources/010-chezmoi-officecli-setup/`
+- `sources/011-pptx-hybrid-integration/`
+- `sources/012-dom-targeting-sync/`
+- `sources/013-markitdown-performance/`
+- `sources/014-markitdown-images-local/`

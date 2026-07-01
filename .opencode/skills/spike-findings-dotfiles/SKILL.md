@@ -24,7 +24,7 @@ Spike sessions wrapped: 2026-07-01
 
 | Area | Reference | Key Finding |
 |------|-----------|-------------|
-| Hybrid OfficeCLI+MarkItDown Workflow | references/hybrid-officecli-markitdown.md | Use markitdown for reading, officecli for writing via text-matching, and flush changes with `officecli close` |
+| Hybrid OfficeCLI+MarkItDown Workflow | references/hybrid-officecli-markitdown.md | Use markitdown[all] for blazing-fast reading, officecli for writing via DOM/text, support local LLMs for OCR, and flush changes with `officecli close` |
 
 ## Source Files
 
@@ -38,4 +38,8 @@ Original spike source files are preserved in `sources/` for complete reference.
 - 008-markitdown-baseline
 - 009-markitdown-multimodal
 - 010-chezmoi-officecli-setup
+- 011-pptx-hybrid-integration
+- 012-dom-targeting-sync
+- 013-markitdown-performance
+- 014-markitdown-images-local
 </metadata>
