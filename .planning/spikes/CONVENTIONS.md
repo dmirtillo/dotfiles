@@ -58,3 +58,13 @@ Patterns and stack choices established across spike sessions. New spikes follow 
 - Use `mise use -g npm:<package>` to natively manage global JavaScript CLI tools (like `@opengsd/gsd-core`) instead of raw `npm install -g`. This automatically handles shims and PATH.
 - **Do NOT** use `mise use -g pipx:<package>[extra]` for Python tools requiring extras (like `markitdown[all]`). The `mise` pipx backend strips bracketed extras. Continue using native `uv tool install --with '<package>[extra]' <package>` directly.
 - Avoid redundant runtime managers. Because `mise` natively reads `.terraform-version`, legacy tools like `tfswitch` (and its zsh hooks) are unnecessary and should be deleted to prevent shell bloat.
+
+## Custom Skill Preservation
+- `gsd-core` updates via `npx @opengsd/gsd-core@latest` do NOT overwrite custom skills. The installer only touches `gsd-*` prefixed skills. Custom skills like `officecli` are completely safe.
+
+## LLM Hybrid Prompting
+- When instructing an LLM to use the hybrid Read/Write pattern, you MUST explicitly tell it to run `officecli close <file>` before using `markitdown`. Without explicit prompting, the LLM will forget to flush the resident mode memory.
+- Forbid the LLM from using `officecli get` and `officecli view`. The resident mode remains fully coherent across multiple sequential writes without needing internal reads.
+
+## Wrap-up Synthesis
+All 32 spikes wrapped into the `spike-findings-dotfiles` skill. The core workflow for future phases is established: `markitdown[all]` for reads, `officecli` + `close` for writes, and orchestration via `chezmoi apply` relying on `mise` for JS globals and `uv` for Python extras.
