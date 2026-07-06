@@ -44,3 +44,8 @@ Patterns and stack choices established across spike sessions. New spikes follow 
 - Orchestrated updates should follow a 5-step sequence: Pre-Sync Brewfile -> System Update -> Chezmoi Update -> Component Version Bumps -> Chezmoi Apply -> Post-Sync Brewfile.
 - GSD and OpenCode plugins update implicitly: changing `package.json` in chezmoi source changes the template hash, causing `chezmoi apply` to run `npm install` and `npx @opengsd/gsd-core@latest` automatically.
 - `sync-brewfile` logic should explicitly identify missing packages (to append) and orphaned packages (to alert the user), rather than blindly appending to the end of the file.
+
+## GSD Core Migration
+- The project has migrated from `get-shit-done-cc` to `@opengsd/gsd-core`.
+- Installer commands use `npx @opengsd/gsd-core@latest`.
+- The installation directory in `.config/opencode` has shifted from `get-shit-done` to `gsd-core`.
