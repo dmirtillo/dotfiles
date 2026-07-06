@@ -109,12 +109,14 @@ cask "tunnelblick"
 # =============================================================================
 # CONTAINERS & ORCHESTRATION
 # =============================================================================
+brew "colima"
 brew "docker"
+brew "docker-compose"
+brew "docker-credential-helper"
 brew "helm"
 brew "kubernetes-cli"
 brew "minikube"
 brew "skaffold"
-cask "docker-desktop"
 
 # =============================================================================
 # CLOUD & INFRASTRUCTURE

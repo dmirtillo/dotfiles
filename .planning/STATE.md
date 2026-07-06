@@ -80,3 +80,5 @@ Last activity: 2026-06-24 - Completed quick task 260624-gi5: can you make sure t
 | 2026-06-01 | fast | fix aws mcp using uvx instead of npx in gemini settings | ✅ |
 | 2026-06-01 | fast | add OPENCODE_DANGEROUSLY_SKIP_PERMISSIONS=true to env vars | ✅ |
 | 2026-06-03 | fast | force apply antigravity-cli config via chezmoi apply | ✅ |
+| 2026-07-01 | fast | Update gsd, opencode, brew, and npm dependencies | ✅ |
+| 2026-07-01 | fast | Move test scripts out of root to .planning/scripts | ✅ |
