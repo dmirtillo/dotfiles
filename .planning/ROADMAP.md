@@ -7,5 +7,5 @@
   2. `officecli` sets are executed properly via unified agent aliases.
 
 **Plans**: 2 plans complete
-- [ ] 06-01-PLAN.md — Core CLI Scripts (office-read / office-write)
+- [ ] 06-01-PLAN.md — Core CLI Aliases (office-read / office-write)
 - [ ] 06-02-PLAN.md — Template Hydration & Gemini Config
