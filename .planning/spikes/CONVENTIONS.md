@@ -53,3 +53,8 @@ Patterns and stack choices established across spike sessions. New spikes follow 
 ## General
 - When writing simple wrapper functions for Bash/Zsh, prefer simple aliases if no conditional logic or parameter manipulation is required.
 - Maintain a single source of truth for dependencies. Rely on `mise` for runtimes and `antidote` for Zsh plugins, avoiding duplicated definitions in Brewfile/Pacfile.
+
+## Global Tool Management
+- Use `mise use -g npm:<package>` to natively manage global JavaScript CLI tools (like `@opengsd/gsd-core`) instead of raw `npm install -g`. This automatically handles shims and PATH.
+- **Do NOT** use `mise use -g pipx:<package>[extra]` for Python tools requiring extras (like `markitdown[all]`). The `mise` pipx backend strips bracketed extras. Continue using native `uv tool install --with '<package>[extra]' <package>` directly.
+- Avoid redundant runtime managers. Because `mise` natively reads `.terraform-version`, legacy tools like `tfswitch` (and its zsh hooks) are unnecessary and should be deleted to prevent shell bloat.
