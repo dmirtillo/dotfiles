@@ -27,3 +27,5 @@
 | 012 | dom-targeting-sync | standard | Given a document modified via `officecli` DOM targeting, when flushed to disk, then `markitdown` perfectly extracts the updated structure | ✓ VALIDATED | officecli, markitdown, dom |
 | 013 | markitdown-performance | standard | Given a large 50+ page Office file, when parsed by `markitdown`, then extraction completes quickly without risking agent timeouts | ✓ VALIDATED | markitdown, performance |
 | 014 | markitdown-images-local | comparison | Given an embedded image, when parsed by `markitdown` using a local/free LLM vs OpenAI, then OCR quality remains sufficient for the agent | ✓ VALIDATED | markitdown, ocr, local-llm |
+| 015 | ponytail-opencode-config | standard | Given OpenCode config, when ponytail is added as a plugin, then OpenCode correctly loads the ponytail hooks/instructions | ✓ VALIDATED | opencode, ponytail |
+| 016 | ponytail-gemini-config | standard | Given Gemini CLI, when ponytail is installed via extensions, then Gemini CLI correctly loads ponytail hooks/instructions | ✓ VALIDATED | gemini-cli, ponytail |
