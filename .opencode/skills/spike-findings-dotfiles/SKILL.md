@@ -32,6 +32,7 @@ Spike sessions wrapped: 2026-07-06
 | toolchain | references/toolchain.md | mise for JS globals, uv for python extras |
 | performance-audit | references/performance-audit.md | Sequential OCR triggers timeouts; Ponytail keeps Zsh fast |
 | gemini-extensions | references/gemini-extensions.md | Automated installs of Gemini CLI extensions require `--consent` |
+| agent-workflow | references/agent-workflow.md | Agent edits must be sequential; text-replace is preferred over DOM mapping |
 
 ## Source Files
 
