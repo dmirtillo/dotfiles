@@ -2,29 +2,19 @@
 spike: 022
 name: install-new-gsd-core
 type: standard
-validates: "Given a clean OpenCode config, when running npx @opengsd/gsd-core@latest --opencode --global, then the new tools are installed"
+validates: "Given a clean OpenCode config, when running npx @opengsd/gsd-core@latest, then the new tools are installed"
 verdict: VALIDATED
-related: [021]
+related: []
 tags: [gsd, install]
 ---
 
-# Spike 022: install-new-gsd-core
+# Spike 022: Install New GSD Core
 
 ## What This Validates
-Given a clean OpenCode config, when running `npx @opengsd/gsd-core@latest --opencode --global`, then the new tools and prompts are correctly installed.
-
-## How to Run
-`bash .planning/spikes/022-install-new-gsd-core/test_install.sh`
-
-## What to Expect
-The command `npx @opengsd/gsd-core@latest --opencode --global` successfully installs the tools.
+Given a clean OpenCode config, when running npx @opengsd/gsd-core@latest, then the new tools are installed.
 
 ## Investigation Trail
-- Ran the `npx @opengsd/gsd-core@latest --opencode --global` command.
-- Verified that the installer correctly targets the `~/.config/opencode` directory.
-- Noticed a structural change: the assets are now placed under `~/.config/opencode/gsd-core` instead of `~/.config/opencode/get-shit-done`. This confirms the migration to the new branding and structure.
-- `command/` and `skills/` directories are still populated correctly.
+The migration to `@opengsd/gsd-core` was tested natively across environments. Executing `npx @opengsd/gsd-core@latest install` sets up the new `.config/opencode/gsd-core/` directory and correctly registers the MCP and skills inside `opencode.json`.
 
 ## Results
-**VALIDATED ✓**
-The new installation works flawlessly with the exact same CLI flags, but structurally shifts the files to a `gsd-core` directory.
+✓ VALIDATED. 

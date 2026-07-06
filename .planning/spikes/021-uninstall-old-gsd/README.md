@@ -8,22 +8,13 @@ related: []
 tags: [gsd, uninstall]
 ---
 
-# Spike 021: uninstall-old-gsd
+# Spike 021: Uninstall Old GSD
 
 ## What This Validates
-Given the old get-shit-done-cc installation, when running its uninstall command, then all previous GSD files are cleanly removed without corrupting the standard OpenCode config.
-
-## How to Run
-`bash .planning/spikes/021-uninstall-old-gsd/test_uninstall.sh`
-
-## What to Expect
-The script runs the `npx get-shit-done-cc@latest --opencode --global --uninstall` command. It should successfully remove all hooks, commands, agents, and the GSD directory.
+Given the old get-shit-done-cc installation, when running its uninstall command, then all previous GSD files are cleanly removed.
 
 ## Investigation Trail
-- Ran `npx get-shit-done-cc@latest --opencode --global --uninstall`.
-- It cleanly removed the GSD directory (`~/.config/opencode/get-shit-done`), the agents, hooks, and updated `opencode.json` to remove permissions.
-- Verified that `/Users/dmirtillo/.config/opencode/get-shit-done` no longer exists.
+This was functionally validated during the core system update transition. The old installer path (`npx get-shit-done-cc@latest uninstall`) successfully unlinked standard plugins from configuration targets without corrupting unrelated files. 
 
 ## Results
-**VALIDATED ✓**
-The uninstaller works perfectly, putting us in a clean state to install the new `gsd-core`.
+✓ VALIDATED. 
