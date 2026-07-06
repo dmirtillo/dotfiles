@@ -434,7 +434,7 @@ brew "localstack/tap/localstack-cli", trusted: true
 # MCP server for estimating Google Cloud running costs
 brew "nozomi-koborinai/tap/gcp-cost-mcp-server", trusted: true
 # The tfswitch command lets you switch between terraform versions.
-brew "warrensbox/tap/tfswitch", link: false, trusted: true
+# brew "warrensbox/tap/tfswitch", link: false, trusted: true
 # Command line management for Google Workspace
 brew "zircoz/gam/gam7", trusted: true
 # Communications service
