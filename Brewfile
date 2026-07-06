@@ -508,3 +508,4 @@ npm "@smithery/cli"
 npm "litellm"
 npm "officecli"
 npm "resume-schema"
+brew "warrensbox/tap/tfswitch", link: false, trusted: true

@@ -1,0 +1,10 @@
+{
+  "permission": {
+    "read": {
+      "/Users/dmirtillo/projects/software/dotfiles/.planning/spikes/032-gsd-core-skill-collision/test-config/gsd-core/*": "allow"
+    },
+    "external_directory": {
+      "/Users/dmirtillo/projects/software/dotfiles/.planning/spikes/032-gsd-core-skill-collision/test-config/gsd-core/*": "allow"
+    }
+  }
+}
