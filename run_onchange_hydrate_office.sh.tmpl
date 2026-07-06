@@ -1,0 +1,11 @@
+#!/bin/bash
+# hash: {{ .gcloud_project }}
+
+set -euo pipefail
+
+DEST="$HOME/Documents/template.docx"
+mkdir -p "$(dirname "$DEST")"
+cp "{{ .chezmoi.sourceDir }}/base_template.docx" "$DEST"
+
+officecli set "$DEST" / --find "PLACEHOLDER_STRING" --replace "{{ .gcloud_project }}"
+officecli close "$DEST"
