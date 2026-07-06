@@ -6,10 +6,9 @@ description: Implementation blueprint from spike experiments. Requirements, prov
 <context>
 ## Project: dotfiles
 
-Rework the `officecli` implementation to use `markitdown` as the read engine, while preserving `officecli`'s write/DOM capabilities.
-Also explores orchestrating a single coherent system update command wrapping brew, chezmoi, and opencode plugin updates.
+Rework the `officecli` implementation to use `markitdown` as the read engine, while preserving `officecli`'s write/DOM capabilities. Also clean up redundant tools, complex bash wrappers, and dead code throughout the repository.
 
-Spike sessions wrapped: Mon Jul 06 2026
+Spike sessions wrapped: 2026-07-06
 </context>
 
 <requirements>
@@ -18,8 +17,9 @@ Spike sessions wrapped: Mon Jul 06 2026
 - The client MUST explicitly request the MCP tools in its API call using LiteLLM's custom `{"type": "mcp", "server_url": "litellm_proxy"}` syntax.
 - Clients like OpenCode and Gemini CLI cannot "implicitly" inherit tools configured on the LiteLLM proxy without code modifications.
 - **Markitdown+OfficeCLI:** Must explicitly call `officecli close <file>` to flush edits to disk before passing the file to `markitdown` for reading, due to `officecli`'s resident mode.
-- Ensure no local state is lost during updates (Brewfile sync must happen before and after updates).
-- The `sync-brewfile` logic should explicitly identify missing packages (to append) and orphaned packages (to alert the user), rather than blindly appending to the end of the file.
+- Rely on modern tools (mise, antidote, eza, bottom) rather than duplicating with older defaults (node, go, nvm, tree, htop).
+- Rely on Zsh native features and core aliases instead of reinventing standard tools. Optimize line count and functionality with a `ponytail` mindset.
+
 </requirements>
 
 <findings_index>
@@ -27,9 +27,8 @@ Spike sessions wrapped: Mon Jul 06 2026
 
 | Area | Reference | Key Finding |
 |------|-----------|-------------|
-| Ponytail Configuration | references/ponytail-configuration.md | OpenCode uses `opencode.json` plugin array; Gemini CLI uses `gemini extensions install` |
-| System Update Orchestration | references/system-update-orchestration.md | A 5-step orchestrated flow uses `chezmoi apply` as the trigger to seamlessly update open code SDK components via template hashing. |
-| GSD Core Migration | references/gsd-core-migration.md | Migrated from `get-shit-done-cc` to `@opengsd/gsd-core`, utilizing the uninstaller and drop-in package replacement. |
+| cleanup | references/cleanup.md | Strip redundant dependencies and dead scripts since `mise` and modern tools cover the functionality. |
+| shell | references/shell.md | Replace complex bash wrappers with simple aliases and native Zsh modifiers (`:t:r`). |
 
 ## Source Files
 
@@ -39,14 +38,7 @@ Original spike source files are preserved in `sources/` for complete reference.
 <metadata>
 ## Processed Spikes
 
-- 015-ponytail-opencode-config
-- 016-ponytail-gemini-config
-- 017-opencode-update-method
-- 018-sync-brewfile-review
-- 019-orchestrated-update-flow
-- 020-workflow-docs-generation
-- 021-uninstall-old-gsd
-- 022-install-new-gsd-core
-- 023-gsd-core-compatibility
-- 024-chezmoi-orchestration-update
+- 025-remove-redundant-deps
+- 026-simplify-bash-wrappers
+- 027-cleanup-dead-code
 </metadata>
