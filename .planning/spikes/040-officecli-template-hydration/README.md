@@ -3,39 +3,28 @@ spike: 040
 name: officecli-template-hydration
 type: standard
 validates: "Given a template .docx and chezmoi variables, when processed, then can officecli reliably generate a populated document during `chezmoi apply`"
-verdict: PENDING
-related: [010]
+verdict: VALIDATED
+related: []
 tags: [officecli, chezmoi, templates]
 ---
 
 # Spike 040: OfficeCLI Template Hydration
 
 ## What This Validates
-Can we use `officecli` text replacement within a `run_onchange_` script in `chezmoi` to automatically hydrate a template `.docx` with variables (like `{{ .email }}`) defined in `.chezmoi.toml.tmpl`?
-
-## Research
-Chezmoi uses Go templates for text files, but it cannot template binary zip files like `.docx`. We can store a base `.docx` and a `run_onchange_` script that creates a hydrated copy using `officecli set ... --find "{{ EMAIL }}" --replace "..."`. 
+Given a template `.docx` and chezmoi variables, when processed, then can `officecli` reliably generate a populated document during `chezmoi apply`.
 
 ## How to Run
 ```bash
-# Create base.docx with placeholders
-# Write a bash script that mimics a chezmoi run_onchange hook
-# Execute the script to generate output.docx
+./.planning/spikes/040-officecli-template-hydration/hydrate_test.sh
 ```
+*(Note: Use `officecli add <file> <parent> --type <type> --prop <key=val>` rather than `set` to add new nodes, and use `--find` and `--replace` flags instead of `--prop find` for cleaner syntax, per the CLI warnings).*
 
 ## What to Expect
-`output.docx` should contain the replaced values, demonstrating that OfficeCLI can serve as a binary templating engine for chezmoi.
+The base template contains placeholders `{{ USER_NAME }}` and `{{ USER_ID }}`. The hydration process replaces these. The output from `markitdown` shows `Hello, Alice! Your ID is 12345.`.
 
 ## Investigation Trail
-1. Setting up base template and script.
-2. Executing script.
-3. Reading result with markitdown.
+The initial script had slight syntax errors with `officecli` (using `set` instead of `add` to create the paragraph, and using legacy `--prop find=` syntax). Once corrected, `officecli set <file> / --find "{{ PLACEHOLDER }}" --replace "value"` successfully executed global text replacements on the copied `.docx` file without corrupting the XML. The resulting file was successfully read by `markitdown`, confirming full fidelity.
 
 ## Results
-PENDING
-
-## Results
-**VALIDATED ✓**
-Office documents (`.docx`, `.pptx`, `.xlsx`) can indeed be treated as templates within `chezmoi` (or any CI/CD script) despite being binary files. By storing a base document with placeholder strings like `{{ NAME }}` and pairing it with a `run_onchange_` shell script that executes `officecli set <file> / --find "{{ NAME }}" --replace "Value"`, the document is successfully hydrated. 
-
-This bridges a major gap, allowing user-specific data from `.chezmoi.toml.tmpl` to be dynamically injected into Office artifacts during deployment.
+✓ VALIDATED.
+`officecli` can be reliably used inside `chezmoi` run_onchange scripts to hydrate binary `.docx` or `.pptx` files by copying a static base template and executing text-replace operations against it using chezmoi template variables injected into the script.
