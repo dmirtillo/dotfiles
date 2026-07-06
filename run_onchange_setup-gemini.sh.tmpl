@@ -1,0 +1,8 @@
+#!/bin/bash
+# hash: {{ include "private_dot_gemini/settings.json.tmpl" | sha256sum }}
+
+set -euo pipefail
+
+if command -v gemini >/dev/null 2>&1; then
+    gemini extensions install https://github.com/DietrichGebert/ponytail --consent
+fi
