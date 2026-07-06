@@ -20,3 +20,4 @@ credentials.json
 *.backup.*
 *.pre-update
 .planning/scripts/
+node_modules/
