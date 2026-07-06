@@ -39,3 +39,4 @@
 | 024 | chezmoi-orchestration-update | standard | Given our orchestrated update flow, when modifying run_onchange_setup-opencode.sh.tmpl, then it updates correctly | PENDING | chezmoi, orchestration |
 | 025 | remove-redundant-deps | standard | Given Brewfile/Pacfile, when redundant deps (node, go, nvm, tree, etc.) are removed, then the system remains functional and relies on modern alternatives | ✓ VALIDATED | deps, cleanup |
 | 026 | simplify-bash-wrappers | standard | Given complex bash functions (kport, extract, findfile), when replaced with simple aliases and Zsh modifiers, then functionality is identical and lines are reduced | ✓ VALIDATED | bash, zsh, ponytail |
+| 027 | cleanup-dead-code | standard | Given duplicate sources and speculative scripts (switch-models, officecli drafts), when deleted, then no workflow is broken | ✓ VALIDATED | cleanup |
