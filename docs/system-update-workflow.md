@@ -26,7 +26,7 @@ The update flow is designed to be run as a single script that guarantees no loca
    - **Command:** `chezmoi apply`
    - **Why:** This is the magic step. Because the `package.json` (from Step 4) changed, its SHA hash changes. The `run_onchange_setup-opencode.sh.tmpl` script detects this hash change and automatically triggers:
      - `npm install` (to install the new SDK)
-     - `npx get-shit-done-cc@latest --opencode --global` (to fetch and install the latest GSD logic)
+     - `npx @opengsd/gsd-core@latest --opencode --global` (to fetch and install the latest GSD logic)
 
 6. **Post-Sync Brewfile**
    - **Command:** `sync-brewfile`

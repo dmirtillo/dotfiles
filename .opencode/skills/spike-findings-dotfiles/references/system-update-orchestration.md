@@ -17,7 +17,7 @@ The update flow should be wrapped in a single, coherent bash script that execute
    ```bash
    (cd $(chezmoi source-path)/private_dot_config/private_opencode && npm install @opencode-ai/plugin@latest --save-exact)
    ```
-5. **Chezmoi Apply**: Run `chezmoi apply`. This triggers `run_onchange_setup-opencode.sh.tmpl` because the `package.json` SHA hash changed, automatically updating the GSD tool logic via `npm install` and `npx get-shit-done-cc@latest`.
+5. **Chezmoi Apply**: Run `chezmoi apply`. This triggers `run_onchange_setup-opencode.sh.tmpl` because the `package.json` SHA hash changed, automatically updating the GSD tool logic via `npm install` and `npx @opengsd/gsd-core@latest`.
 6. **Post-Sync Brewfile**: Run `sync-brewfile` again to capture any new dependencies pulled during the update.
 
 **Robust `sync-brewfile` logic:**

@@ -36,11 +36,11 @@ The `.zshrc` template includes ~100 aliases organized by category. Highlights:
 ---
 
 ## OpenCode \+ GSD Integration
-[Get Shit Done](https://github.com/affaan-m/get-shit-done-cc) (GSD) provides AI agent prompts, commands, skills, and workflows for OpenCode.
+[Get Shit Done](https://github.com/open-gsd/gsd-core) (GSD) provides AI agent prompts, commands, skills, and workflows for OpenCode.
 
 ### How It Works
 
-1. **`run_onchange_setup-opencode.sh`** installs GSD globally via `npx get-shit-done-cc@latest --opencode --global`
+1. **`run_onchange_setup-opencode.sh`** installs GSD globally via `npx @opengsd/gsd-core@latest --opencode --global`
 2. **Our customizations** (`opencode.json`, `AGENTS.md`, `package.json`) are deployed directly by chezmoi from `private_dot_config/private_opencode/`
 
 ### Model Routing
@@ -59,7 +59,7 @@ Agents are routed to different models based on task complexity:
 chezmoi apply
 ```
 
-This triggers the setup script to run `npx get-shit-done-cc@latest` again, ensuring you have the latest features and fixes.
+This triggers the setup script to run `npx @opengsd/gsd-core@latest` again, ensuring you have the latest features and fixes.
 
 ---
 

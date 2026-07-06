@@ -9,9 +9,9 @@ set -euo pipefail
 echo "[antigravity] Setting up skills..."
 
 if command -v npx &>/dev/null; then
-  npx --yes get-shit-done-cc@latest --antigravity --global
+  npx --yes @opengsd/gsd-core@latest --antigravity --global
 else
-  echo "  WARNING: npm not found. Install Node.js to use get-shit-done-cc."
+  echo "  WARNING: npm not found. Install Node.js to use @opengsd/gsd-core."
 fi
 
 if command -v agy &>/dev/null; then
