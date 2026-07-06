@@ -29,3 +29,7 @@
 | 014 | markitdown-images-local | comparison | Given an embedded image, when parsed by `markitdown` using a local/free LLM vs OpenAI, then OCR quality remains sufficient for the agent | ✓ VALIDATED | markitdown, ocr, local-llm |
 | 015 | ponytail-opencode-config | standard | Given OpenCode config, when ponytail is added as a plugin, then OpenCode correctly loads the ponytail hooks/instructions | ✓ VALIDATED | opencode, ponytail |
 | 016 | ponytail-gemini-config | standard | Given Gemini CLI, when ponytail is installed via extensions, then Gemini CLI correctly loads ponytail hooks/instructions | ✓ VALIDATED | gemini-cli, ponytail |
+| 017 | opencode-update-method | standard | Given an internet connection, when an update script runs, then opencode (and tools like gsd) reliably fetch the latest versions. | VALIDATED | opencode, npm |
+| 018 | sync-brewfile-review | standard | Given system package drift, when the current `sync-brewfile` script is run, then the logic robustly and correctly updates the `Brewfile` without data loss. | VALIDATED | brew, bash |
+| 019 | orchestrated-update-flow | standard | Given components needing update, when unified under a single command, then the sequence executes reliably without manual intervention. | VALIDATED | orchestration |
+| 020 | workflow-docs-generation | standard | Given the orchestrated update script, when documented, then clear specific docs can be produced. | VALIDATED | docs |
