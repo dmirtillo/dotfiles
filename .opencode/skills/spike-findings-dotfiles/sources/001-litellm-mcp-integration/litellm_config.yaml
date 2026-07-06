@@ -1,0 +1,13 @@
+model_list:
+  - model_name: gemini-3.1-flash-lite-preview
+    litellm_params:
+      model: gemini/gemini-3.1-flash-lite-preview
+      api_key: os.environ/GEMINI_API_KEY
+
+mcp_servers:
+  gcp_cost:
+    transport: "stdio"
+    command: "/opt/homebrew/bin/npx"
+    args: ["/opt/homebrew/bin/gcp-cost-mcp-server"]
+    # Allow all keys to access this server
+    allow_all_keys: true

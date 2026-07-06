@@ -1,0 +1,10 @@
+{
+  "permission": {
+    "read": {
+      "./gsd-core/*": "allow"
+    },
+    "external_directory": {
+      "./gsd-core/*": "allow"
+    }
+  }
+}

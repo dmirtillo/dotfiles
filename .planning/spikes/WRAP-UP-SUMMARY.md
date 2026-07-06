@@ -1,7 +1,7 @@
 # Spike Wrap-Up Summary
 
 **Date:** 2026-07-06
-**Spikes processed:** 32
+**Spikes processed:** 37
 **Feature areas:** litellm-mcp, brew-sync, officecli-hybrid, orchestration-chezmoi, opencode-gsd, toolchain, performance-audit
 **Skill output:** `./.opencode/skills/spike-findings-dotfiles/`
 
@@ -40,6 +40,11 @@
 | 033 | uv-mise-path-integration | standard | ✓ VALIDATED | toolchain |
 | 034 | officecli-hybrid-skill-prompting | standard | ✓ VALIDATED | officecli-hybrid |
 | 035 | officecli-read-commands-cleanup | standard | ✓ VALIDATED | officecli-hybrid |
+| 036 | full-skill-replacement-e2e | standard | ✓ VALIDATED | officecli-hybrid |
+| 037 | concurrent-officecli-resident-mode | standard | ✓ VALIDATED | officecli-hybrid |
+| 038 | markdown-to-dom-translation | standard | ✗ INVALIDATED | officecli-hybrid |
+| 039 | markitdown-cost-profiling | standard | ✓ VALIDATED | performance-audit |
+| 040 | officecli-template-hydration | standard | ✓ VALIDATED | orchestration-chezmoi |
 
 ## Key Findings
 - **LiteLLM MCP Integration:** Custom payloads are required for standard clients like OpenCode/Gemini to access LiteLLM-hosted MCP tools.
@@ -49,3 +54,7 @@
 - **GSD Updates:** The shift to `@opengsd/gsd-core` acts as a perfect drop-in replacement that respects and avoids clobbering user-defined skills.
 - **Toolchain Reliability:** `mise` is highly effective for `npm` managed globals, but Python utilities depending on bracketed extras (`markitdown[all]`) strictly necessitate `uv tool install` to prevent missing dependencies.
 - **Shell Startup:** Utilizing `_cache_eval` allows for `<50ms` initialization. Combined with `ponytail-audit` checks, the environment remains exceptionally lightweight.
+- **Hybrid E2E:** LLMs correctly utilize the `markitdown` read / `officecli` write / `officecli close` loop when explicit instructions are provided in the skill payload.
+- **Concurrency & Hydration:** `officecli` safely handles concurrent writes via its resident daemon without XML corruption, and proves effective for template hydration of binary artifacts via Chezmoi `run_onchange` hooks.
+- **MarkItDown Limits:** Multimodal OCR runs sequentially. Do NOT default to passing `--with-ocr` for large graphical decks or the agent will exceed the 120s execution timeout boundary.
+- **Markdown parsing limits:** Attempting to build an intermediary parser that translates LLM markdown diffs back to DOM commands is an anti-pattern. Continue to use explicit `officecli set --find --replace`.
