@@ -39,3 +39,8 @@ Patterns and stack choices established across spike sessions. New spikes follow 
 - Both `officecli set ... --find ... --replace` (text-replacement) and `officecli set ... /body/paragraph[1]` (DOM targeting) are fully compatible with `markitdown` extraction.
 - The `officecli close <file>` command is **mandatory** before passing the document to `markitdown`, otherwise Resident Mode in-memory edits will not be visible to the python read script.
 - For multimodal OCR (images), `markitdown` can be pointed to alternative LLM endpoints (like local Ollama or Gemini's OpenAI-compatible layer) by passing an instantiated `openai.OpenAI` client with a custom `base_url` to `MarkItDown(llm_client=...)`.
+
+## Coherent System Update Pattern
+- Orchestrated updates should follow a 5-step sequence: Pre-Sync Brewfile -> System Update -> Chezmoi Update -> Component Version Bumps -> Chezmoi Apply -> Post-Sync Brewfile.
+- GSD and OpenCode plugins update implicitly: changing `package.json` in chezmoi source changes the template hash, causing `chezmoi apply` to run `npm install` and `npx get-shit-done-cc@latest` automatically.
+- `sync-brewfile` logic should explicitly identify missing packages (to append) and orphaned packages (to alert the user), rather than blindly appending to the end of the file.
