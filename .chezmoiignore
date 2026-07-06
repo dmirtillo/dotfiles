@@ -26,3 +26,7 @@ Pacfile
 Wingetfile.json
 Documents/PowerShell
 {{ end }}
+
+# Ignore node_modules globally so they don't get tracked or synced back
+**/node_modules
+**/node_modules/**
