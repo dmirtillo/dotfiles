@@ -49,3 +49,7 @@ Patterns and stack choices established across spike sessions. New spikes follow 
 - The project has migrated from `get-shit-done-cc` to `@opengsd/gsd-core`.
 - Installer commands use `npx @opengsd/gsd-core@latest`.
 - The installation directory in `.config/opencode` has shifted from `get-shit-done` to `gsd-core`.
+
+## General
+- When writing simple wrapper functions for Bash/Zsh, prefer simple aliases if no conditional logic or parameter manipulation is required.
+- Maintain a single source of truth for dependencies. Rely on `mise` for runtimes and `antidote` for Zsh plugins, avoiding duplicated definitions in Brewfile/Pacfile.
