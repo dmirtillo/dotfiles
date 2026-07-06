@@ -29,6 +29,7 @@ Spike sessions wrapped: Mon Jul 06 2026
 |------|-----------|-------------|
 | Ponytail Configuration | references/ponytail-configuration.md | OpenCode uses `opencode.json` plugin array; Gemini CLI uses `gemini extensions install` |
 | System Update Orchestration | references/system-update-orchestration.md | A 5-step orchestrated flow uses `chezmoi apply` as the trigger to seamlessly update open code SDK components via template hashing. |
+| GSD Core Migration | references/gsd-core-migration.md | Migrated from `get-shit-done-cc` to `@opengsd/gsd-core`, utilizing the uninstaller and drop-in package replacement. |
 
 ## Source Files
 
@@ -44,4 +45,8 @@ Original spike source files are preserved in `sources/` for complete reference.
 - 018-sync-brewfile-review
 - 019-orchestrated-update-flow
 - 020-workflow-docs-generation
+- 021-uninstall-old-gsd
+- 022-install-new-gsd-core
+- 023-gsd-core-compatibility
+- 024-chezmoi-orchestration-update
 </metadata>
