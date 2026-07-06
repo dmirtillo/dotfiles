@@ -68,3 +68,12 @@ Patterns and stack choices established across spike sessions. New spikes follow 
 
 ## Wrap-up Synthesis
 All 32 spikes wrapped into the `spike-findings-dotfiles` skill. The core workflow for future phases is established: `markitdown[all]` for reads, `officecli` + `close` for writes, and orchestration via `chezmoi apply` relying on `mise` for JS globals and `uv` for Python extras.
+
+## Template Hydration (Spike 040)
+- While chezmoi cannot directly template `.docx`/`.pptx` zip binaries, it can manage a generic `base.docx` alongside a `run_onchange_*.sh.tmpl` script. The script copies the base document and uses `officecli set <file> / --find "{{ PLACEHOLDER }}" --replace "{{ .chezmoi_variable }}"` to hydrate the document locally on the target machine.
+
+## Performance Limits (Spike 039)
+- Do not use `markitdown` multimodal OCR by default on large presentations. Image extraction operates **sequentially**, introducing a blocking 3–5 second latency per image. A large deck will quickly trigger the 120s execution timeout for the agent environment.
+
+## Concurrency (Spike 037)
+- `officecli`'s Resident Mode queues concurrent background write operations perfectly. Multiple parallel agents or shell scripts executing `officecli add` against the same file simultaneously will not cause zip/XML corruption.
