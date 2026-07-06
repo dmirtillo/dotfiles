@@ -700,3 +700,35 @@ export CLOUDSDK_PYTHON_SITEPACKAGES=1
 {{ if eq .chezmoi.os "darwin" -}}
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 {{ end -}}
+
+# === Agent CLI Wrappers ===
+# Office read/write hybrid loop using officecli and markitdown
+# See: .planning/phases/06-core-spike-knowledge-integration/06-01-PLAN.md
+office-read() {
+  local file="$1"
+  if [[ -z "$file" ]]; then
+    echo "Usage: office-read <file>"
+    return 1
+  fi
+  # D-01: Explicitly flush resident mode changes to disk before reading
+  officecli close "$file" 2>/dev/null || true
+  # T-06-01: Explicit version pinning to prevent supply chain injection
+  # D-05: Multimodal OCR is omitted by default for performance
+  uv run --with 'markitdown[all]==0.1.6' markitdown "$file"
+}
+
+office-write() {
+  local file="$1"
+  local find_str="$2"
+  local replace_str="$3"
+  if [[ -z "$file" || -z "$find_str" || -z "$replace_str" ]]; then
+    echo "Usage: office-write <file> <find> <replace>"
+    return 1
+  fi
+  # D-01: Execute writes globally using text replacement
+  officecli set "$file" / --find "$find_str" --replace "$replace_str"
+  local status=$?
+  # D-02: Sequentially flush to prevent zip corruption
+  officecli close "$file" 2>/dev/null || true
+  return $status
+}
