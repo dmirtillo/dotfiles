@@ -53,5 +53,5 @@ Idea: ponytail still doesnt load into gemini
 | 038 | markdown-to-dom-translation | standard | Given standard markdown diffs from an LLM, when parsed, then can they be reliably translated into `officecli` DOM or text-replace operations | PENDING | markitdown, officecli, parsing |
 | 039 | markitdown-cost-profiling | standard | Given a 50+ slide deck with images, when parsed by markitdown OCR, then what is the token cost and latency using remote vs local LLMs | PENDING | markitdown, profiling |
 | 040 | officecli-template-hydration | standard | Given a template .docx and chezmoi variables, when processed, then can officecli reliably generate a populated document during `chezmoi apply` | PENDING | officecli, chezmoi, templates |
-| 041 | gemini-ponytail-install | standard | Given Gemini CLI, when ponytail is installed via extension URL, then it is recognized and loaded | PENDING | gemini, ponytail |
-| 042 | gemini-ponytail-debug | standard | Given a failed extension install, when running gemini in debug mode, then the root cause of the load failure is identifiable | PENDING | gemini, ponytail, debugging |
+| 041 | gemini-ponytail-install | standard | Given Gemini CLI, when ponytail is installed via extension URL, then it is recognized and loaded | ✓ VALIDATED | gemini, ponytail |
+| 042 | gemini-ponytail-debug | standard | Given a failed extension install, when running gemini in debug mode, then the root cause of the load failure is identifiable | ✗ INVALIDATED | gemini, ponytail, debugging |
