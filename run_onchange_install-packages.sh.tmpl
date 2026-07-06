@@ -27,11 +27,6 @@ if command -v pipx &>/dev/null; then
     pipx inject litellm 'google-cloud-aiplatform>=1.38' 2>&1 | sed 's/^/  /'
   fi
 
-  if ! pipx list --short 2>/dev/null | grep -q '^markitdown 0\.1\.6'; then
-    echo "[packages] Installing markitdown..."
-    pipx install --force 'markitdown[all]==0.1.6' --pip-args="--prerelease=allow" 2>&1 | sed 's/^/  /'
-  fi
-
   # Patch LiteLLM to drop top_p when temperature is also present for Vertex Claude models.
   # Vertex AI rejects requests specifying both parameters, and AI-SDK passes both by default.
   LITELLM_TRANSFORM="$HOME/.local/pipx/venvs/litellm/lib/python3.13/site-packages/litellm/llms/vertex_ai/vertex_ai_partner_models/anthropic/transformation.py"
