@@ -33,3 +33,7 @@
 | 018 | sync-brewfile-review | standard | Given system package drift, when the current `sync-brewfile` script is run, then the logic robustly and correctly updates the `Brewfile` without data loss. | VALIDATED | brew, bash |
 | 019 | orchestrated-update-flow | standard | Given components needing update, when unified under a single command, then the sequence executes reliably without manual intervention. | VALIDATED | orchestration |
 | 020 | workflow-docs-generation | standard | Given the orchestrated update script, when documented, then clear specific docs can be produced. | VALIDATED | docs |
+| 021 | uninstall-old-gsd | standard | Given the old get-shit-done-cc installation, when running its uninstall command, then all previous GSD files are cleanly removed | PENDING | gsd, uninstall |
+| 022 | install-new-gsd-core | standard | Given a clean OpenCode config, when running npx @opengsd/gsd-core@latest, then the new tools are installed | PENDING | gsd, install |
+| 023 | gsd-core-compatibility | standard | Given the newly installed gsd-core, when executing standard workflows, then it functions correctly | PENDING | gsd, compat |
+| 024 | chezmoi-orchestration-update | standard | Given our orchestrated update flow, when modifying run_onchange_setup-opencode.sh.tmpl, then it updates correctly | PENDING | chezmoi, orchestration |
