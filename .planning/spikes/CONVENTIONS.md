@@ -22,7 +22,7 @@ Patterns and stack choices established across spike sessions. New spikes follow 
 - If using `tool_choice`, it must be the exact dictionary format `{"type": "function", "function": {"name": "server_alias-tool_name"}}`.
 - For syncing local package state with tracking files (like `Brewfile`), use merge scripts to append new dependencies rather than destructive overwrites (`brew bundle dump --force`), as auto-generators strip manual comments and grouping headers.
 - When pairing `officecli` and `markitdown` for document manipulation, apply changes via `officecli set ... --prop find=... --prop replace=...` and use `officecli close <file>` to flush Resident Mode changes to disk before re-reading with `markitdown`.
-- **Ponytail installation**: For OpenCode, add `"plugin": ["@dietrichgebert/ponytail"]` to `~/.config/opencode/opencode.json`. For Gemini CLI, use `gemini extensions install https://github.com/DietrichGebert/ponytail`.
+- **Ponytail installation**: For OpenCode, add `"plugin": ["@dietrichgebert/ponytail"]` to `~/.config/opencode/opencode.json`. For Gemini CLI, use `gemini extensions install https://github.com/DietrichGebert/ponytail --consent`.
 
 ## Tools & Libraries
 - `litellm[proxy]` via `uvx`

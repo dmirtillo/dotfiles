@@ -31,6 +31,7 @@ Spike sessions wrapped: 2026-07-06
 | opencode-gsd | references/opencode-gsd.md | gsd-core safely replaces legacy tools without skill loss |
 | toolchain | references/toolchain.md | mise for JS globals, uv for python extras |
 | performance-audit | references/performance-audit.md | Sequential OCR triggers timeouts; Ponytail keeps Zsh fast |
+| gemini-extensions | references/gemini-extensions.md | Automated installs of Gemini CLI extensions require `--consent` |
 
 ## Source Files
 
@@ -80,4 +81,6 @@ Original spike source files are preserved in `sources/` for complete reference.
 - 038-markdown-to-dom-translation
 - 039-markitdown-cost-profiling
 - 040-officecli-template-hydration
+- 041-gemini-ponytail-install
+- 042-gemini-ponytail-debug
 </metadata>
