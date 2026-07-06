@@ -22,6 +22,7 @@ Patterns and stack choices established across spike sessions. New spikes follow 
 - If using `tool_choice`, it must be the exact dictionary format `{"type": "function", "function": {"name": "server_alias-tool_name"}}`.
 - For syncing local package state with tracking files (like `Brewfile`), use merge scripts to append new dependencies rather than destructive overwrites (`brew bundle dump --force`), as auto-generators strip manual comments and grouping headers.
 - When pairing `officecli` and `markitdown` for document manipulation, apply changes via `officecli set ... --prop find=... --prop replace=...` and use `officecli close <file>` to flush Resident Mode changes to disk before re-reading with `markitdown`.
+- **Ponytail installation**: For OpenCode, add `"plugin": ["@dietrichgebert/ponytail"]` to `~/.config/opencode/opencode.json`. For Gemini CLI, use `gemini extensions install https://github.com/DietrichGebert/ponytail`.
 
 ## Tools & Libraries
 - `litellm[proxy]` via `uvx`
@@ -30,6 +31,7 @@ Patterns and stack choices established across spike sessions. New spikes follow 
 - `brew bundle dump --file=-` for extracting cleanly-formatted local brew state.
 - `markitdown[all]` via `uv run` for generating semantically accurate Markdown representations of Office documents.
 - `officecli` for read/write document manipulation via DOM XML addressing or text-match replace.
+- `gemini extensions install` for managing extensions in Gemini CLI.
 
 ## Markitdown Hybrid Read/Write Patterns (Spikes 007, 011-014)
 - When executing `markitdown`, always use the `[all]` extra (e.g., `uv tool install markitdown[all]`) to ensure complex formats like `.pptx` are supported without throwing `MissingDependencyException`.
