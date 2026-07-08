@@ -714,7 +714,7 @@ office-read() {
   officecli close "$file" 2>/dev/null || true
   # T-06-01: Explicit version pinning to prevent supply chain injection
   # D-05: Multimodal OCR is omitted by default for performance
-  uv run --with 'markitdown[all]==0.1.6' markitdown "$file"
+  uv run --prerelease=allow --with 'markitdown[all]==0.1.6' markitdown "$file"
 }
 
 office-write() {
