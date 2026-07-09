@@ -124,17 +124,7 @@ unset _antidote_home
 # PATH setup (consolidated, typeset -U path prevents duplicates)
 export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
-alias tfswitch='tfswitch -b $HOME/.local/bin/terraform'
 
-load-tfswitch() {
-	local tfswitchrc_path=".terraform-version"
-
-	if [ -f "$tfswitchrc_path" ]; then
-	tfswitch
-	fi
-}
-add-zsh-hook chpwd load-tfswitch
-load-tfswitch
 
 # You may need to manually set your language environment
 export LANG=en_GB.UTF-8

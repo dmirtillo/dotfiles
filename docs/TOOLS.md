@@ -10,7 +10,7 @@ This repository installs a wide variety of tools to ensure a consistent, modern 
 
 ## DevOps & Cloud
 - **Containers:** `docker`, `lazydocker`, `helm`, `kubernetes-cli`, `minikube`, `skaffold`
-- **Infrastructure as Code:** `ansible`, `packer`, `terraform` (via `tfswitch`)
+- **Infrastructure as Code:** `ansible`, `packer`, `terraform` (via `mise`)
 - **Cloud Providers:** `awscli`, `azure-cli`, `gcloud-cli`, `localstack-cli`
 
 ## Languages & Runtimes

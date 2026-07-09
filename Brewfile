@@ -7,7 +7,6 @@ tap "hashicorp/tap"
 tap "localstack/tap"
 tap "macos-fuse-t/cask"
 tap "romkatv/powerlevel10k"
-tap "warrensbox/tap"
 
 # =============================================================================
 # SYSTEM / BASE
@@ -132,7 +131,6 @@ brew "azure-cli"
 cask "gcloud-cli"
 cask "session-manager-plugin"
 cask "vagrant"
-cask "warrensbox/tap/tfswitch"
 
 # =============================================================================
 # LANGUAGES & RUNTIMES
@@ -432,8 +430,6 @@ brew "hashicorp/tap/packer", trusted: true
 brew "localstack/tap/localstack-cli", trusted: true
 # MCP server for estimating Google Cloud running costs
 brew "nozomi-koborinai/tap/gcp-cost-mcp-server", trusted: true
-# The tfswitch command lets you switch between terraform versions.
-# brew "warrensbox/tap/tfswitch", link: false, trusted: true
 # Command line management for Google Workspace
 brew "zircoz/gam/gam7", trusted: true
 # Communications service
@@ -493,7 +489,6 @@ cask "inkscape"
 # System monitor for the menu bar
 # Video game digital distribution service
 # Desktop client for Telegram messenger
-# The tfswitch command lets you switch between terraform versions.
 # Free and open-source OpenVPN client
 # Virtual machines UI using QEMU
 # Development environment
@@ -507,4 +502,3 @@ npm "@smithery/cli"
 npm "litellm"
 npm "officecli"
 npm "resume-schema"
-brew "warrensbox/tap/tfswitch", link: false, trusted: true
