@@ -257,6 +257,8 @@ fi
 {{ if ne .gcloud_project "" -}}
 export GOOGLE_GENAI_USE_VERTEXAI=true
 export GOOGLE_CLOUD_PROJECT="{{ .gcloud_project }}"
+export AGY_BUSINESS_PAYGO_TIER=true
+export GCP_GE_PAYGO_TIER=true
 {{ end -}}
 {{ if ne .gcloud_location "" -}}
 export GOOGLE_CLOUD_LOCATION="{{ .gcloud_location }}"
