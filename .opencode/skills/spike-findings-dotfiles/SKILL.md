@@ -17,12 +17,16 @@ Spike sessions wrapped: 2026-07-06
 - The client MUST explicitly request the MCP tools in its API call using LiteLLM's custom `{"type": "mcp", "server_url": "litellm_proxy"}` syntax.
 - Clients like OpenCode and Gemini CLI cannot "implicitly" inherit tools configured on the LiteLLM proxy without code modifications.
 - **Markitdown+OfficeCLI:** Must explicitly call `officecli close <file>` to flush edits to disk before passing the file to `markitdown` for reading, due to `officecli`'s resident mode.
+- Must support Vertex AI (BYOK) for pay-as-you-go billing.
+- Must operate from the terminal.
+
 </requirements>
 
 <findings_index>
 ## Feature Areas
 
 | Area | Reference | Key Finding |
+| CLI Tooling | references/cli-tooling.md | How to bypass antigravity-cli subscription using PAYGO env vars |
 |------|-----------|-------------|
 | litellm-mcp | references/litellm-mcp.md | Standard clients need custom payloads to reach MCP servers |
 | brew-sync | references/brew-sync.md | Safe merging of Brewfiles preserves user comments |
@@ -84,4 +88,5 @@ Original spike source files are preserved in `sources/` for complete reference.
 - 040-officecli-template-hydration
 - 041-gemini-ponytail-install
 - 042-gemini-ponytail-debug
+- 043-antigravity-cli-byok
 </metadata>
