@@ -8,8 +8,22 @@
   1. `markitdown` reads are configured correctly natively.
   2. `officecli` sets are executed properly via unified agent aliases.
 
-**Plans**: 3 plans
+**Plans**: 3/3 plans complete
 
 - [x] 06-01-PLAN.md — Core CLI Aliases (office-read / office-write)
 - [x] 06-02-PLAN.md — Template Hydration & Gemini Config
-- [ ] 06-03-PLAN.md — Gap Closure: CLI Aliases & Gemini Setup
+- [x] 06-03-PLAN.md — Gap Closure: CLI Aliases & Gemini Setup
+
+### Phase 7: Antigravity CLI BYOK Implementation
+
+**Goal**: Implement the PAYGO environment variables for antigravity-cli discovered in Spike 043.
+**Depends on**: Phase 6
+**Requirements**: CORE-02
+**Success Criteria** (what must be TRUE):
+
+  1. `antigravity-cli` bypasses the subscription requirement natively.
+  2. The `AGY_BUSINESS_PAYGO_TIER` and `GCP_GE_PAYGO_TIER` env vars are configured in the system shell profile.
+
+**Plans**: 0/1 plans complete
+
+- [ ] 07-01-PLAN.md — Export PAYGO env vars in Zsh and PowerShell profiles
