@@ -24,6 +24,6 @@
   1. `antigravity-cli` bypasses the subscription requirement natively.
   2. The `AGY_BUSINESS_PAYGO_TIER` and `GCP_GE_PAYGO_TIER` env vars are configured in the system shell profile.
 
-**Plans**: 0/1 plans complete
+**Plans**: 0/1 plans executed
 
 - [ ] 07-01-PLAN.md — Export PAYGO env vars in Zsh and PowerShell profiles
