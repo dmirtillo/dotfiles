@@ -11,3 +11,4 @@ Find a viable CLI replacement for the deprecated `gemini-cli` that supports Vert
 | # | Name | Type | Validates | Verdict | Tags |
 |---|------|------|-----------|---------|------|
 | 043 | antigravity-cli-byok | standard | Given antigravity-cli, when using undocumented env vars, then BYOK/PAYGO mode is enabled | ✓ VALIDATED | antigravity, byok, vertex |
+| 044 | officecli-markitdown-rework | standard | Given markitdown parsing Office documents, when translating back to DOM operations for officecli, then a reliable, deterministic mapping can be established without full AST rebuilding. | ◆ PENDING | officecli, markitdown, parsing, rework |
