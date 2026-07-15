@@ -89,4 +89,73 @@ function mkcd {
     Set-Location $path
 }
 
+# === Agent CLI Wrappers ===
+# Office read/write hybrid loop using officecli and markitdown
+
+function office-read {
+    param([string]$file)
+    if ([string]::IsNullOrEmpty($file)) {
+        Write-Host "Usage: office-read <file>"
+        return
+    }
+    # Explicitly flush resident mode changes to disk before reading
+    & officecli close $file 2>$null
+    # Multimodal OCR is omitted by default for performance
+    & uv run --prerelease=allow --with 'markitdown[all]==0.1.6' markitdown $file
+}
+
+function office-write {
+    param([string]$file, [string]$find_str, [string]$replace_str)
+    if ([string]::IsNullOrEmpty($file) -or [string]::IsNullOrEmpty($find_str) -or [string]::IsNullOrEmpty($replace_str)) {
+        Write-Host "Usage: office-write <file> <find> <replace>"
+        return
+    }
+    # Execute writes globally using text replacement
+    & officecli set $file / --find $find_str --replace $replace_str
+    $exitCode = $LASTEXITCODE
+    # Sequentially flush to prevent zip corruption
+    & officecli close $file 2>$null
+    return $exitCode
+}
+
+function office-query {
+    param([string]$file, [string]$text)
+    if ([string]::IsNullOrEmpty($file) -or [string]::IsNullOrEmpty($text)) {
+        Write-Host "Usage: office-query <file> <text>"
+        return
+    }
+    & officecli close $file 2>$null
+    & officecli query $file ":contains(`"$text`")" --json
+}
+
+function office-format {
+    param([string]$file, [string]$text)
+    
+    $props = $args
+    if ([string]::IsNullOrEmpty($file) -or [string]::IsNullOrEmpty($text) -or $props.Count -eq 0) {
+        Write-Host "Usage: office-format <file> <text> <property> [value]..."
+        return
+    }
+    
+    & officecli close $file 2>$null
+    
+    $jsonOutput = & officecli query $file ":contains(`"$text`")" --json | Out-String
+    try {
+        $queryResult = $jsonOutput | ConvertFrom-Json
+        $path = $queryResult.data.Results[0].path
+    } catch {
+        $path = $null
+    }
+    
+    if ([string]::IsNullOrEmpty($path)) {
+        Write-Host "Error: Text not found in document"
+        return
+    }
+    
+    & officecli set $file $path @props
+    $exitCode = $LASTEXITCODE
+    & officecli close $file 2>$null
+    return $exitCode
+}
+
 {{- end -}}
