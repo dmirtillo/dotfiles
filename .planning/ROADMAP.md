@@ -38,6 +38,6 @@
   1. A query wrapper utility correctly links target text to explicit DOM paths.
   2. The workflow can execute end-to-end structural DOM changes (e.g. fill colors) on documents processed through `markitdown`.
 
-**Plans**: 1 plans
+**Plans**: 0/1 plans executed
 
 - [ ] 08-01-PLAN.md — Hybrid workflow wrappers (office-query, office-format) for Zsh and PowerShell
