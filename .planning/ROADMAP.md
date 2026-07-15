@@ -27,3 +27,17 @@
 **Plans**: 2/1 plans complete
 
 - [x] 07-01-PLAN.md — Export PAYGO env vars in Zsh and PowerShell profiles
+
+### Phase 8: OfficeCLI Hybrid Markitdown Workflow
+
+**Goal**: Establish a robust hybrid approach to document modification that pairs `markitdown` for reading and `officecli query/set` for structurally-aware targeting.
+**Depends on**: Phase 7
+**Requirements**: CORE-03
+**Success Criteria** (what must be TRUE):
+
+  1. A query wrapper utility correctly links target text to explicit DOM paths.
+  2. The workflow can execute end-to-end structural DOM changes (e.g. fill colors) on documents processed through `markitdown`.
+
+**Plans**: 1 plans
+
+- [ ] 08-01-PLAN.md — Hybrid workflow wrappers (office-query, office-format) for Zsh and PowerShell
