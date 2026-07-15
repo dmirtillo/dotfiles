@@ -724,3 +724,39 @@ office-write() {
   officecli close "$file" 2>/dev/null || true
   return $status
 }
+
+office-query() {
+  local file="$1"
+  local text="$2"
+  if [[ -z "$file" || -z "$text" ]]; then
+    echo "Usage: office-query <file> <text>"
+    return 1
+  fi
+  officecli close "$file" 2>/dev/null || true
+  officecli query "$file" ":contains(\"$text\")" --json
+}
+
+office-format() {
+  local file="$1"
+  local text="$2"
+  shift 2
+  if [[ -z "$file" || -z "$text" || $# -eq 0 ]]; then
+    echo "Usage: office-format <file> <text> <property> [value]..."
+    return 1
+  fi
+  
+  officecli close "$file" 2>/dev/null || true
+  
+  local path
+  path=$(officecli query "$file" ":contains(\"$text\")" --json | jq -r '.data.Results[0].path // empty')
+  
+  if [[ -z "$path" ]]; then
+    echo "Error: Text not found in document"
+    return 1
+  fi
+  
+  officecli set "$file" "$path" "$@"
+  local status=$?
+  officecli close "$file" 2>/dev/null || true
+  return $status
+}
