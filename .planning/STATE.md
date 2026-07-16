@@ -4,8 +4,8 @@ milestone: v1.14.35
 milestone_name: milestone
 status: Phase 06 complete
 stopped_at: Phase 08 context gathered
-last_updated: "2026-07-16T12:39:45.992Z"
-last_activity: 2026-07-15
+last_updated: "2026-07-16T13:07:08.752Z"
+last_activity: 2026-07-16
 progress:
   total_phases: 3
   completed_phases: 3
@@ -72,7 +72,7 @@ progress:
 | 260624-ev7 | i want to install ponytail globally https://github.com/DietrichGebert/ponytail, can you tell me if this can be done and how? | 2026-06-24 | cfef3cc | [260624-ev7-i-want-to-install-ponytail-globally-http](./quick/260624-ev7-i-want-to-install-ponytail-globally-http/) |
 | 260624-gi5 | can you make sure that the project id is not hardcoded in the template but gets asked during setup? | 2026-06-24 | 9cdcd74 | [260624-gi5-can-you-make-sure-that-the-project-id-is](./quick/260624-gi5-can-you-make-sure-that-the-project-id-is/) |
 
-Last activity: 2026-07-15
+Last activity: 2026-07-16
 | 2026-05-27 | fast | Change tmuxai plugin to gemini 3.5 | ✅ |
 | 2026-05-27 | fast | Revert tmuxai gemini-pro to 3.1-pro-preview | ✅ |
 | 2026-05-29 | fast | claude opus 4.8 should be the only available, is it working? i dont care for older versions of the model | ✅ |
