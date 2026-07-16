@@ -125,7 +125,16 @@ function office-query {
         return
     }
     & officecli close $file 2>$null
-    & officecli query $file ":contains(`"$text`")" --json
+    $jsonOutput = & officecli query $file ":contains(`"$text`")" --json | Out-String
+    $queryResult = $jsonOutput | ConvertFrom-Json
+    if ($queryResult.data.results) {
+        foreach ($result in $queryResult.data.results) {
+            Write-Output "Match: $($result.text)"
+            Write-Output "Path: $($result.path)"
+            Write-Output "Type: $($result.type)"
+            Write-Output "---"
+        }
+    }
 }
 
 function office-format {
@@ -133,8 +142,46 @@ function office-format {
     
     $props = $args
     if ([string]::IsNullOrEmpty($file) -or [string]::IsNullOrEmpty($text) -or $props.Count -eq 0) {
-        Write-Host "Usage: office-format <file> <text> <property> [value]..."
-        return
+        Write-Error "Usage: office-format <file> <text> <property> [value]..."
+        return 1
+    }
+    
+    $valid_props = @("text", "style", "alignment", "bold", "italic", "font", "size", "color", "spaceBefore", "spaceAfter", "spaceBeforeLines", "spaceAfterLines", "lineSpacing", "indent", "liststyle", "formula", "direction", "bidi", "fill", "background", "x", "y", "w", "h", "width", "height")
+    
+    $i = 0
+    while ($i -lt $props.Count) {
+        $arg = $props[$i]
+        $key = ""
+        
+        if ($arg -eq "--prop") {
+            if ($i + 1 -ge $props.Count) {
+                Write-Error "Error: Missing value for --prop"
+                return 1
+            }
+            $next_arg = $props[$i+1]
+            $key = $next_arg.Split('=')[0]
+            $i += 2
+        } elseif ($arg.StartsWith("--prop=")) {
+            $key_val = $arg.Substring(7)
+            $key = $key_val.Split('=')[0]
+            $i += 1
+        } else {
+            $i += 1
+            continue
+        }
+        
+        $is_valid = $false
+        foreach ($valid_prop in $valid_props) {
+            if ($key -eq $valid_prop -or $key.StartsWith("font.") -or $key.StartsWith("underline.") -or $key.StartsWith("anchor.")) {
+                $is_valid = $true
+                break
+            }
+        }
+        
+        if (-not $is_valid) {
+            Write-Error "Error: Invalid formatting property '$key'"
+            return 1
+        }
     }
     
     & officecli close $file 2>$null
@@ -142,20 +189,35 @@ function office-format {
     $jsonOutput = & officecli query $file ":contains(`"$text`")" --json | Out-String
     try {
         $queryResult = $jsonOutput | ConvertFrom-Json
-        $path = $queryResult.data.Results[0].path
+        # Handle single vs multiple results from ConvertFrom-Json
+        if ($queryResult.data.results -is [array]) {
+            $paths = $queryResult.data.results.path
+        } elseif ($queryResult.data.results) {
+            $paths = @($queryResult.data.results.path)
+        } else {
+            $paths = $null
+        }
     } catch {
-        $path = $null
+        $paths = $null
     }
     
-    if ([string]::IsNullOrEmpty($path)) {
-        Write-Host "Error: Text not found in document"
-        return
+    if (-not $paths -or $paths.Count -eq 0) {
+        Write-Error "Error: Text not found in document"
+        return 1
     }
     
-    & officecli set $file $path @props
-    $exitCode = $LASTEXITCODE
+    $status = 0
+    foreach ($path in $paths) {
+        if (-not [string]::IsNullOrEmpty($path)) {
+            & officecli set $file $path @props
+            if ($LASTEXITCODE -ne 0) {
+                $status = $LASTEXITCODE
+            }
+        }
+    }
+    
     & officecli close $file 2>$null
-    return $exitCode
+    return $status
 }
 
 {{- end -}}
