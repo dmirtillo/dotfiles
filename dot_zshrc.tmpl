@@ -733,7 +733,7 @@ office-query() {
     return 1
   fi
   officecli close "$file" 2>/dev/null || true
-  officecli query "$file" ":contains(\"$text\")" --json
+  officecli query "$file" ":contains(\"$text\")" --json | jq -r '.data.results[] | "Match: \(.text)\nPath: \(.path)\nType: \(.type)\n---"'
 }
 
 office-format() {
@@ -745,18 +745,54 @@ office-format() {
     return 1
   fi
   
+  local valid_props=(text style alignment bold italic font size color spaceBefore spaceAfter spaceBeforeLines spaceAfterLines lineSpacing indent liststyle formula direction bidi fill background x y w h width height)
+  
+  local i=1
+  while [[ $i -le $# ]]; do
+    local arg="${@[$i]}"
+    local key=""
+    
+    if [[ "$arg" == "--prop" ]]; then
+      local next_arg="${@[$i+1]}"
+      key="${next_arg%%=*}"
+      i=$((i+2))
+    elif [[ "$arg" == --prop=* ]]; then
+      local key_val="${arg#--prop=}"
+      key="${key_val%%=*}"
+      i=$((i+1))
+    else
+      i=$((i+1))
+      continue
+    fi
+    
+    local is_valid=0
+    for valid_prop in "${valid_props[@]}"; do
+      if [[ "$key" == "$valid_prop" || "$key" == font.* || "$key" == underline.* || "$key" == anchor.* ]]; then
+        is_valid=1
+        break
+      fi
+    done
+    
+    if [[ $is_valid -eq 0 ]]; then
+      echo "Error: Invalid formatting property '$key'"
+      return 1
+    fi
+  done
+  
   officecli close "$file" 2>/dev/null || true
   
-  local path
-  path=$(officecli query "$file" ":contains(\"$text\")" --json | jq -r '.data.Results[0].path // empty')
+  local paths=($(officecli query "$file" ":contains(\"$text\")" --json | jq -r '.data.results[].path // empty'))
   
-  if [[ -z "$path" ]]; then
+  if [[ ${#paths[@]} -eq 0 ]]; then
     echo "Error: Text not found in document"
     return 1
   fi
   
-  officecli set "$file" "$path" "$@"
-  local status=$?
+  local status=0
+  for path in "${paths[@]}"; do
+    officecli set "$file" "$path" "$@" || status=1
+  done
+  
   officecli close "$file" 2>/dev/null || true
   return $status
 }
