@@ -36,3 +36,6 @@ These requirements are already satisfied by the existing codebase.
 | WIN-02 | Phase 2 | Complete |
 | WIN-01 | Phase 3 | Complete |
 | DEP-01 | Phase 4 | Complete |
+
+### OfficeCLI Hybrid Workflow
+- [ ] **CORE-03**: Establish a robust hybrid approach to document modification that pairs `markitdown` for reading and `officecli query/set` for structurally-aware targeting.
