@@ -13,12 +13,71 @@ if command -v npx &>/dev/null; then
   npx --yes @opengsd/gsd-core@latest --antigravity --global
   echo "  Installing GSD Core for Gemini CLI..."
   npx --yes @opengsd/gsd-core@latest --kimi --global
+  
+  # Clean up frontmatter validation errors in generated subagents
+  if [ -d "$HOME/.gemini/agents" ] && command -v node &>/dev/null; then
+    echo "  Cleaning up subagent frontmatter schema compatibility..."
+    node -e '
+      const fs = require("fs");
+      const path = require("path");
+      const agentsDir = path.join(process.env.HOME, ".gemini", "agents");
+      if (!fs.existsSync(agentsDir)) process.exit(0);
+      
+      // 1. Fix gsd.md
+      const gsdPath = path.join(agentsDir, "gsd.md");
+      if (fs.existsSync(gsdPath)) {
+        let content = fs.readFileSync(gsdPath, "utf8");
+        if (!content.startsWith("---")) {
+          const fm = "---\nname: gsd\ndescription: Coordinate installed gsd workflows and route work to generated GSD subagents when a workflow requires an agent handoff.\n---\n\n";
+          fs.writeFileSync(gsdPath, fm + content, "utf8");
+        }
+      }
+      
+      // 2. Fix other agents
+      fs.readdirSync(agentsDir).forEach(file => {
+        if (!file.endsWith(".md") || file === "gsd.md") return;
+        const filePath = path.join(agentsDir, file);
+        let content = fs.readFileSync(filePath, "utf8");
+        if (!content.startsWith("---")) return;
+        
+        const parts = content.split("---");
+        if (parts.length < 3) return;
+        
+        const lines = parts[1].split("\n");
+        const newLines = [];
+        let inTools = false;
+        
+        lines.forEach(line => {
+          const trimmed = line.trim();
+          if (inTools) {
+            if (trimmed.startsWith("-") || trimmed === "") return;
+            if (trimmed.includes(":")) inTools = false;
+            else return;
+          }
+          if (trimmed.startsWith("tools:")) {
+            if (trimmed.slice(6).trim() === "") inTools = true;
+            return;
+          }
+          if (trimmed.startsWith("color:")) return;
+          newLines.push(line);
+        });
+        
+        fs.writeFileSync(filePath, "---" + newLines.join("\n") + "---" + parts.slice(2).join("---"), "utf8");
+      });
+    '
+  fi
+
+  # Clean up duplicate gsd-ns-* skills in ~/.gemini/skills to avoid startup conflicts
+  if [ -d "$HOME/.gemini/skills" ]; then
+    echo "  Pruning duplicate gsd-ns-* skills from ~/.gemini/skills..."
+    rm -rf "$HOME/.gemini/skills"/gsd-ns-*
+  fi
 else
   echo "  WARNING: npm not found. Install Node.js to use @opengsd/gsd-core."
 fi
 
 if command -v agy &>/dev/null; then
-  agy plugin install https://github.com/DietrichGebert/ponytail
+  (cd /tmp && agy plugin install https://github.com/DietrichGebert/ponytail)
 fi
 
 echo "  Done."
