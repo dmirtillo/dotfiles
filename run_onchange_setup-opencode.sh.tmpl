@@ -27,4 +27,16 @@ if [ -f "$OC_CONFIG/package.json" ]; then
 fi
 
 echo "  Done."
+
+# Ensure target directories for any opencode symlinks exist to prevent installer ENOENT errors
+for dir in "$OC_CONFIG"/*; do
+  if [ -L "$dir" ]; then
+    TARGET="$(readlink -f "$dir" || true)"
+    if [ -n "$TARGET" ]; then
+      mkdir -p "$TARGET"
+    fi
+  fi
+done
+
+export GSD_INSTALLER_MIGRATION_RESOLVE=keep
 npx @opengsd/gsd-core@latest --opencode --global

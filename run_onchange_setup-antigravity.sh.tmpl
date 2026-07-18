@@ -9,7 +9,10 @@ set -euo pipefail
 echo "[antigravity] Setting up skills..."
 
 if command -v npx &>/dev/null; then
+  echo "  Installing GSD Core for Antigravity (agy)..."
   npx --yes @opengsd/gsd-core@latest --antigravity --global
+  echo "  Installing GSD Core for Gemini CLI..."
+  npx --yes @opengsd/gsd-core@latest --kimi --global
 else
   echo "  WARNING: npm not found. Install Node.js to use @opengsd/gsd-core."
 fi
