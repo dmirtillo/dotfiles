@@ -428,8 +428,6 @@ brew "anomalyco/tap/opencode", trusted: true
 brew "hashicorp/tap/packer", trusted: true
 # Localstack cli packaged using pyinstaller
 brew "localstack/tap/localstack-cli", trusted: true
-# MCP server for estimating Google Cloud running costs
-brew "nozomi-koborinai/tap/gcp-cost-mcp-server", trusted: true
 # Command line management for Google Workspace
 brew "zircoz/gam/gam7", trusted: true
 # Communications service

@@ -54,7 +54,7 @@
   "mcp": {
     "gcp-cost": {
       "type": "local",
-      "command": ["{{ if eq .chezmoi.os "darwin" }}/opt/homebrew/bin/gcp-cost-mcp-server{{ else }}gcp-cost-mcp-server{{ end }}"],
+      "command": ["{{ .chezmoi.homeDir }}/.local/share/mise/shims/gcp-cost-mcp-server"],
       "env": {
         "GOOGLE_CLOUD_PROJECT": "{{ .gcloud_project }}"
       }
