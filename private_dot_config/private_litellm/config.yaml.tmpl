@@ -28,22 +28,72 @@
 # =============================================================================
 
 model_list:
-  # --- Gemini models (via Google AI Studio) ---
+  # --- Gemini models (via Vertex AI, global endpoint) ---
   - model_name: gemini-3.8-flash
+    litellm_params:
+      model: vertex_ai/gemini-3.8-flash
+      vertex_project: "{{ .gcloud_project }}"
+      vertex_location: "{{ .gcloud_location | default "global" }}"
+
+  - model_name: gemini-2.5-flash
+    litellm_params:
+      model: vertex_ai/gemini-2.5-flash
+      vertex_project: "{{ .gcloud_project }}"
+      vertex_location: "{{ .gcloud_location | default "global" }}"
+
+  - model_name: gemini-2.5-pro
+    litellm_params:
+      model: vertex_ai/gemini-2.5-pro
+      vertex_project: "{{ .gcloud_project }}"
+      vertex_location: "{{ .gcloud_location | default "global" }}"
+{{ if .gemini_api_key }}
+  # --- Gemini models (via Google AI Studio direct) ---
+  - model_name: gemini-3.8-flash-direct
     litellm_params:
       model: gemini/gemini-3.8-flash
       api_key: "{{ .gemini_api_key }}"
-
-  # --- Anthropic models (via Vertex AI, us-east5) ---
+{{ end }}
+  # --- Anthropic models (via Vertex AI, global endpoint) ---
   - model_name: claude-sonnet-5
     litellm_params:
       model: vertex_ai/claude-sonnet-5
       vertex_project: "{{ .gcloud_project }}"
-      vertex_location: "us-east5"
+      vertex_location: "{{ .gcloud_location | default "global" }}"
 
   - model_name: claude-opus-5
     litellm_params:
       model: vertex_ai/claude-opus-5@default
+      vertex_project: "{{ .gcloud_project }}"
+      vertex_location: "{{ .gcloud_location | default "global" }}"
+
+  # --- xAI Grok models (via Vertex AI, global endpoint) ---
+  - model_name: xai/grok-4.6
+    litellm_params:
+      model: vertex_ai/publishers/xai/models/grok-4.6
+      vertex_project: "{{ .gcloud_project }}"
+      vertex_location: "global"
+
+  - model_name: grok-4.6
+    litellm_params:
+      model: vertex_ai/publishers/xai/models/grok-4.6
+      vertex_project: "{{ .gcloud_project }}"
+      vertex_location: "global"
+
+  - model_name: xai/grok-4.3
+    litellm_params:
+      model: vertex_ai/publishers/xai/models/grok-4.3
+      vertex_project: "{{ .gcloud_project }}"
+      vertex_location: "global"
+
+  - model_name: xai/grok-4.20-non-reasoning
+    litellm_params:
+      model: vertex_ai/publishers/xai/models/grok-4.20-non-reasoning
+      vertex_project: "{{ .gcloud_project }}"
+      vertex_location: "global"
+
+  - model_name: xai/grok-4.20-reasoning
+    litellm_params:
+      model: vertex_ai/publishers/xai/models/grok-4.20-reasoning
       vertex_project: "{{ .gcloud_project }}"
       vertex_location: "global"
 

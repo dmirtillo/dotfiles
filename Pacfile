@@ -207,6 +207,7 @@ gemini-cli-git
 openspec
 officecli
 antigravity-cli
+litellm
 
 # =============================================================================
 # MAIL
