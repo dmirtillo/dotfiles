@@ -105,6 +105,14 @@ else
   exit 1
 fi
 
+# Ensure markitdown[all] is installed via uv tool for Office file conversion
+if command -v uv &>/dev/null; then
+  if ! uv tool list 2>/dev/null | grep -q '^markitdown '; then
+    echo "  [packages] Installing markitdown[all] via uv tool..."
+    uv tool install "markitdown[all]" 2>&1 | sed 's/^/  /' || true
+  fi
+fi
+
 # Ensure the log directory exists before systemd starts the service.
 mkdir -p "$HOME/.local/share/litellm"
 
