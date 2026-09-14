@@ -36,9 +36,9 @@ set -euo pipefail
 
 CONFIG="${OPENCODE_CONFIG:-$HOME/.config/opencode/opencode.json}"
 
-GEMINI_PRO="google/gemini-3.1-pro-preview"
-GEMINI_FLASH="google/gemini-3.1-flash-preview"
-ANTHROPIC_PRO="google-vertex-anthropic/claude-sonnet-4-6"
+GEMINI_PRO="google/gemini-3.8-flash"
+GEMINI_FLASH="google/gemini-3.8-flash"
+ANTHROPIC_PRO="google-vertex-anthropic/claude-sonnet-5"
 
 readonly CONFIG GEMINI_PRO GEMINI_FLASH ANTHROPIC_PRO
 
@@ -63,9 +63,10 @@ check_deps() {
 }
 
 status() {
-  local main_model small_model
-  main_model=$(jq -r '.model' "$CONFIG")
-  small_model=$(jq -r '.small_model' "$CONFIG")
+  local main_model small_model clean_json
+  clean_json=$(sed 's|^[[:space:]]*//.*||g' "$CONFIG")
+  main_model=$(echo "$clean_json" | jq -r '.model')
+  small_model=$(echo "$clean_json" | jq -r '.small_model')
 
   # Determine current mode
   local mode="unknown"
@@ -80,10 +81,10 @@ status() {
   echo "  small_model: $small_model"
   echo ""
   echo "  Agents:"
-  jq -r '
-    .agent | to_entries[] |
+  echo "$clean_json" | jq -r '
+    (.agent // {}) | to_entries[] |
     "    \(.key): \(.value.model // "(inherits main model)")"
-  ' "$CONFIG"
+  '
 }
 
 switch_models() {
@@ -91,14 +92,16 @@ switch_models() {
   local flash="$2"
   local label="$3"
   local tmp="${CONFIG}.tmp.$$"
+  local clean_json
+  clean_json=$(sed 's|^[[:space:]]*//.*||g' "$CONFIG")
 
-  jq \
+  echo "$clean_json" | jq \
     --arg pro "$pro" \
     --arg flash "$flash" \
     '
     .model = $pro |
     .small_model = $flash |
-    .agent |= with_entries(
+    .agent |= (if . then with_entries(
       if .value.model then
         if (.value.model | test("flash|haiku")) then
           .value.model = $flash
@@ -108,8 +111,8 @@ switch_models() {
       else
         .
       end
-    )
-    ' "$CONFIG" > "$tmp" && mv "$tmp" "$CONFIG"
+    ) else null end)
+    ' > "$tmp" && mv "$tmp" "$CONFIG"
 
   echo "Switched to $label mode."
   echo ""

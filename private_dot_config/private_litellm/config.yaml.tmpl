@@ -29,34 +29,23 @@
 
 model_list:
   # --- Gemini models (via Google AI Studio) ---
-  - model_name: gemini-3.1-pro-preview
+  - model_name: gemini-3.8-flash
     litellm_params:
-      model: gemini/gemini-3.1-pro-preview
-      api_key: "{{ .gemini_api_key }}"
-
-  - model_name: gemini-3.1-flash-preview
-    litellm_params:
-      model: gemini/gemini-3.1-flash-lite-preview
+      model: gemini/gemini-3.8-flash
       api_key: "{{ .gemini_api_key }}"
 
   # --- Anthropic models (via Vertex AI, us-east5) ---
-  - model_name: claude-sonnet-4-6
+  - model_name: claude-sonnet-5
     litellm_params:
-      model: vertex_ai/claude-sonnet-4-6
+      model: vertex_ai/claude-sonnet-5
       vertex_project: "{{ .gcloud_project }}"
       vertex_location: "us-east5"
 
-  - model_name: claude-opus-4-8
+  - model_name: claude-opus-5
     litellm_params:
-      model: vertex_ai/claude-opus-4-8@default
+      model: vertex_ai/claude-opus-5@default
       vertex_project: "{{ .gcloud_project }}"
       vertex_location: "global"
-
-  - model_name: claude-sonnet-4
-    litellm_params:
-      model: vertex_ai/claude-sonnet-4
-      vertex_project: "{{ .gcloud_project }}"
-      vertex_location: "us-east5"
 
 general_settings:
   master_key: null

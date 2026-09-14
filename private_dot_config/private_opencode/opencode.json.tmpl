@@ -11,8 +11,8 @@
   "plugin": [
     "@dietrichgebert/ponytail"
   ],
-  "model": "google/gemini-3.1-pro-preview",
-  "small_model": "google/gemini-3.1-flash-lite-preview",
+  "model": "google/gemini-3.8-flash",
+  "small_model": "google/gemini-3.8-flash",
   "provider": {
     "google": {
       "npm": "@ai-sdk/google",
@@ -21,11 +21,8 @@
         "apiKey": "{{ .gemini_api_key }}"
       },
       "models": {
-        "gemini-3.1-pro-preview": {
-          "name": "Gemini 3.1 Pro"
-        },
-        "gemini-3.1-flash-lite-preview": {
-          "name": "Gemini 3.1 Flash Lite"
+        "gemini-3.8-flash": {
+          "name": "Gemini 3.8 Flash"
         }
       }
     },
@@ -36,14 +33,11 @@
         "baseURL": "http://localhost:4000/v1"
       },
       "models": {
-        "claude-sonnet-4-6": {
-          "name": "Claude Sonnet 4.6 (Vertex)"
+        "claude-sonnet-5": {
+          "name": "Claude Sonnet 5 (Vertex)"
         },
-        "claude-opus-4-8": {
-          "name": "Claude Opus 4.8 (Vertex)"
-        },
-        "claude-sonnet-4": {
-          "name": "Claude Sonnet 4 (Vertex)"
+        "claude-opus-5": {
+          "name": "Claude Opus 5 (Vertex)"
         }
       }
     }
