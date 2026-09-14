@@ -9,4 +9,6 @@ set -euo pipefail
 if command -v mise &> /dev/null; then
     echo "[mise] Trusting ~/.mise.toml..."
     mise trust ~/.mise.toml || true
+    echo "[mise] Installing tools from ~/.mise.toml..."
+    mise install || true
 fi
