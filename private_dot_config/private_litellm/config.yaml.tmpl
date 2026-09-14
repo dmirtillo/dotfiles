@@ -58,42 +58,24 @@ model_list:
     litellm_params:
       model: vertex_ai/claude-sonnet-5
       vertex_project: "{{ .gcloud_project }}"
-      vertex_location: "{{ .gcloud_location | default "global" }}"
+      vertex_location: "global"
 
   - model_name: claude-opus-5
     litellm_params:
       model: vertex_ai/claude-opus-5@default
       vertex_project: "{{ .gcloud_project }}"
-      vertex_location: "{{ .gcloud_location | default "global" }}"
+      vertex_location: "global"
 
   # --- xAI Grok models (via Vertex AI, global endpoint) ---
   - model_name: xai/grok-4.6
     litellm_params:
-      model: vertex_ai/publishers/xai/models/grok-4.6
+      model: vertex_ai/xai/grok-4.6
       vertex_project: "{{ .gcloud_project }}"
       vertex_location: "global"
 
   - model_name: grok-4.6
     litellm_params:
-      model: vertex_ai/publishers/xai/models/grok-4.6
-      vertex_project: "{{ .gcloud_project }}"
-      vertex_location: "global"
-
-  - model_name: xai/grok-4.3
-    litellm_params:
-      model: vertex_ai/publishers/xai/models/grok-4.3
-      vertex_project: "{{ .gcloud_project }}"
-      vertex_location: "global"
-
-  - model_name: xai/grok-4.20-non-reasoning
-    litellm_params:
-      model: vertex_ai/publishers/xai/models/grok-4.20-non-reasoning
-      vertex_project: "{{ .gcloud_project }}"
-      vertex_location: "global"
-
-  - model_name: xai/grok-4.20-reasoning
-    litellm_params:
-      model: vertex_ai/publishers/xai/models/grok-4.20-reasoning
+      model: vertex_ai/xai/grok-4.6
       vertex_project: "{{ .gcloud_project }}"
       vertex_location: "global"
 
