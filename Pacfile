@@ -208,6 +208,7 @@ openspec
 officecli
 antigravity-cli
 litellm
+markitdown-bin
 
 # =============================================================================
 # MAIL

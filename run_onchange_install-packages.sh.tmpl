@@ -105,12 +105,10 @@ else
   exit 1
 fi
 
-# Ensure markitdown[all] is installed via uv tool for Office file conversion
-if command -v uv &>/dev/null; then
-  if ! uv tool list 2>/dev/null | grep -q '^markitdown '; then
-    echo "  [packages] Installing markitdown[all] via uv tool..."
-    uv tool install "markitdown[all]" 2>&1 | sed 's/^/  /' || true
-  fi
+# Fallback: ensure markitdown[all] is installed if not provided by package manager
+if ! command -v markitdown &>/dev/null && command -v uv &>/dev/null; then
+  echo "  [packages] Installing markitdown[all] via uv tool fallback..."
+  uv tool install "markitdown[all]" 2>&1 | sed 's/^/  /' || true
 fi
 
 # Ensure the log directory exists before systemd starts the service.
