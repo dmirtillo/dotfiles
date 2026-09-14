@@ -73,8 +73,9 @@ progress:
 | 260624-gi5 | can you make sure that the project id is not hardcoded in the template but gets asked during setup? | 2026-06-24 | 9cdcd74 | [260624-gi5-can-you-make-sure-that-the-project-id-is](./quick/260624-gi5-can-you-make-sure-that-the-project-id-is/) |
 | 260914-obs | fix the gcp-cost mcp | 2026-09-14 | 0a3837c | [260914-obs-fix-the-gcp-cost-mcp](./quick/260914-obs-fix-the-gcp-cost-mcp/) |
 | 260914-orp | install microsoft markitdown for linux | 2026-09-14 | f8fcca0 | [260914-orp-install-microsoft-markitdown-for-linux](./quick/260914-orp-install-microsoft-markitdown-for-linux/) |
+| 260914-p2r | check if tools installed with uv can be installed with aur or mise | 2026-09-14 | 22e115d | [260914-p2r-check-if-tools-installed-with-uv-can-be-](./quick/260914-p2r-check-if-tools-installed-with-uv-can-be-/) |
 
-Last activity: 2026-09-14 - Completed quick task 260914-orp: install microsoft markitdown for linux
+Last activity: 2026-09-14 - Completed quick task 260914-p2r: check if tools installed with uv can be installed with aur or mise
 | 2026-05-27 | fast | Change tmuxai plugin to gemini 3.5 | ✅ |
 | 2026-05-27 | fast | Revert tmuxai gemini-pro to 3.1-pro-preview | ✅ |
 | 2026-05-29 | fast | claude opus 4.8 should be the only available, is it working? i dont care for older versions of the model | ✅ |
