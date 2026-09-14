@@ -68,4 +68,5 @@ for dir in "$OC_CONFIG"/*; do
 done
 
 export GSD_INSTALLER_MIGRATION_RESOLVE=keep
+export GSD_ALLOW_SYMLINKED_DEST=1
 npx @opengsd/gsd-core@latest --opencode --global

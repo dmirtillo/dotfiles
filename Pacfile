@@ -205,6 +205,8 @@ ollama
 # AUR
 gemini-cli-git
 openspec
+officecli
+antigravity-cli
 
 # =============================================================================
 # MAIL
