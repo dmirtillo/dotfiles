@@ -72,9 +72,26 @@ If Claude models in OpenCode are failing, verify if the proxy is running:
 # Check if the process is active
 pgrep -fl litellm
 
-# Restart the service
+# Check if port 4000 is listening
+ss -tulpn | grep 4000   # Linux
+lsof -i :4000          # macOS
+
+# Restart the service (macOS)
 launchctl kickstart -k gui/$(id -u)/com.litellm.proxy
+
+# Restart the service (Linux)
+systemctl --user restart litellm
 ```
+
+### Linux Installation & Service Setup
+LiteLLM is managed via chezmoi:
+- **Package:** Installed via AUR (`yay -S litellm`) in `Pacfile`.
+- **Service:** Managed by systemd user service (`~/.config/systemd/user/litellm.service`).
+- To check service status or logs:
+  ```bash
+  systemctl --user status litellm
+  journalctl --user -u litellm -f
+  ```
 
 ### Permission Denied / ADC Errors
 LiteLLM uses Google Cloud Application Default Credentials (ADC) for Vertex AI. If you see auth errors:
@@ -85,5 +102,5 @@ gcloud auth application-default login
 
 ### Log Locations
 If the proxy starts but fails to route requests, check the logs:
-- Output: `~/.local/share/litellm/proxy.log`
+- Output: `~/.local/share/litellm/proxy.log` (or `journalctl --user -u litellm -f` on Linux)
 - Errors: `~/.local/share/litellm/proxy.err`

@@ -46,8 +46,9 @@ This does `git pull` on the source repo and then `chezmoi apply` in one step.
 ## Services & AI
 
 ### LiteLLM Proxy
-The LiteLLM proxy runs as a macOS Launch Agent on port 4000. It handles routing for Claude models via Vertex AI.
+The LiteLLM proxy runs on port 4000 (via macOS LaunchAgent or Linux systemd user service). It handles routing for Claude models via Vertex AI.
 
+#### macOS (LaunchAgent)
 | Task | Command |
 |---|---|
 | **Restart (Quickest)** | `launchctl kickstart -k gui/$(id -u)/com.litellm.proxy` |
@@ -55,6 +56,16 @@ The LiteLLM proxy runs as a macOS Launch Agent on port 4000. It handles routing 
 | **Start** | `launchctl load ~/Library/LaunchAgents/com.litellm.proxy.plist` |
 | **Tail Logs** | `tail -f ~/.local/share/litellm/proxy.log` |
 | **Tail Errors** | `tail -f ~/.local/share/litellm/proxy.err` |
+
+#### Linux (systemd user service)
+| Task | Command |
+|---|---|
+| **Status** | `systemctl --user status litellm` |
+| **Start** | `systemctl --user start litellm` |
+| **Stop** | `systemctl --user stop litellm` |
+| **Restart** | `systemctl --user restart litellm` |
+| **Enable on Boot** | `systemctl --user enable --now litellm` |
+| **Tail Logs** | `journalctl --user -u litellm -f` or `tail -f ~/.local/share/litellm/proxy.log` |
 
 ### OpenCode Models
 Switch between Gemini (Direct) and Anthropic (via LiteLLM Proxy) modes:

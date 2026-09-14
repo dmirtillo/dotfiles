@@ -105,5 +105,16 @@ else
   exit 1
 fi
 
+# Ensure the log directory exists before systemd starts the service.
+mkdir -p "$HOME/.local/share/litellm"
+
+# (Re)load and enable the litellm systemd user service so changes take effect immediately.
+if [ -f "$HOME/.config/systemd/user/litellm.service" ] && command -v systemctl &>/dev/null; then
+  echo "  [packages] Reloading litellm systemd user service..."
+  systemctl --user daemon-reload
+  systemctl --user enable --now litellm 2>&1 | sed 's/^/  /' || true
+  echo "  [packages] LiteLLM proxy service active."
+fi
+
 echo "  Done."
 {{ end -}}

@@ -1,0 +1,17 @@
+[Unit]
+Description=LiteLLM Proxy Service
+After=network.target
+
+[Service]
+Type=simple
+Environment="PATH={{ .chezmoi.homeDir }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
+Environment=PYTHONUNBUFFERED=1
+ExecStartPre=/usr/bin/mkdir -p {{ .chezmoi.homeDir }}/.local/share/litellm
+ExecStart=/usr/bin/env litellm --config {{ .chezmoi.homeDir }}/.config/litellm/config.yaml --port 4000
+Restart=always
+RestartSec=10
+StandardOutput=append:{{ .chezmoi.homeDir }}/.local/share/litellm/proxy.log
+StandardError=append:{{ .chezmoi.homeDir }}/.local/share/litellm/proxy.err
+
+[Install]
+WantedBy=default.target

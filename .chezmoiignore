@@ -33,6 +33,7 @@ private_Library
 {{ if ne .chezmoi.os "linux" }}
 # Linux-only files
 Pacfile
+.config/systemd
 {{ end }}
 
 {{ if ne .chezmoi.os "windows" }}

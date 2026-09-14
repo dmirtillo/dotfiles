@@ -20,6 +20,6 @@ This repository installs a wide variety of tools to ensure a consistent, modern 
 
 ## Git & AI
 - **Version Control:** `git`, `lazygit`, `gh`, `git-filter-repo`
-- **AI Tools:** `opencode`, `gemini-cli`
+- **AI Tools:** `opencode`, `gemini-cli`, `litellm` (proxy for Anthropic/Vertex AI)
 
 For the exact list of packages installed on each platform, see the `Brewfile` (macOS) and `Pacfile` (Arch Linux).
