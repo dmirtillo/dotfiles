@@ -788,11 +788,11 @@ office-format() {
     return 1
   fi
   
-  local status=0
-  for path in "${paths[@]}"; do
-    officecli set "$file" "$path" "$@" || status=1
+  local exit_status=0
+  for dom_path in "${paths[@]}"; do
+    officecli set "$file" "$dom_path" "$@" || exit_status=1
   done
   
   officecli close "$file" 2>/dev/null || true
-  return $status
+  return $exit_status
 }
