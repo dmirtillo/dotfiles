@@ -16,7 +16,7 @@
 #                       • ~/.config/tmuxai/config.yaml   (direct Gemini access)
 #   enable_antigravity - Enable Antigravity Python env manager
 # =============================================================================
-{{- $gitName := promptStringOnce . "git_name" "Git user name" -}}
+{{ $gitName := promptStringOnce . "git_name" "Git user name" -}}
 {{- $gitEmail := promptStringOnce . "git_email" "Git email address" -}}
 {{- $workEmail := promptStringOnce . "work_email" "Git work email address (leave empty to skip)" -}}
 {{- $sshKeys := promptStringOnce . "ssh_keys" "SSH key filenames in ~/.ssh/keys/ (comma-separated, leave empty for none)" -}}
