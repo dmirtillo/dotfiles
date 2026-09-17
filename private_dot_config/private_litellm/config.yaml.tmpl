@@ -32,51 +32,51 @@ model_list:
   - model_name: gemini-3.8-flash
     litellm_params:
       model: vertex_ai/gemini-3.8-flash
-      vertex_project: "{{ .gcloud_project }}"
-      vertex_location: "{{ .gcloud_location | default "global" }}"
+      vertex_project: "{{ get . "gcloud_project" }}"
+      vertex_location: "{{ (get . "gcloud_location") | default "global" }}"
 
   - model_name: gemini-2.5-flash
     litellm_params:
       model: vertex_ai/gemini-2.5-flash
-      vertex_project: "{{ .gcloud_project }}"
-      vertex_location: "{{ .gcloud_location | default "global" }}"
+      vertex_project: "{{ get . "gcloud_project" }}"
+      vertex_location: "{{ (get . "gcloud_location") | default "global" }}"
 
   - model_name: gemini-2.5-pro
     litellm_params:
       model: vertex_ai/gemini-2.5-pro
-      vertex_project: "{{ .gcloud_project }}"
-      vertex_location: "{{ .gcloud_location | default "global" }}"
-{{ if .gemini_api_key }}
+      vertex_project: "{{ get . "gcloud_project" }}"
+      vertex_location: "{{ (get . "gcloud_location") | default "global" }}"
+{{ if get . "gemini_api_key" }}
   # --- Gemini models (via Google AI Studio direct) ---
   - model_name: gemini-3.8-flash-direct
     litellm_params:
       model: gemini/gemini-3.8-flash
-      api_key: "{{ .gemini_api_key }}"
+      api_key: "{{ get . "gemini_api_key" }}"
 {{ end }}
   # --- Anthropic models (via Vertex AI, global endpoint) ---
   - model_name: claude-sonnet-5
     litellm_params:
       model: vertex_ai/claude-sonnet-5
-      vertex_project: "{{ .gcloud_project }}"
+      vertex_project: "{{ get . "gcloud_project" }}"
       vertex_location: "global"
 
   - model_name: claude-opus-5
     litellm_params:
       model: vertex_ai/claude-opus-5@default
-      vertex_project: "{{ .gcloud_project }}"
+      vertex_project: "{{ get . "gcloud_project" }}"
       vertex_location: "global"
 
   # --- xAI Grok models (via Vertex AI, global endpoint) ---
   - model_name: xai/grok-4.6
     litellm_params:
       model: vertex_ai/xai/grok-4.6
-      vertex_project: "{{ .gcloud_project }}"
+      vertex_project: "{{ get . "gcloud_project" }}"
       vertex_location: "global"
 
   - model_name: grok-4.6
     litellm_params:
       model: vertex_ai/xai/grok-4.6
-      vertex_project: "{{ .gcloud_project }}"
+      vertex_project: "{{ get . "gcloud_project" }}"
       vertex_location: "global"
 
 general_settings:

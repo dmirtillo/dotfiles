@@ -3,16 +3,16 @@
 # Managed by chezmoi
 # =============================================================================
 
-{{ if ne .gcloud_project "" -}}
+{{ if get . "gcloud_project" -}}
 # Google Cloud / Vertex AI Settings
 $env:GOOGLE_GENAI_USE_VERTEXAI="true"
-$env:GOOGLE_CLOUD_PROJECT="{{ .gcloud_project }}"
+$env:GOOGLE_CLOUD_PROJECT="{{ get . "gcloud_project" }}"
 $env:AGY_BUSINESS_PAYGO_TIER="true"
 $env:GCP_GE_PAYGO_TIER="true"
 {{ end -}}
 
-{{ if ne .gcloud_location "" -}}
-$env:GOOGLE_CLOUD_LOCATION="{{ .gcloud_location }}"
+{{ if get . "gcloud_location" -}}
+$env:GOOGLE_CLOUD_LOCATION="{{ get . "gcloud_location" }}"
 {{ end -}}
 
 # Function to aggressively cache tool initializations for fast startup

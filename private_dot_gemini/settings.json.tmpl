@@ -1,31 +1,31 @@
 {
   "security": {
     "auth": {
-      "selectedType": "vertex-ai"{{- if .gcloud_project }},
-      "enterpriseGcpProjectId": "{{ .gcloud_project }}"{{- end }}
+      "selectedType": "vertex-ai"{{- if get . "gcloud_project" }},
+      "enterpriseGcpProjectId": "{{ get . "gcloud_project" }}"{{- end }}
     }
-  }{{- if .gcloud_project }},
-  "enterpriseGcpProjectId": "{{ .gcloud_project }}",
+  }{{- if get . "gcloud_project" }},
+  "enterpriseGcpProjectId": "{{ get . "gcloud_project" }}",
   "billing": {
     "vertexAi": {
-      "projectId": "{{ .gcloud_project }}",
-      "location": "{{ .gcloud_location }}"
+      "projectId": "{{ get . "gcloud_project" }}",
+      "location": "{{ get . "gcloud_location" }}"
     }
   },
-  "projectId": "{{ .gcloud_project }}",
-  "location": "{{ .gcloud_location }}",
-  "gcpRegion": "{{ .gcloud_location }}"{{- end }},
+  "projectId": "{{ get . "gcloud_project" }}",
+  "location": "{{ get . "gcloud_location" }}",
+  "gcpRegion": "{{ get . "gcloud_location" }}"{{- end }},
   "mcpServers": {
     "gcp-cost": {
       "command": "{{ .chezmoi.homeDir }}/.local/share/mise/shims/gcp-cost-mcp-server",
       "env": {
-        "GOOGLE_CLOUD_PROJECT": "{{ .gcloud_project }}"
+        "GOOGLE_CLOUD_PROJECT": "{{ get . "gcloud_project" }}"
       }
-    }{{- if .aws_profile }},
+    }{{- if get . "aws_profile" }},
     "aws-pricing": {
       "command": "{{ if eq .chezmoi.os "darwin" }}/opt/homebrew/bin/uvx{{ else if eq .chezmoi.os "linux" }}/usr/bin/uvx{{ else }}uvx{{ end }}",
       "env": {
-        "AWS_PROFILE": "{{ .aws_profile }}",
+        "AWS_PROFILE": "{{ get . "aws_profile" }}",
         "AWS_REGION": "us-east-1",
         "HOME": "{{ .chezmoi.homeDir }}",
         "AWS_SHARED_CREDENTIALS_FILE": "{{ .chezmoi.homeDir }}/.aws/credentials"

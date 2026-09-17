@@ -38,12 +38,12 @@ models:
   gemini-fast:
     provider: "gemini"
     model: "gemini-3.8-flash"
-    api_key: "{{ .gemini_api_key }}"
+    api_key: "{{ get . "gemini_api_key" }}"
 
   gemini-pro:
     provider: "gemini"
     model: "gemini-3.8-flash"
-    api_key: "{{ .gemini_api_key }}"
+    api_key: "{{ get . "gemini_api_key" }}"
 
   claude-sonnet:
     provider: "openrouter"

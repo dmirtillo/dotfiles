@@ -18,7 +18,7 @@
       "npm": "@ai-sdk/google",
       "name": "Google AI Studio",
       "options": {
-        "apiKey": "{{ .gemini_api_key }}"
+        "apiKey": "{{ get . "gemini_api_key" }}"
       },
       "models": {
         "gemini-3.8-flash": {
@@ -56,14 +56,14 @@
       "type": "local",
       "command": ["{{ .chezmoi.homeDir }}/.local/share/mise/shims/gcp-cost-mcp-server"],
       "env": {
-        "GOOGLE_CLOUD_PROJECT": "{{ .gcloud_project }}"
+        "GOOGLE_CLOUD_PROJECT": "{{ get . "gcloud_project" }}"
       }
     }{{- if hasKey . "aws_profile" }},
     "aws-pricing": {
       "type": "local",
       "command": [
         "/usr/bin/env",
-        "AWS_PROFILE={{ .aws_profile }}",
+        "AWS_PROFILE={{ get . "aws_profile" }}",
         "AWS_REGION=us-east-1",
         "HOME={{ .chezmoi.homeDir }}",
         "AWS_SHARED_CREDENTIALS_FILE={{ .chezmoi.homeDir }}/.aws/credentials",
@@ -71,7 +71,7 @@
         "awslabs.aws-pricing-mcp-server"
       ],
       "env": {
-        "AWS_PROFILE": "{{ .aws_profile }}",
+        "AWS_PROFILE": "{{ get . "aws_profile" }}",
         "AWS_REGION": "us-east-1",
         "HOME": "{{ .chezmoi.homeDir }}",
         "AWS_SHARED_CREDENTIALS_FILE": "{{ .chezmoi.homeDir }}/.aws/credentials"

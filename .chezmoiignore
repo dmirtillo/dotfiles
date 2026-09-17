@@ -51,6 +51,6 @@ Documents/PowerShell
 *.pptx
 
 # Dynamically ignore work Git configuration if not set
-{{ if not .work_email }}
+{{ if not (get . "work_email") }}
 .gitconfig-work
 {{ end }}
