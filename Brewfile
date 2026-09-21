@@ -180,6 +180,7 @@ brew "yt-dlp"
 cask "handbrake-app"
 cask "iina"
 cask "jellyfin-media-player"
+cask "losslesscut"
 cask "obs"
 cask "vlc"
 

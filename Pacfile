@@ -209,6 +209,7 @@ officecli
 antigravity-cli
 litellm
 markitdown-bin
+losslesscut-bin
 
 # =============================================================================
 # MAIL
