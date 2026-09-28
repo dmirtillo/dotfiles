@@ -203,6 +203,7 @@ ttf-meslo-nerd-font-powerlevel10k
 ollama
 
 # AUR
+opencode-bin
 gemini-cli-git
 openspec
 officecli

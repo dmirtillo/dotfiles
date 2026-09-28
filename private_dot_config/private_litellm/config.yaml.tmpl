@@ -60,9 +60,9 @@ model_list:
       vertex_project: "{{ get . "gcloud_project" }}"
       vertex_location: "global"
 
-  - model_name: claude-opus-5
+  - model_name: claude-opus-5-5
     litellm_params:
-      model: vertex_ai/claude-opus-5@default
+      model: vertex_ai/claude-opus-5-5@default
       vertex_project: "{{ get . "gcloud_project" }}"
       vertex_location: "global"
 
