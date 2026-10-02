@@ -21,11 +21,10 @@ gemini extensions list
 ```
 
 **OpenCode CLI**
-1. In OpenCode v2, plugins are added dynamically from source:
-```bash
-opencode plugin add <package>
-```
-2. Note: Upstream `@dietrichgebert/ponytail` on npm is currently structured for OpenCode v1. Do not hardcode `"plugin": ["@dietrichgebert/ponytail"]` in `opencode.json` until upstream publishes an OpenCode v2-compatible export (`export default { id, setup }`).
+1. In OpenCode v2, plugins use the `{ id, setup(ctx) }` lifecycle. Upstream `@dietrichgebert/ponytail` on npm is currently structured for OpenCode v1 (PR #962 pending).
+2. To provide full Ponytail integration in OpenCode v2 without hardcoding broken v1 plugin entries into `opencode.json`:
+   - `@dietrichgebert/ponytail` is installed in `~/.config/opencode/node_modules/`
+   - An OpenCode v2 plugin bridge is deployed at `~/.config/opencode/plugins/ponytail.ts` (automatically handled by `run_onchange_setup-opencode.sh.tmpl`), registering commands (`/ponytail`), skills, and the system prompt injection hook.
 3. Mode persistence is stored in `~/.config/opencode/.ponytail-active` (e.g. `full`, `lite`, `ultra`, `off`).
 
 **Antigravity CLI**

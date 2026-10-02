@@ -38,6 +38,18 @@ fi
 
 # --- Install plugin SDK dependencies ---
 if [ -f "$OC_CONFIG/package.json" ]; then
+  node -e '
+  const fs = require("fs");
+  const p = "'"$OC_CONFIG"'/package.json";
+  try {
+    const pkg = JSON.parse(fs.readFileSync(p, "utf8"));
+    pkg.dependencies = pkg.dependencies || {};
+    if (!pkg.dependencies["@dietrichgebert/ponytail"]) {
+      pkg.dependencies["@dietrichgebert/ponytail"] = "^4.10.0";
+      fs.writeFileSync(p, JSON.stringify(pkg, null, 2) + "\n");
+    }
+  } catch (e) {}
+  '
   if command -v bun &>/dev/null; then
     echo "  Installing plugin dependencies via bun..."
     (cd "$OC_CONFIG" && bun install 2>&1 | sed 's/^/  /')
@@ -67,6 +79,123 @@ npx @opengsd/gsd-core@latest --opencode --global
 
 # Clean up obsolete V1 plugins installed by gsd-core or legacy hooks that break OpenCode V2
 rm -f "$OC_CONFIG/plugins/ecc-hooks.ts" "$OC_CONFIG/plugins/gsd-core.js" "$OC_CONFIG/plugins/package.json"
+
+# Deploy OpenCode V2 bridge for Ponytail plugin
+cat << 'PONYTAIL_EOF' > "$OC_CONFIG/plugins/ponytail.ts"
+import { createRequire } from 'module';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+
+const require = createRequire(import.meta.url);
+const mainFile = require.resolve('@dietrichgebert/ponytail');
+const ponytailPkgDir = path.resolve(path.dirname(mainFile), '../..');
+const { getPonytailInstructions } = require(path.join(ponytailPkgDir, 'hooks/ponytail-instructions'));
+const { getDefaultMode, normalizePersistedMode } = require(path.join(ponytailPkgDir, 'hooks/ponytail-config'));
+const { parseCommandFile } = require(path.join(ponytailPkgDir, '.opencode/plugins/ponytail-frontmatter.cjs'));
+
+const statePath = path.join(
+  process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config'),
+  'opencode',
+  '.ponytail-active',
+);
+
+function readMode() {
+  try {
+    return normalizePersistedMode(fs.readFileSync(statePath, 'utf8').trim()) || getDefaultMode();
+  } catch {
+    return getDefaultMode();
+  }
+}
+
+function writeMode(mode) {
+  fs.mkdirSync(path.dirname(statePath), { recursive: true });
+  fs.writeFileSync(statePath, mode);
+}
+
+function switchMode(text) {
+  const args = text.replace(/^\/ponytail\s*/, '').trim();
+  const mode = args ? normalizePersistedMode(args) : getDefaultMode();
+  if (mode) writeMode(mode);
+  return mode;
+}
+
+export default {
+  id: 'ponytail',
+  async setup(ctx) {
+    const ponytailSkillsDir = path.join(ponytailPkgDir, 'skills');
+    const commandDir = path.join(ponytailPkgDir, '.opencode/command');
+
+    // Register slash commands if command API exists
+    if (ctx.command?.transform) {
+      await ctx.command.transform((editor) => {
+        try {
+          for (const file of fs.readdirSync(commandDir).filter((f) => f.endsWith('.md'))) {
+            const name = path.basename(file, '.md');
+            const parsed = parseCommandFile(path.join(commandDir, file));
+            if (!parsed) continue;
+
+            editor.add({
+              name,
+              description: parsed.description || `ponytail ${name}`,
+              execute: async ({ sessionID, prompt, delivery }) => {
+                const text = prompt?.text || '';
+                if (name === 'ponytail') {
+                  const mode = switchMode(text);
+                  await ctx.session.prompt({
+                    ...prompt,
+                    sessionID,
+                    text: `ponytail mode: ${mode}`,
+                    delivery,
+                  });
+                } else {
+                  await ctx.session.prompt({
+                    ...prompt,
+                    sessionID,
+                    text: parsed.content || text,
+                    delivery,
+                  });
+                }
+              },
+            });
+          }
+        } catch (e) {
+          console.error('[ponytail] failed to register commands', e);
+        }
+      });
+    }
+
+    // Register skills if skill API exists
+    if (ctx.skill?.transform) {
+      await ctx.skill.transform((editor) => {
+        try {
+          for (const skillDir of fs.readdirSync(ponytailSkillsDir)) {
+            const skillPath = path.join(ponytailSkillsDir, skillDir);
+            if (!fs.statSync(skillPath).isDirectory()) continue;
+            editor.add({
+              id: `ponytail-${skillDir}`,
+              name: skillDir,
+              description: `ponytail ${skillDir}`,
+              path: skillPath,
+            });
+          }
+        } catch (e) {
+          console.error('[ponytail] failed to register skills', e);
+        }
+      });
+    }
+
+    // Inject ruleset into system prompt every turn
+    if (ctx.session?.hook) {
+      await ctx.session.hook('context', (event) => {
+        const mode = readMode();
+        if (mode === 'off') return;
+        event.system.push({ type: 'text', text: getPonytailInstructions(mode) });
+      });
+    }
+  },
+};
+PONYTAIL_EOF
 
 # --- Ensure OpenCode configuration and MCP servers ---
 echo "  Ensuring OpenCode configuration and MCP servers..."

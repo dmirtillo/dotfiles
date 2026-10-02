@@ -41,14 +41,23 @@ OpenCode was recently upgraded to v2.0.20, which uses a new plugin architecture:
 
 1. **Cleaned Active OpenCode Configuration**:
    - Removed the stale `"plugin": ["@dietrichgebert/ponytail"]` entry from `~/.config/opencode/opencode.json`.
-   - Verified with `opencode plugin list` and `opencode plugin check` that OpenCode now reports 0 errors and exits cleanly.
+   - Verified with `opencode plugin check` that OpenCode reports no package errors.
 
-2. **Automated Cleanup in Chezmoi Setup**:
-   - Updated `run_onchange_setup-opencode.sh.tmpl` to delete legacy `config.plugin` and strip `@dietrichgebert/ponytail` from `config.plugins` if present when regenerating OpenCode configuration.
+2. **Provided OpenCode V2 Compatible Bridge Plugin**:
+   - Installed `@dietrichgebert/ponytail` into `~/.config/opencode/node_modules/`.
+   - Created `~/.config/opencode/plugins/ponytail.ts` implementing the OpenCode v2 plugin API (`{ id: 'ponytail', async setup(ctx) }`).
+   - Wired slash commands (`/ponytail`), skills, and the system prompt injection hook (`ctx.session.hook('context')`).
+
+3. **Automated Setup in Chezmoi**:
+   - Updated `run_onchange_setup-opencode.sh.tmpl` to:
+     - Ensure `@dietrichgebert/ponytail` is in `~/.config/opencode/package.json`
+     - Deploy `$OC_CONFIG/plugins/ponytail.ts`
+     - Sanitize `opencode.json` of broken v1 `config.plugin` entries
 
 ## Verification
 
-- `opencode plugin list`: Returned `No plugins found`.
+- `opencode plugin list`: Returned `ponytail local /Users/dmirtillo/.config/opencode/plugins/ponytail.ts`.
+- `opencode api get /api/plugin`: Confirmed plugin status is `active`.
 - `opencode plugin check`: Returned `No package plugins found` (exit code 0).
-- OpenCode server logs: Verified no further `failed to load plugin` errors are logged.
+- OpenCode server logs: Verified no errors during plugin reconciliation.
 - `chezmoi diff`: Successfully rendered and displayed clean template output.
