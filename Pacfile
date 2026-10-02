@@ -204,6 +204,7 @@ ttf-meslo-nerd-font-powerlevel10k
 # =============================================================================
 ollama
 opencode
+python-httpx2
 
 # AUR
 openspec
