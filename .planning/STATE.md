@@ -76,8 +76,9 @@ progress:
 | 260914-p2r | check if tools installed with uv can be installed with aur or mise | 2026-09-14 | 22e115d | [260914-p2r-check-if-tools-installed-with-uv-can-be-](./quick/260914-p2r-check-if-tools-installed-with-uv-can-be-/) |
 | 260921-dgi | check if fable 5.1 is available from vertex ai endpoint global | 2026-09-21 | 9b99eb4 | [260921-dgi-check-if-fable-5-1-is-available-from-ver](./quick/260921-dgi-check-if-fable-5-1-is-available-from-ver/) |
 | 260921-l31 | add losslesscut-bin bin to aur pacfile and brewfile | 2026-09-21 | 41bc016 | [260921-l31-add-losslesscut-bin-bin-to-aur-pacfile-a](./quick/260921-l31-add-losslesscut-bin-bin-to-aur-pacfile-a/) |
+| 261002-erj | remove cask boltai as i dont have a license anymore | 2026-10-02 | 5478b11 | [261002-erj-remove-cask-boltai-as-i-dont-have-a-lice](./quick/261002-erj-remove-cask-boltai-as-i-dont-have-a-lice/) |
 
-Last activity: 2026-09-21 - Completed quick task 260921-l31: add losslesscut-bin bin to aur pacfile and brewfile
+Last activity: 2026-10-02 - Completed quick task 261002-erj: remove cask boltai as i dont have a license anymore
 | 2026-05-27 | fast | Change tmuxai plugin to gemini 3.5 | ✅ |
 | 2026-05-27 | fast | Revert tmuxai gemini-pro to 3.1-pro-preview | ✅ |
 | 2026-05-29 | fast | claude opus 4.8 should be the only available, is it working? i dont care for older versions of the model | ✅ |
