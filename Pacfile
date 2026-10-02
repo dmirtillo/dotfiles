@@ -201,9 +201,9 @@ ttf-meslo-nerd-font-powerlevel10k
 # AI / LLM TOOLS
 # =============================================================================
 ollama
+opencode
 
 # AUR
-opencode-bin
 openspec
 officecli
 antigravity-cli
