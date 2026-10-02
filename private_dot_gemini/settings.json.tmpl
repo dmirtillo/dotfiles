@@ -21,6 +21,15 @@
       "env": {
         "GOOGLE_CLOUD_PROJECT": "{{ get . "gcloud_project" }}"
       }
+    },
+    "gsd": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "-p",
+        "@opengsd/gsd-core",
+        "gsd-mcp-server"
+      ]
     }{{- if get . "aws_profile" }},
     "aws-pricing": {
       "command": "{{ if eq .chezmoi.os "darwin" }}/opt/homebrew/bin/uvx{{ else if eq .chezmoi.os "linux" }}/usr/bin/uvx{{ else }}uvx{{ end }}",
