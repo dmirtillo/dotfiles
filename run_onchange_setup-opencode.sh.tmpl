@@ -165,18 +165,6 @@ config.mcp["aws-pricing"] = {
 };
 {{ end }}
 
-config.mcp["gsd"] = {
-  type: "local",
-  command: [
-    "npx",
-    "-y",
-    "-p",
-    "@opengsd/gsd-core",
-    "gsd-mcp-server"
-  ],
-  enabled: true
-};
-
 fs.mkdirSync(path.dirname(configPath), { recursive: true });
 fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n');
 NODE_EOF
