@@ -86,6 +86,16 @@ if (fs.existsSync(configPath)) {
   }
 }
 
+// Clean up legacy V1 plugin field and incompatible plugins (e.g. ponytail which lacks V2 plugin exports)
+delete config.plugin;
+if (Array.isArray(config.plugins)) {
+  config.plugins = config.plugins.filter((p) => {
+    const name = typeof p === 'string' ? p : p?.package;
+    return name && !name.startsWith('@dietrichgebert/ponytail');
+  });
+  if (config.plugins.length === 0) delete config.plugins;
+}
+
 config.$schema = "https://opencode.ai/config.json";
 config.model = config.model || "google/gemini-3.8-flash";
 config.small_model = config.small_model || "google/gemini-3.8-flash";

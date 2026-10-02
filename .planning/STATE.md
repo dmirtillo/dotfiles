@@ -78,8 +78,9 @@ progress:
 | 260921-l31 | add losslesscut-bin bin to aur pacfile and brewfile | 2026-09-21 | 41bc016 | [260921-l31-add-losslesscut-bin-bin-to-aur-pacfile-a](./quick/260921-l31-add-losslesscut-bin-bin-to-aur-pacfile-a/) |
 | 261002-erj | remove cask boltai as i dont have a license anymore | 2026-10-02 | 5478b11 | [261002-erj-remove-cask-boltai-as-i-dont-have-a-lice](./quick/261002-erj-remove-cask-boltai-as-i-dont-have-a-lice/) |
 | 261002-u1m | review recent tasks and update documentation accordingly | 2026-10-02 | edd0f65 | [261002-u1m-review-recent-tasks-and-update-documentation-accordingly](./quick/261002-u1m-review-recent-tasks-and-update-documentation-accordingly/) |
+| 261002-pon | fix opencode plugin error for ponytail | 2026-10-02 | 5c5e465 | [261002-pon-fix-opencode-plugin-error-ponytail](./quick/261002-pon-fix-opencode-plugin-error-ponytail/) |
 
-Last activity: 2026-10-02 - Completed quick task 261002-u1m: review recent tasks and update documentation accordingly
+Last activity: 2026-10-02 - Completed quick task 261002-pon: fix opencode plugin error for ponytail
 | 2026-05-27 | fast | Change tmuxai plugin to gemini 3.5 | ✅ |
 | 2026-05-27 | fast | Revert tmuxai gemini-pro to 3.1-pro-preview | ✅ |
 | 2026-05-29 | fast | claude opus 4.8 should be the only available, is it working? i dont care for older versions of the model | ✅ |
