@@ -35,23 +35,32 @@ The `.zshrc` template includes ~100 aliases organized by category. Highlights:
 
 ---
 
-## OpenCode \+ GSD Integration
+## OpenCode + GSD Integration
 [Get Shit Done](https://github.com/open-gsd/gsd-core) (GSD) provides AI agent prompts, commands, skills, and workflows for OpenCode.
 
 ### How It Works
 
-1. **`run_onchange_setup-opencode.sh`** installs GSD globally via `npx @opengsd/gsd-core@latest --opencode --global`
-2. **Our customizations** (`opencode.json`, `AGENTS.md`, `package.json`) are deployed directly by chezmoi from `private_dot_config/private_opencode/`
+1. **`run_onchange_setup-opencode.sh`** installs GSD globally via `npx @opengsd/gsd-core@latest --opencode --global` and removes obsolete V1 plugin bridges.
+2. **Dynamic Configuration:** Rather than tracking static `opencode.json` files in git, `run_onchange_setup-opencode.sh` synthesizes providers, permissions, and Model Context Protocol (MCP) servers (`gcp-cost`, `aws-pricing`, `gsd`) automatically using Chezmoi secret variables (`gemini_api_key`, `gcloud_project`, etc.).
+3. **Plugins & Hooks:** Managed directly via native CLI commands (`opencode plugin add`) rather than being versioned in dotfiles, avoiding runtime conflicts across OpenCode versions.
 
-### Model Routing
+### Model Routing & Providers
 
-Agents are routed to different models based on task complexity:
+Models are configured via Google AI Studio and a local LiteLLM proxy:
 
-| Model | Agents | Rationale |
+| Provider / Model | Route | Usage |
 |---|---|---|
-| **Gemini 3.1 Pro** | `planner`, `architect`, `gsd-*` | Deep reasoning for complex planning and architecture |
-| **Gemini 3.1 Pro** (default) | `code-reviewer`, `security-reviewer`, `tdd-guide`, `e2e-runner`, `refactor-cleaner` | Best balance for code generation and review |
-| **Gemini 3.1 Flash** | `build-error-resolver`, `doc-updater` | Mechanical fixes and documentation |
+| **Gemini 3.8 Flash** | Google AI Studio direct (`@ai-sdk/google`) | Default primary & small model; fast, high-context generation |
+| **Claude Sonnet 5** | LiteLLM (`localhost:4000/v1` via Vertex AI) | Complex feature implementation, TDD, and code review |
+| **Claude Opus 5.5** | LiteLLM (`localhost:4000/v1` via Vertex AI) | Deep architectural reasoning and planning |
+| **xAI Grok 4.6** | LiteLLM (`localhost:4000/v1` via Vertex AI) | Alternative fast reasoning and verification |
+
+### Model Context Protocol (MCP)
+
+OpenCode and Gemini CLI connect to standardized local MCP servers:
+- **`gcp-cost`**: Live Google Cloud cost analysis and SKU pricing.
+- **`aws-pricing`**: AWS Pricing API and Bedrock architecture patterns.
+- **`gsd`**: Get Shit Done MCP server (`npx -y -p @opengsd/gsd-core gsd-mcp-server`) exposing command routing and state management tools.
 
 ### Updating GSD
 
