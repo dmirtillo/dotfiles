@@ -50,6 +50,10 @@ Documents/PowerShell
 *.docx
 *.pptx
 
+# OpenCode config and plugins managed directly / from source, not dotfiles
+.config/opencode/opencode.json
+.config/opencode/plugins/**
+
 # Dynamically ignore work Git configuration if not set
 {{ if not (get . "work_email") }}
 .gitconfig-work
