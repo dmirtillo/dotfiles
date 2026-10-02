@@ -67,3 +67,116 @@ npx @opengsd/gsd-core@latest --opencode --global
 
 # Clean up obsolete V1 plugins installed by gsd-core or legacy hooks that break OpenCode V2
 rm -f "$OC_CONFIG/plugins/ecc-hooks.ts" "$OC_CONFIG/plugins/gsd-core.js" "$OC_CONFIG/plugins/package.json"
+
+# --- Ensure OpenCode configuration and MCP servers ---
+echo "  Ensuring OpenCode configuration and MCP servers..."
+node << 'NODE_EOF'
+const fs = require('fs');
+const path = require('path');
+
+const configPath = path.join(process.env.HOME, '.config', 'opencode', 'opencode.json');
+let config = {};
+
+if (fs.existsSync(configPath)) {
+  try {
+    const raw = fs.readFileSync(configPath, 'utf8');
+    config = JSON.parse(raw.replace(/^\s*\/\/.*$/gm, ''));
+  } catch (e) {
+    config = {};
+  }
+}
+
+config.$schema = "https://opencode.ai/config.json";
+config.model = config.model || "google/gemini-3.8-flash";
+config.small_model = config.small_model || "google/gemini-3.8-flash";
+
+config.provider = config.provider || {};
+config.provider.google = {
+  npm: "@ai-sdk/google",
+  name: "Google AI Studio",
+  options: {
+    apiKey: "{{ get . "gemini_api_key" }}"
+  },
+  models: {
+    "gemini-3.8-flash": {
+      name: "Gemini 3.8 Flash"
+    }
+  }
+};
+
+config.provider.litellm = {
+  npm: "@ai-sdk/openai-compatible",
+  name: "LiteLLM (Vertex Proxy)",
+  options: {
+    baseURL: "http://localhost:4000/v1"
+  },
+  models: {
+    "claude-sonnet-5": {
+      name: "Claude Sonnet 5 (Vertex)"
+    },
+    "claude-opus-5-5": {
+      name: "Claude Opus 5.5 (Vertex)"
+    },
+    "gemini-3.8-flash": {
+      name: "Gemini 3.8 Flash (Vertex)"
+    },
+    "xai/grok-4.6": {
+      name: "Grok 4.6 (Vertex)"
+    }
+  }
+};
+
+config.permission = config.permission || {};
+config.permission["mcp_*"] = config.permission["mcp_*"] || "ask";
+config.permission.read = Object.assign({}, config.permission.read, {
+  "~/.config/opencode/gsd-core/*": "allow"
+});
+config.permission.external_directory = Object.assign({}, config.permission.external_directory, {
+  "~/.config/opencode/gsd-core/*": "allow"
+});
+
+config.mcp = config.mcp || {};
+config.mcp["gcp-cost"] = {
+  type: "local",
+  command: ["{{ .chezmoi.homeDir }}/.local/share/mise/shims/gcp-cost-mcp-server"],
+  env: {
+    GOOGLE_CLOUD_PROJECT: "{{ get . "gcloud_project" }}"
+  }
+};
+
+{{ if get . "aws_profile" }}
+config.mcp["aws-pricing"] = {
+  type: "local",
+  command: [
+    "/usr/bin/env",
+    "AWS_PROFILE={{ get . "aws_profile" }}",
+    "AWS_REGION=us-east-1",
+    "HOME={{ .chezmoi.homeDir }}",
+    "AWS_SHARED_CREDENTIALS_FILE={{ .chezmoi.homeDir }}/.aws/credentials",
+    "uvx",
+    "awslabs.aws-pricing-mcp-server"
+  ],
+  env: {
+    AWS_PROFILE: "{{ get . "aws_profile" }}",
+    AWS_REGION: "us-east-1",
+    HOME: "{{ .chezmoi.homeDir }}",
+    AWS_SHARED_CREDENTIALS_FILE: "{{ .chezmoi.homeDir }}/.aws/credentials"
+  }
+};
+{{ end }}
+
+config.mcp["gsd"] = {
+  type: "local",
+  command: [
+    "npx",
+    "-y",
+    "-p",
+    "@opengsd/gsd-core",
+    "gsd-mcp-server"
+  ],
+  enabled: true
+};
+
+fs.mkdirSync(path.dirname(configPath), { recursive: true });
+fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n');
+NODE_EOF
