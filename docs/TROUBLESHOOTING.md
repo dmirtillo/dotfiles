@@ -1,6 +1,7 @@
 # Troubleshooting
 
-## Troubleshooting
+## Chezmoi
+
 ### Check chezmoi health
 
 ```bash
@@ -62,6 +63,52 @@ ls -la ~/.cache/{brew-shellenv,fzf,zoxide,direnv,thefuck}.zsh
 ```
 
 If missing, open a new terminal — they regenerate automatically on first load.
+
+---
+
+## OpenCode CLI & Plugins
+
+### OpenCode warning: "Plugins are KO" or TypeScript errors
+OpenCode v2 strictly requires plugins to export `{ id: string, setup: (ctx) => void }` (or `Plugin.define`).
+Legacy v1 plugins (`module.exports = { server }` or `@opencode-ai/plugin` hooks) will fail to load.
+
+To clean up legacy hooks and verify:
+```bash
+# Check loaded plugins
+opencode plugin list
+
+# Verify MCP servers
+opencode mcp list
+
+# Test execution
+opencode run "ping"
+```
+
+### Dynamic configuration
+`~/.config/opencode/opencode.json` is not versioned in git to prevent machine-specific leakage. Instead, `chezmoi apply` (via `run_onchange_setup-opencode.sh.tmpl`) synthesizes your providers, models, and MCP servers (`gcp-cost`, `aws-pricing`, `gsd`) automatically.
+
+---
+
+## Gemini CLI Extensions & MCP
+
+### Extension status
+List installed extensions:
+```bash
+gemini extensions list
+```
+
+Install or update ponytail extension:
+```bash
+gemini extensions install https://github.com/DietrichGebert/ponytail --consent
+```
+
+### MCP server status
+List configured MCP servers:
+```bash
+gemini mcp list
+```
+
+---
 
 ## LiteLLM Proxy Issues
 

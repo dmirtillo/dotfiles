@@ -2,26 +2,33 @@
 
 ## Requirements
 
-- Provide smooth updates and correct hook integration for the OpenCode environment.
+- Provide smooth updates and correct MCP integration for OpenCode v2 and Gemini CLI.
 - Ensure GSD core updates do not overwrite custom skill folders.
+- Avoid tracking static `opencode.json` in git; synthesize configuration and MCP servers dynamically via Chezmoi apply.
 
 ## How to Build It
 
-1. Use `npx @opengsd/gsd-core@latest --opencode --global` to install the modern GSD toolchain.
-2. The installer will replace the old `get-shit-done-cc` structure, shifting files from `~/.config/opencode/get-shit-done/` to `~/.config/opencode/gsd-core/`.
-3. Custom skills (like `officecli` or `ponytail`) placed directly in `~/.config/opencode/skills/` are fully preserved during `gsd-core` updates; the core installer only touches `gsd-*` prefixed skills.
-4. `ponytail` can be installed via its plugin format in OpenCode `opencode.json` (`"plugin": ["@dietrichgebert/ponytail"]`) or via Gemini CLI's extensions manager.
+1. Use `npx @opengsd/gsd-core@latest --opencode --global` to stage workflows, commands, and skills.
+2. In OpenCode v2, GSD operates as an MCP server using `gsd-mcp-server` (`npx -y -p @opengsd/gsd-core gsd-mcp-server`).
+3. In Gemini CLI, GSD is registered as an MCP server under `mcpServers.gsd` in `~/.gemini/settings.json`.
+4. Chezmoi's `run_onchange_setup-opencode.sh.tmpl` automatically ensures `~/.config/opencode/opencode.json` contains:
+   - Google AI Studio provider for Gemini models
+   - LiteLLM proxy provider (`http://localhost:4000/v1`) for Claude and Grok models
+   - MCP servers: `gcp-cost`, `aws-pricing`, and `gsd`
+   - Permissions for GSD operations
+5. Obsolete OpenCode v1 plugins (like `plugins/gsd-core.js` and `plugins/ecc-hooks.ts`) are removed automatically during setup to avoid OpenCode v2 plugin loader crashes.
 
 ## What to Avoid
 
-- Do not manually delete the `gsd-*` skill folders to perform updates; rely on the `@opengsd/gsd-core` installer.
-- Ensure the old `get-shit-done-cc` is cleanly uninstalled using its `--uninstall` flag before transitioning to `@opengsd/gsd-core`.
+- Do not commit `~/.config/opencode/opencode.json` or plugin files to the dotfiles repository. Keep them in `.chezmoiignore` and configure them through `run_onchange_setup-opencode.sh.tmpl`.
+- Do not keep OpenCode v1 CommonJS plugins (`module.exports = { server }`) or v1 hook files in `~/.config/opencode/plugins/`. OpenCode v2 requires the new `export default { id, setup(ctx) }` plugin shape.
+- Do not manually delete `gsd-*` skill folders; rely on the `@opengsd/gsd-core` installer.
 
 ## Constraints
 
-- Update sequences for GSD rely on the `npm` cache and global installation mechanisms inside `~/.config/opencode/`.
+- OpenCode v2 loads plugins strictly using the v2 specification (`id` and `setup`/`effect`). Plugins that still use v1 exports must be loaded via v2 adapters or installed when updated upstream.
+- MCP servers in OpenCode can also be managed dynamically with `opencode mcp add --global <name> -- <command...>`.
 
 ## Origin
 
-Synthesized from spikes: 015, 016, 017, 021, 022, 023, 032
-Source files available in: sources/015-ponytail-opencode-config/, sources/016-ponytail-gemini-config/, sources/017-opencode-update-method/, sources/021-uninstall-old-gsd/, sources/022-install-new-gsd-core/, sources/023-gsd-core-compatibility/, sources/032-gsd-core-skill-collision/
+Synthesized from spikes: 015, 016, 017, 021, 022, 023, 032, and OpenCode v2 migration.

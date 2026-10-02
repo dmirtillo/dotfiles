@@ -2,45 +2,43 @@
 
 ## Requirements
 
-- Clients like OpenCode and Gemini CLI cannot "implicitly" inherit tools configured on the LiteLLM proxy without code modifications. (Note: this is related to MCP, but important context for CLI extensions).
+- Provide lazy senior developer principles and instructions across supported AI harnesses (Gemini CLI, Antigravity, and OpenCode).
+- Extensions and plugins must be installed and managed from upstream sources rather than committed as static vendor files in the dotfiles git repository.
 
 ## How to Build It
 
-To install and configure the Ponytail agent extension for the primary CLIs:
+**Gemini CLI**
+Gemini CLI uses a built-in extension manager:
+
+1. Install non-interactively with `--consent`:
+```bash
+gemini extensions install https://github.com/DietrichGebert/ponytail --consent
+```
+2. Automatically handled during `chezmoi apply` via `run_onchange_setup-gemini.sh.tmpl`.
+3. Verify status with:
+```bash
+gemini extensions list
+```
 
 **OpenCode CLI**
-OpenCode uses a JSON configuration file. Add `@dietrichgebert/ponytail` to the `plugin` array.
-
-1. Open `~/.config/opencode/opencode.json`
-2. Add the plugin:
-```json
-{
-  "plugin": [
-    "@dietrichgebert/ponytail"
-  ]
-}
-```
-OpenCode will automatically load the ponytail skill and its associated instructions.
-
-**Gemini CLI**
-Gemini CLI uses a built-in extension manager.
-
-1. Run the installation command:
+1. In OpenCode v2, plugins are added dynamically from source:
 ```bash
-echo "Y" | gemini extensions install https://github.com/DietrichGebert/ponytail
+opencode plugin add <package>
 ```
-This automatically downloads the skills, registers them in `~/.gemini/skills/`, and enables them.
+2. Note: Upstream `@dietrichgebert/ponytail` on npm is currently structured for OpenCode v1. Do not hardcode `"plugin": ["@dietrichgebert/ponytail"]` in `opencode.json` until upstream publishes an OpenCode v2-compatible export (`export default { id, setup }`).
+3. Mode persistence is stored in `~/.config/opencode/.ponytail-active` (e.g. `full`, `lite`, `ultra`, `off`).
+
+**Antigravity CLI**
+Handled during setup via:
+```bash
+agy plugin install https://github.com/DietrichGebert/ponytail
+```
 
 ## What to Avoid
 
-- Do not attempt to manually copy the `SKILL.md` files for Ponytail. Use the native extension mechanisms (OpenCode `plugin` array, Gemini `extensions install` command) so that updates and lifecycle hooks (like `ponytail-mode-tracker.js`) function correctly.
-
-## Constraints
-
-- OpenCode expects the plugin to exist in its own `node_modules` directory (`~/.config/opencode/node_modules/@dietrichgebert/ponytail`).
-- Gemini CLI requires user confirmation (the `[Y/n]` prompt) when installing extensions from GitHub, hence the `echo "Y" | ...` in automated setups.
+- Do not commit plugin implementation files or vendor copies into the dotfiles repository.
+- Do not track `opencode.json` or `plugins/` in git; manage them via Chezmoi setup scripts and native CLI extension commands.
 
 ## Origin
 
-Synthesized from spikes: 015, 016
-Source files available in: sources/015-ponytail-opencode-config/, sources/016-ponytail-gemini-config/
+Synthesized from spikes: 015, 016, 041, 042, and OpenCode v2 transition.
