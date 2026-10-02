@@ -1,7 +1,6 @@
 # =============================================================================
 # TAPS
 # =============================================================================
-tap "anomalyco/tap"
 tap "gromgit/fuse"
 tap "hashicorp/tap"
 tap "localstack/tap"
@@ -208,7 +207,7 @@ cask "font-hack-nerd-font"
 # =============================================================================
 # AI / LLM TOOLS
 # =============================================================================
-brew "anomalyco/tap/opencode" # tracks v1.15.11
+brew "opencode"
 cask "boltai"
 
 # =============================================================================
@@ -422,8 +421,6 @@ brew "typst"
 # Next-generation plugin manager for zsh
 # UNIX shell (command interpreter)
 # Additional completion definitions for zsh
-# The AI coding agent built for the terminal.
-brew "anomalyco/tap/opencode", trusted: true
 # Packer
 brew "hashicorp/tap/packer", trusted: true
 # Localstack cli packaged using pyinstaller
