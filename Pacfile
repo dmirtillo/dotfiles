@@ -166,7 +166,6 @@ imagemagick
 yt-dlp
 unace
 unarj
-unrar
 unzip
 zip
 cdrtools
@@ -177,11 +176,14 @@ cdrtools
 iotop
 lsof
 mc
-neofetch
+fastfetch
 screen
 viu
 dos2unix
 goaccess
+fail2ban
+tailscale
+reflector
 # watch is provided by procps-ng on Arch (installed by default)
 
 # =============================================================================
@@ -209,7 +211,6 @@ officecli
 antigravity-cli
 litellm
 markitdown-bin
-losslesscut-bin
 
 # =============================================================================
 # MAIL
