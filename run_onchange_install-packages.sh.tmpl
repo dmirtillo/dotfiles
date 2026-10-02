@@ -116,10 +116,14 @@ mkdir -p "$HOME/.local/share/litellm"
 
 # (Re)load and enable the litellm systemd user service so changes take effect immediately.
 if [ -f "$HOME/.config/systemd/user/litellm.service" ] && command -v systemctl &>/dev/null; then
+  export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
   echo "  [packages] Reloading litellm systemd user service..."
-  systemctl --user daemon-reload
-  systemctl --user enable --now litellm 2>&1 | sed 's/^/  /' || true
-  echo "  [packages] LiteLLM proxy service active."
+  if systemctl --user daemon-reload 2>/dev/null; then
+    systemctl --user enable --now litellm 2>&1 | sed 's/^/  /' || true
+    echo "  [packages] LiteLLM proxy service active."
+  else
+    echo "  [packages] Note: Systemd user bus not accessible; skipping litellm service reload."
+  fi
 fi
 
 echo "  Done."
