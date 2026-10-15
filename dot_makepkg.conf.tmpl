@@ -1,0 +1,10 @@
+{{ if eq .chezmoi.os "linux" -}}
+# =============================================================================
+# makepkg.conf - User configuration for makepkg
+# Managed by chezmoi - do not edit directly
+# =============================================================================
+
+# Sanitize PATH during makepkg builds so tools use Arch system packages
+# rather than user-level version manager shims (e.g. mise, nvm, pyenv)
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
+{{ end -}}

@@ -1,6 +1,8 @@
 [tools]
 node = "lts"
+{{- if ne .chezmoi.os "linux" }}
 python = "3.13"
+{{- end }}
 go = "latest"
 terraform = "latest"
 "npm:@opengsd/gsd-core" = "latest"

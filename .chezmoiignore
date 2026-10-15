@@ -34,6 +34,7 @@ private_Library
 # Linux-only files
 Pacfile
 .config/systemd
+.makepkg.conf
 {{ end }}
 
 {{ if ne .chezmoi.os "windows" }}
