@@ -214,7 +214,6 @@ brew "opencode"
 # =============================================================================
 cask "amazon-chime"
 cask "android-platform-tools"
-cask "antigravity"
 cask "anydesk"
 cask "applepi-baker"
 cask "balenaetcher"
