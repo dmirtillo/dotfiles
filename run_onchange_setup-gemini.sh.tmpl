@@ -1,8 +1,18 @@
 #!/bin/bash
 # hash: {{ include "private_dot_gemini/settings.json.tmpl" | sha256sum }}
+# hash_mise: {{ include "dot_mise.toml.tmpl" | sha256sum }}
+# hash_patch: {{ include "dot_local/bin/executable_patch-gemini-cli" | sha256sum }}
 
 set -euo pipefail
 
 if command -v gemini >/dev/null 2>&1; then
     (cd /tmp && gemini extensions install https://github.com/DietrichGebert/ponytail --consent || true)
 fi
+
+# Whitelist OpenSpec flags in Gemini CLI to prevent untrusted flags false-positives
+if [ -x "$HOME/.local/bin/patch-gemini-cli" ]; then
+    "$HOME/.local/bin/patch-gemini-cli" || true
+elif [ -f "{{ .chezmoi.sourceDir }}/dot_local/bin/executable_patch-gemini-cli" ]; then
+    bash "{{ .chezmoi.sourceDir }}/dot_local/bin/executable_patch-gemini-cli" || true
+fi
+

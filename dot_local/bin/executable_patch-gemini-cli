@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# =============================================================================
+# Whitelist OpenSpec and common flags in Gemini CLI's safe flags list
+# Prevents false-positive "Untrusted Command Flags Detected" security prompts.
+# =============================================================================
+
+if ! command -v node >/dev/null 2>&1; then
+    echo "[patch-gemini-cli] Node.js is required but not found in PATH." >&2
+    exit 0
+fi
+
+node -e '
+const fs = require("fs");
+const path = require("path");
+const cp = require("child_process");
+
+const candidateDirs = new Set();
+const miseBase = path.join(process.env.HOME, ".local/share/mise/installs/npm-google-gemini-cli");
+if (fs.existsSync(miseBase)) candidateDirs.add(miseBase);
+
+try {
+  const geminiBin = cp.execSync("which gemini 2>/dev/null").toString().trim();
+  if (geminiBin) {
+    const realBin = fs.realpathSync(geminiBin);
+    candidateDirs.add(path.dirname(path.dirname(realBin)));
+  }
+} catch (e) {}
+
+function findChunks(dir) {
+  let results = [];
+  try {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        results = results.concat(findChunks(fullPath));
+      } else if (entry.isFile() && entry.name.startsWith("chunk-") && entry.name.endsWith(".js")) {
+        results.push(fullPath);
+      }
+    }
+  } catch (e) {}
+  return results;
+}
+
+const flagsToAdd = [
+  "--change",
+  "--json",
+  "--schema",
+  "--specs",
+  "--store",
+  "--skip-sync",
+  "--force"
+];
+
+const chunkFiles = new Set();
+for (const dir of candidateDirs) {
+  for (const f of findChunks(dir)) {
+    chunkFiles.add(f);
+  }
+}
+
+let patchedCount = 0;
+for (const file of chunkFiles) {
+  let content = fs.readFileSync(file, "utf8");
+  const target = "SAFE_LONG_FLAGS = /* @__PURE__ */ new Set([";
+  const idx = content.indexOf(target);
+  if (idx !== -1) {
+    if (!content.includes("\"--change\"")) {
+      const replacement = target + "\n  " + flagsToAdd.map(f => JSON.stringify(f)).join(",\n  ") + ",";
+      content = content.replace(target, replacement);
+      fs.writeFileSync(file, content, "utf8");
+      console.log("[patch-gemini-cli] Patched:", file);
+      patchedCount++;
+    } else {
+      console.log("[patch-gemini-cli] Already patched:", file);
+    }
+  }
+}
+
+if (patchedCount > 0) {
+  console.log(`[patch-gemini-cli] Successfully patched ${patchedCount} chunk file(s).`);
+} else {
+  console.log("[patch-gemini-cli] Gemini CLI bundle files are up to date.");
+}
+'
