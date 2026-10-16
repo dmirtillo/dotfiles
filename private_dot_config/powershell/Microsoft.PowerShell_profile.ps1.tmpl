@@ -1,0 +1,477 @@
+# =============================================================================
+# PowerShell Profile
+# Managed by chezmoi
+# =============================================================================
+
+{{ if get . "gcloud_project" -}}
+# Google Cloud / Vertex AI Settings
+$env:GOOGLE_GENAI_USE_VERTEXAI="true"
+$env:GOOGLE_CLOUD_PROJECT="{{ get . "gcloud_project" }}"
+$env:AGY_BUSINESS_PAYGO_TIER="true"
+$env:GCP_GE_PAYGO_TIER="true"
+{{ end -}}
+
+{{ if get . "gcloud_location" -}}
+$env:GOOGLE_CLOUD_LOCATION="{{ get . "gcloud_location" }}"
+{{ end -}}
+
+# Function to aggressively cache tool initializations for fast startup
+function Invoke-CachedEval {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Name,
+
+        [Parameter(Mandatory=$true)]
+        [string]$Command
+    )
+
+    $tempDir = if ($env:TMPDIR) { $env:TMPDIR } elseif ($env:TEMP) { $env:TEMP } else { "/tmp" }
+    $cacheDir = Join-Path $tempDir "ps_cache"
+    if (!(Test-Path $cacheDir)) {
+        New-Item -ItemType Directory -Force -Path $cacheDir | Out-Null
+    }
+
+    $cacheFile = Join-Path $cacheDir "$Name.ps1"
+    
+    $bin = Get-Command $Name -ErrorAction SilentlyContinue
+
+    if ($bin) {
+        $binPath = $bin.Source
+        if ($binPath -and (Test-Path $binPath)) {
+            $binAge = (Get-Item $binPath).LastWriteTime
+        } else {
+            $binAge = (Get-Date).AddYears(-1)
+        }
+
+        $needsUpdate = $true
+        if (Test-Path $cacheFile) {
+            $cacheAge = (Get-Item $cacheFile).LastWriteTime
+            if ($cacheAge -gt $binAge) {
+                $needsUpdate = $false
+            }
+        }
+
+        if ($needsUpdate) {
+            Invoke-Expression $Command | Out-File -FilePath $cacheFile -Encoding utf8
+        }
+
+        . $cacheFile
+    }
+}
+
+# =============================================================================
+# Tool Initializations
+# =============================================================================
+
+# Oh My Posh
+if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
+{{- if eq .chezmoi.os "windows" }}
+    Invoke-CachedEval "oh-my-posh" "oh-my-posh init pwsh --config ~/AppData/Local/Programs/oh-my-posh/themes/jandedobbeleer.omp.json"
+{{- else }}
+    Invoke-CachedEval "oh-my-posh" "oh-my-posh init pwsh"
+{{- end }}
+}
+
+# Zoxide
+if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+    Invoke-CachedEval "zoxide" "zoxide init powershell"
+}
+
+# Mise
+if (Get-Command mise -ErrorAction SilentlyContinue) {
+    Invoke-CachedEval "mise" "mise activate powershell"
+}
+
+# ============================================================================
+# PATH MODIFICATIONS
+# ============================================================================
+
+$sep = [System.IO.Path]::PathSeparator
+$miseShims = Join-Path $HOME ".local/share/mise/shims"
+if ((Test-Path $miseShims) -and -not ($env:PATH -split $sep -contains $miseShims)) {
+    $env:PATH = "$miseShims$sep$($env:PATH)"
+}
+{{- if eq .chezmoi.os "darwin" }}
+$brewBins = @("/opt/homebrew/bin", "/opt/homebrew/sbin")
+foreach ($p in $brewBins) {
+    if ((Test-Path $p) -and -not ($env:PATH -split $sep -contains $p)) {
+        $env:PATH = "$p$sep$($env:PATH)"
+    }
+}
+{{- end }}
+
+# ============================================================================
+# PRODUCTIVITY ALIASES AND FUNCTIONS
+# ============================================================================
+
+# Navigation
+function .. { Set-Location .. }
+function ... { Set-Location ..\.. }
+function .... { Set-Location ..\..\.. }
+function ~ { Set-Location ~ }
+
+# Enhanced ls commands (using eza, a modern ls replacement)
+if (Get-Command eza -ErrorAction SilentlyContinue) {
+    function ls { eza --color=auto --icons @args }
+    function ll { eza -alF --icons --git @args }
+    function la { eza -a --icons @args }
+    function l { eza -F --icons @args }
+    function lt { eza -l --sort=modified @args }
+    function lh { eza -l --icons @args }
+    function lsize { eza -l --sort=size @args }
+    function ltree { eza --tree --level=2 --icons @args }
+    function t1 { eza --tree --level=1 @args }
+    function t2 { eza --tree --level=2 @args }
+    function t3 { eza --tree --level=3 @args }
+}
+
+# Directory operations
+function md { New-Item -ItemType Directory -Force -Path $args }
+function desktop { Set-Location "$HOME/Desktop" }
+function downloads { Set-Location "$HOME/Downloads" }
+function documents { Set-Location "$HOME/Documents" }
+function projects { Set-Location "$HOME/projects" }
+
+# Git Enhancements
+function gst { git status @args }
+function gco { git checkout @args }
+function gcb { git checkout -b @args }
+function gp { git push @args }
+function gpl { git pull @args }
+function gf { git fetch @args }
+function gm { git merge @args }
+function gr { git rebase @args }
+function glog { git log --oneline --graph --decorate @args }
+function gclean { git clean -fd @args }
+function greset { git reset --hard HEAD @args }
+function gb { git branch @args }
+function gbd { git branch -d @args }
+function gbD { git branch -D @args }
+function gba { git branch -a @args }
+function gwip { git add -A; git commit -m "WIP" }
+function gunwip { 
+    $lastLog = git log -n 1
+    if ($lastLog -match "WIP") {
+        git reset HEAD~1
+    }
+}
+function gundo { git reset --soft HEAD~1 @args }
+function gclone {
+    param([Parameter(Mandatory=$true)][string]$Url)
+    git clone $Url
+    $DirName = ($Url -split '/')[-1] -replace '\.git$',''
+    Set-Location $DirName
+}
+
+# Python shortcuts
+function py { python @args }
+function venv { python -m venv @args }
+function pipr { pip install -r requirements.txt }
+function pipf { pip freeze > requirements.txt }
+
+# Docker shortcuts
+if (Get-Command docker -ErrorAction SilentlyContinue) {
+    Set-Alias -Name d -Value docker -Option AllScope
+    function dc { docker compose @args }
+    function dcu { docker compose up @args }
+    function dcd { docker compose down @args }
+    function dcb { docker compose build @args }
+    function dcr { docker compose restart @args }
+    function dps { docker ps @args }
+    function dpsa { docker ps -a @args }
+    function di { docker images @args }
+    function drm { docker rm @args }
+    function drmi { docker rmi @args }
+    function dprune { docker system prune -f @args }
+}
+
+# System Utilities
+if (Get-Command procs -ErrorAction SilentlyContinue) {
+    function psg { procs --tree @args }
+}
+function myip { (Invoke-RestMethod -Uri "https://ipinfo.io/ip").Trim() }
+
+{{- if eq .chezmoi.os "darwin" }}
+function localip { ipconfig getifaddr en0 }
+function ports { lsof -i -P @args }
+function listening { lsof -i -P | Select-String "LISTEN" }
+function kport {
+    param([Parameter(Mandatory=$true)][string]$Port)
+    $pids = lsof -ti ":$Port"
+    if ($pids) {
+        Write-Host "Killing processes on port ${Port}: $pids"
+        $pids | ForEach-Object { kill -9 $_ }
+    } else {
+        Write-Host "No process found running on port $Port"
+    }
+}
+{{- else if eq .chezmoi.os "linux" }}
+function localip { (hostname -I).Split()[0] }
+function ports { ss -tulpn @args }
+function listening { ss -tulpn | Select-String "LISTEN" }
+function kport {
+    param([Parameter(Mandatory=$true)][string]$Port)
+    fuser -k $Port/tcp
+}
+{{- else }}
+function localip { (Test-Connection -ComputerName $env:COMPUTERNAME -Count 1).IPv4Address.IPAddressToString }
+function ports { netstat -ano @args }
+function listening { netstat -ano | Select-String "LISTENING" }
+function kport {
+    param([Parameter(Mandatory=$true)][string]$Port)
+    $Matches = (netstat -ano | Select-String ":$Port\s+.*\s+(\d+)")
+    if ($Matches) {
+        $Pids = $Matches | ForEach-Object { $_.Matches.Groups[1].Value } | Select-Object -Unique
+        Write-Host "Killing processes on port ${Port}: $Pids"
+        foreach ($p in $Pids) { Stop-Process -Id $p -Force -ErrorAction SilentlyContinue }
+    } else {
+        Write-Host "No process found running on port $Port"
+    }
+}
+{{- end }}
+Set-Alias -Name killport -Value kport -Option AllScope
+
+# Disk usage
+if (Get-Command dust -ErrorAction SilentlyContinue) {
+    Set-Alias -Name du -Value dust -Option AllScope
+    function ducks { dust -r -n 10 @args }
+}
+if (Get-Command duf -ErrorAction SilentlyContinue) {
+    Set-Alias -Name df -Value duf -Option AllScope
+    Set-Alias -Name diskspace -Value duf -Option AllScope
+}
+
+# History aliases
+Set-Alias -Name h -Value history -Option AllScope
+function hg { history | Select-String @args }
+function hs { history | Select-String @args }
+
+# ============================================================================
+# USEFUL FUNCTIONS
+# ============================================================================
+
+function mkcd {
+    param([Parameter(Mandatory=$true)][string]$Path)
+    New-Item -ItemType Directory -Force -Path $Path | Out-Null
+    Set-Location $Path
+}
+
+function extract {
+    param([Parameter(Mandatory=$true)][string]$Path)
+    if (Test-Path $Path) {
+        if ($Path -match '\.zip$') { Expand-Archive -Path $Path -DestinationPath . }
+        elseif ($Path -match '\.tar\.gz$|\.tgz$|\.tar$') { tar xf $Path }
+        else { Write-Host "Format not supported by extract function natively in PowerShell." }
+    } else {
+        Write-Host "'$Path' is not a valid file"
+    }
+}
+
+if (Get-Command fd -ErrorAction SilentlyContinue) {
+    function findfile { fd --type f @args }
+    function finddir { fd --type d @args }
+}
+
+function weather {
+    param([string]$Location = "Rome")
+    $url = "wttr.in/$Location"
+    curl -s $url
+}
+
+function backup {
+    param([Parameter(Mandatory=$true)][string]$Path)
+    $DateStr = Get-Date -Format "yyyyMMdd_HHmmss"
+    Copy-Item -Path $Path -Destination "$Path.backup.$DateStr"
+}
+
+if (Get-Command rg -ErrorAction SilentlyContinue) {
+    function search { rg $args[0] . }
+}
+
+function sizeof { (Get-Item $args[0]).Length }
+
+# ============================================================================
+# MODERN TOOL INTEGRATIONS
+# ============================================================================
+if (Get-Command bat -ErrorAction SilentlyContinue) {
+    Set-Alias -Name cat -Value bat -Option AllScope
+    function catp { bat @args }
+    function batdiff { git diff --name-only --diff-filter=d | ForEach-Object { bat --diff $_ } }
+}
+
+if (Get-Command lazygit -ErrorAction SilentlyContinue) {
+    Set-Alias -Name lg -Value lazygit -Option AllScope
+}
+if (Get-Command lazydocker -ErrorAction SilentlyContinue) {
+    Set-Alias -Name lzd -Value lazydocker -Option AllScope
+}
+
+# Terraform shortcuts
+if (Get-Command terraform -ErrorAction SilentlyContinue) {
+    Set-Alias -Name tf -Value terraform -Option AllScope
+    function tfi { terraform init @args }
+    function tfp { terraform plan @args }
+    function tfa { terraform apply @args }
+    function tfs { terraform show @args }
+    function tfo { terraform output @args }
+    function tfv { terraform validate @args }
+    function tfw { terraform workspace @args }
+}
+
+# Ansible shortcuts
+if (Get-Command ansible-playbook -ErrorAction SilentlyContinue) {
+    function ap { ansible-playbook @args }
+    function apv { ansible-playbook --ask-vault-pass @args }
+    function apc { ansible-playbook --check --diff @args }
+    function av { ansible-vault @args }
+    function ave { ansible-vault encrypt @args }
+    function avd { ansible-vault decrypt @args }
+    function avv { ansible-vault view @args }
+    function al { ansible-lint @args }
+    function ai { ansible-inventory --graph @args }
+}
+
+if (Get-Command gping -ErrorAction SilentlyContinue) {
+    Set-Alias -Name ping -Value gping -Option AllScope
+}
+if (Get-Command tldr -ErrorAction SilentlyContinue) {
+    Set-Alias -Name help -Value tldr -Option AllScope
+}
+if (Get-Command ncdu -ErrorAction SilentlyContinue) {
+    Set-Alias -Name diskexplore -Value ncdu -Option AllScope
+}
+if (Get-Command btm -ErrorAction SilentlyContinue) {
+    Set-Alias -Name btm -Value btm -Option AllScope
+    Set-Alias -Name sysmon -Value btm -Option AllScope
+}
+
+# ============================================================================
+# AGENT CLI WRAPPERS (officecli + markitdown)
+# ============================================================================
+
+function office-read {
+    param([string]$file)
+    if ([string]::IsNullOrEmpty($file)) {
+        Write-Host "Usage: office-read <file>"
+        return
+    }
+    # Explicitly flush resident mode changes to disk before reading
+    & officecli close $file 2>$null
+    # Multimodal OCR is omitted by default for performance
+    & uv run --prerelease=allow --with 'markitdown[all]==0.1.6' markitdown $file
+}
+
+function office-write {
+    param([string]$file, [string]$find_str, [string]$replace_str)
+    if ([string]::IsNullOrEmpty($file) -or [string]::IsNullOrEmpty($find_str) -or [string]::IsNullOrEmpty($replace_str)) {
+        Write-Host "Usage: office-write <file> <find> <replace>"
+        return
+    }
+    # Execute writes globally using text replacement
+    & officecli set $file / --find $find_str --replace $replace_str
+    $exitCode = $LASTEXITCODE
+    # Sequentially flush to prevent zip corruption
+    & officecli close $file 2>$null
+    return $exitCode
+}
+
+function office-query {
+    param([string]$file, [string]$text)
+    if ([string]::IsNullOrEmpty($file) -or [string]::IsNullOrEmpty($text)) {
+        Write-Host "Usage: office-query <file> <text>"
+        return
+    }
+    & officecli close $file 2>$null
+    $jsonOutput = & officecli query $file ":contains(`"$text`")" --json | Out-String
+    $queryResult = $jsonOutput | ConvertFrom-Json
+    if ($queryResult.data.results) {
+        foreach ($result in $queryResult.data.results) {
+            Write-Output "Match: $($result.text)"
+            Write-Output "Path: $($result.path)"
+            Write-Output "Type: $($result.type)"
+            Write-Output "---"
+        }
+    }
+}
+
+function office-format {
+    param([string]$file, [string]$text)
+    
+    $props = $args
+    if ([string]::IsNullOrEmpty($file) -or [string]::IsNullOrEmpty($text) -or $props.Count -eq 0) {
+        Write-Error "Usage: office-format <file> <text> <property> [value]..."
+        return 1
+    }
+    
+    $valid_props = @("text", "style", "alignment", "bold", "italic", "font", "size", "color", "spaceBefore", "spaceAfter", "spaceBeforeLines", "spaceAfterLines", "lineSpacing", "indent", "liststyle", "formula", "direction", "bidi", "fill", "background", "x", "y", "w", "h", "width", "height")
+    
+    $i = 0
+    while ($i -lt $props.Count) {
+        $arg = $props[$i]
+        $key = ""
+        
+        if ($arg -eq "--prop") {
+            if ($i + 1 -ge $props.Count) {
+                Write-Error "Error: Missing value for --prop"
+                return 1
+            }
+            $next_arg = $props[$i+1]
+            $key = $next_arg.Split('=')[0]
+            $i += 2
+        } elseif ($arg.StartsWith("--prop=")) {
+            $key_val = $arg.Substring(7)
+            $key = $key_val.Split('=')[0]
+            $i += 1
+        } else {
+            $i += 1
+            continue
+        }
+        
+        $is_valid = $false
+        foreach ($valid_prop in $valid_props) {
+            if ($key -eq $valid_prop -or $key.StartsWith("font.") -or $key.StartsWith("underline.") -or $key.StartsWith("anchor.")) {
+                $is_valid = $true
+                break
+            }
+        }
+        
+        if (-not $is_valid) {
+            Write-Error "Error: Invalid formatting property '$key'"
+            return 1
+        }
+    }
+    
+    & officecli close $file 2>$null
+    
+    $jsonOutput = & officecli query $file ":contains(`"$text`")" --json | Out-String
+    try {
+        $queryResult = $jsonOutput | ConvertFrom-Json
+        if ($queryResult.data.results -is [array]) {
+            $paths = $queryResult.data.results.path
+        } elseif ($queryResult.data.results) {
+            $paths = @($queryResult.data.results.path)
+        } else {
+            $paths = $null
+        }
+    } catch {
+        $paths = $null
+    }
+    
+    if (-not $paths -or $paths.Count -eq 0) {
+        Write-Error "Error: Text not found in document"
+        return 1
+    }
+    
+    $status = 0
+    foreach ($path in $paths) {
+        if (-not [string]::IsNullOrEmpty($path)) {
+            & officecli set $file $path @props
+            if ($LASTEXITCODE -ne 0) {
+                $status = $LASTEXITCODE
+            }
+        }
+    }
+    
+    & officecli close $file 2>$null
+    return $status
+}

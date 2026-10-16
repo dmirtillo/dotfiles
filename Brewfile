@@ -36,6 +36,7 @@ brew "maven"
 # SHELL
 # =============================================================================
 brew "antidote"
+brew "powershell"
 brew "tmux"
 brew "zsh"
 brew "zsh-completions"

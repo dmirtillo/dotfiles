@@ -79,8 +79,9 @@ progress:
 | 261002-erj | remove cask boltai as i dont have a license anymore | 2026-10-02 | 5478b11 | [261002-erj-remove-cask-boltai-as-i-dont-have-a-lice](./quick/261002-erj-remove-cask-boltai-as-i-dont-have-a-lice/) |
 | 261002-u1m | review recent tasks and update documentation accordingly | 2026-10-02 | edd0f65 | [261002-u1m-review-recent-tasks-and-update-documentation-accordingly](./quick/261002-u1m-review-recent-tasks-and-update-documentation-accordingly/) |
 | 261002-pon | fix opencode plugin error for ponytail | 2026-10-02 | 5c5e465 | [261002-pon-fix-opencode-plugin-error-ponytail](./quick/261002-pon-fix-opencode-plugin-error-ponytail/) |
+| 261016-pws | set up powershell on mac and test it from ghostty tmux terminal | 2026-10-16 | 2e5a0e9 | [261016-pws-setup-powershell-on-mac](./quick/261016-pws-setup-powershell-on-mac/) |
 
-Last activity: 2026-10-02 - Completed quick task 261002-pon: fix opencode plugin error for ponytail
+Last activity: 2026-10-16 - Completed quick task 261016-pws: set up powershell on mac and test it from ghostty tmux terminal
 | 2026-05-27 | fast | Change tmuxai plugin to gemini 3.5 | ✅ |
 | 2026-05-27 | fast | Revert tmuxai gemini-pro to 3.1-pro-preview | ✅ |
 | 2026-05-29 | fast | claude opus 4.8 should be the only available, is it working? i dont care for older versions of the model | ✅ |
