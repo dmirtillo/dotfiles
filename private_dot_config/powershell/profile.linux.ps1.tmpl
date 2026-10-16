@@ -1,0 +1,52 @@
+# =============================================================================
+# Linux-Specific PowerShell Profile
+# =============================================================================
+
+# Linuxbrew Environment (if installed)
+$linuxbrewBins = @("/home/linuxbrew/.linuxbrew/bin", "/home/linuxbrew/.linuxbrew/sbin")
+$sep = [System.IO.Path]::PathSeparator
+foreach ($p in $linuxbrewBins) {
+    if ((Test-Path $p) -and -not ($env:PATH -split $sep -contains $p)) {
+        $env:PATH = "$p$sep$($env:PATH)"
+    }
+}
+
+# Directory Shortcuts
+function desktop { Set-Location "$HOME/Desktop" }
+function downloads { Set-Location "$HOME/Downloads" }
+function documents { Set-Location "$HOME/Documents" }
+
+# Networking & Ports
+function localip { (hostname -I).Trim().Split()[0] }
+function ports { ss -tulpn @args }
+function listening { ss -tulpn | Select-String "LISTEN" }
+
+function kport {
+    param([Parameter(Mandatory=$true)][string]$Port)
+    $pids = fuser "$Port/tcp" 2>$null
+    if ($pids) {
+        Write-Host "Killing processes on port ${Port}: $pids"
+        fuser -k "$Port/tcp"
+    } else {
+        Write-Host "No process found running on port $Port"
+    }
+}
+Set-Alias -Name killport -Value kport -Option AllScope
+
+# Linux System & Package Management (Arch / Pacman / Yay parity)
+if (Get-Command yay -ErrorAction SilentlyContinue) {
+    function update { yay -Syu @args }
+} elseif (Get-Command pacman -ErrorAction SilentlyContinue) {
+    function update { sudo pacman -Syu @args }
+}
+
+function syslog { journalctl -xe @args }
+
+function flushdns {
+    if (Get-Command resolvectl -ErrorAction SilentlyContinue) {
+        sudo resolvectl flush-caches
+    } elseif (Get-Command systemd-resolve -ErrorAction SilentlyContinue) {
+        sudo systemd-resolve --flush-caches
+    }
+    Write-Host "DNS cache flushed."
+}

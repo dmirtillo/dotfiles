@@ -384,6 +384,13 @@ alias cleanup='rm -rf ~/.Trash/* 2>/dev/null; echo "Trash cleaned."'
 alias flushdns='sudo dscacheutil -flushcache'
 alias emptytrash='rm -rfv ~/.Trash/* 2>/dev/null; echo "Trash emptied."'
 alias 7z='7zz'
+
+# Cloudflare API (token in Keychain: cloudflare-api-token)
+export CF_API_TOKEN="$(security find-generic-password -s cloudflare-api-token -w 2>/dev/null)"
+cfapi() {
+  curl -s -H "Authorization: Bearer $CF_API_TOKEN" -H "Content-Type: application/json" \
+       "https://api.cloudflare.com/client/v4$1" "${@:2}"
+}
 {{ else if eq .chezmoi.os "linux" -}}
 # Linux Specific
 alias flushdns='sudo systemd-resolve --flush-caches 2>/dev/null || sudo resolvectl flush-caches 2>/dev/null'

@@ -1,5 +1,5 @@
 # =============================================================================
-# PowerShell Profile
+# PowerShell Profile (Common Core)
 # Managed by chezmoi
 # =============================================================================
 
@@ -60,17 +60,8 @@ function Invoke-CachedEval {
 }
 
 # =============================================================================
-# Tool Initializations
+# Modern Tool Initializations
 # =============================================================================
-
-# Oh My Posh
-if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
-{{- if eq .chezmoi.os "windows" }}
-    Invoke-CachedEval "oh-my-posh" "oh-my-posh init pwsh --config ~/AppData/Local/Programs/oh-my-posh/themes/jandedobbeleer.omp.json"
-{{- else }}
-    Invoke-CachedEval "oh-my-posh" "oh-my-posh init pwsh"
-{{- end }}
-}
 
 # Zoxide
 if (Get-Command zoxide -ErrorAction SilentlyContinue) {
@@ -82,26 +73,15 @@ if (Get-Command mise -ErrorAction SilentlyContinue) {
     Invoke-CachedEval "mise" "mise activate powershell"
 }
 
-# ============================================================================
-# PATH MODIFICATIONS
-# ============================================================================
-
+# Prepend mise shims to PATH
 $sep = [System.IO.Path]::PathSeparator
 $miseShims = Join-Path $HOME ".local/share/mise/shims"
 if ((Test-Path $miseShims) -and -not ($env:PATH -split $sep -contains $miseShims)) {
     $env:PATH = "$miseShims$sep$($env:PATH)"
 }
-{{- if eq .chezmoi.os "darwin" }}
-$brewBins = @("/opt/homebrew/bin", "/opt/homebrew/sbin")
-foreach ($p in $brewBins) {
-    if ((Test-Path $p) -and -not ($env:PATH -split $sep -contains $p)) {
-        $env:PATH = "$p$sep$($env:PATH)"
-    }
-}
-{{- end }}
 
 # ============================================================================
-# PRODUCTIVITY ALIASES AND FUNCTIONS
+# Productivity Aliases and Functions
 # ============================================================================
 
 # Navigation
@@ -110,7 +90,7 @@ function ... { Set-Location ..\.. }
 function .... { Set-Location ..\..\.. }
 function ~ { Set-Location ~ }
 
-# Enhanced ls commands (using eza, a modern ls replacement)
+# Enhanced ls commands (eza)
 if (Get-Command eza -ErrorAction SilentlyContinue) {
     function ls { eza --color=auto --icons @args }
     function ll { eza -alF --icons --git @args }
@@ -127,9 +107,6 @@ if (Get-Command eza -ErrorAction SilentlyContinue) {
 
 # Directory operations
 function md { New-Item -ItemType Directory -Force -Path $args }
-function desktop { Set-Location "$HOME/Desktop" }
-function downloads { Set-Location "$HOME/Downloads" }
-function documents { Set-Location "$HOME/Documents" }
 function projects { Set-Location "$HOME/projects" }
 
 # Git Enhancements
@@ -191,46 +168,6 @@ if (Get-Command procs -ErrorAction SilentlyContinue) {
 }
 function myip { (Invoke-RestMethod -Uri "https://ipinfo.io/ip").Trim() }
 
-{{- if eq .chezmoi.os "darwin" }}
-function localip { ipconfig getifaddr en0 }
-function ports { lsof -i -P @args }
-function listening { lsof -i -P | Select-String "LISTEN" }
-function kport {
-    param([Parameter(Mandatory=$true)][string]$Port)
-    $pids = lsof -ti ":$Port"
-    if ($pids) {
-        Write-Host "Killing processes on port ${Port}: $pids"
-        $pids | ForEach-Object { kill -9 $_ }
-    } else {
-        Write-Host "No process found running on port $Port"
-    }
-}
-{{- else if eq .chezmoi.os "linux" }}
-function localip { (hostname -I).Split()[0] }
-function ports { ss -tulpn @args }
-function listening { ss -tulpn | Select-String "LISTEN" }
-function kport {
-    param([Parameter(Mandatory=$true)][string]$Port)
-    fuser -k $Port/tcp
-}
-{{- else }}
-function localip { (Test-Connection -ComputerName $env:COMPUTERNAME -Count 1).IPv4Address.IPAddressToString }
-function ports { netstat -ano @args }
-function listening { netstat -ano | Select-String "LISTENING" }
-function kport {
-    param([Parameter(Mandatory=$true)][string]$Port)
-    $Matches = (netstat -ano | Select-String ":$Port\s+.*\s+(\d+)")
-    if ($Matches) {
-        $Pids = $Matches | ForEach-Object { $_.Matches.Groups[1].Value } | Select-Object -Unique
-        Write-Host "Killing processes on port ${Port}: $Pids"
-        foreach ($p in $Pids) { Stop-Process -Id $p -Force -ErrorAction SilentlyContinue }
-    } else {
-        Write-Host "No process found running on port $Port"
-    }
-}
-{{- end }}
-Set-Alias -Name killport -Value kport -Option AllScope
-
 # Disk usage
 if (Get-Command dust -ErrorAction SilentlyContinue) {
     Set-Alias -Name du -Value dust -Option AllScope
@@ -246,10 +183,7 @@ Set-Alias -Name h -Value history -Option AllScope
 function hg { history | Select-String @args }
 function hs { history | Select-String @args }
 
-# ============================================================================
-# USEFUL FUNCTIONS
-# ============================================================================
-
+# Useful Functions
 function mkcd {
     param([Parameter(Mandatory=$true)][string]$Path)
     New-Item -ItemType Directory -Force -Path $Path | Out-Null
@@ -290,9 +224,7 @@ if (Get-Command rg -ErrorAction SilentlyContinue) {
 
 function sizeof { (Get-Item $args[0]).Length }
 
-# ============================================================================
-# MODERN TOOL INTEGRATIONS
-# ============================================================================
+# Modern CLI tools
 if (Get-Command bat -ErrorAction SilentlyContinue) {
     Set-Alias -Name cat -Value bat -Option AllScope
     function catp { bat @args }
@@ -355,9 +287,7 @@ function office-read {
         Write-Host "Usage: office-read <file>"
         return
     }
-    # Explicitly flush resident mode changes to disk before reading
     & officecli close $file 2>$null
-    # Multimodal OCR is omitted by default for performance
     & uv run --prerelease=allow --with 'markitdown[all]==0.1.6' markitdown $file
 }
 
@@ -367,10 +297,8 @@ function office-write {
         Write-Host "Usage: office-write <file> <find> <replace>"
         return
     }
-    # Execute writes globally using text replacement
     & officecli set $file / --find $find_str --replace $replace_str
     $exitCode = $LASTEXITCODE
-    # Sequentially flush to prevent zip corruption
     & officecli close $file 2>$null
     return $exitCode
 }
@@ -474,4 +402,21 @@ function office-format {
     
     & officecli close $file 2>$null
     return $status
+}
+
+# =============================================================================
+# Load OS-Specific Profile
+# =============================================================================
+$profileDir = if ($PSScriptRoot) { $PSScriptRoot } else { Join-Path $HOME ".config/powershell" }
+
+$osScript = if ($IsMacOS) {
+    Join-Path $profileDir "profile.darwin.ps1"
+} elseif ($IsLinux) {
+    Join-Path $profileDir "profile.linux.ps1"
+} elseif ($IsWindows) {
+    Join-Path $profileDir "profile.windows.ps1"
+}
+
+if ($osScript -and (Test-Path $osScript)) {
+    . $osScript
 }

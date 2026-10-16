@@ -1,0 +1,65 @@
+# =============================================================================
+# macOS-Specific PowerShell Profile
+# =============================================================================
+
+# Homebrew Environment
+$sep = [System.IO.Path]::PathSeparator
+{{- if eq .chezmoi.arch "arm64" }}
+$brewBins = @("/opt/homebrew/bin", "/opt/homebrew/sbin")
+{{- else }}
+$brewBins = @("/usr/local/bin", "/usr/local/sbin")
+{{- end }}
+
+foreach ($p in $brewBins) {
+    if ((Test-Path $p) -and -not ($env:PATH -split $sep -contains $p)) {
+        $env:PATH = "$p$sep$($env:PATH)"
+    }
+}
+
+# Colima / Docker Host (macOS container runtime)
+$colimaSock = "$HOME/.colima/default/docker.sock"
+if (Test-Path $colimaSock) {
+    $env:DOCKER_HOST = "unix://$colimaSock"
+}
+function colima-start { colima start @args }
+function colima-stop { colima stop @args }
+
+# Directory Shortcuts
+function desktop { Set-Location "$HOME/Desktop" }
+function downloads { Set-Location "$HOME/Downloads" }
+function documents { Set-Location "$HOME/Documents" }
+
+# Networking & Ports
+function localip { ipconfig getifaddr en0 }
+function ports { lsof -i -P @args }
+function listening { lsof -i -P | Select-String "LISTEN" }
+
+function kport {
+    param([Parameter(Mandatory=$true)][string]$Port)
+    $pids = lsof -ti ":$Port"
+    if ($pids) {
+        Write-Host "Killing processes on port ${Port}: $pids"
+        $pids | ForEach-Object { kill -9 $_ }
+    } else {
+        Write-Host "No process found running on port $Port"
+    }
+}
+Set-Alias -Name killport -Value kport -Option AllScope
+
+# macOS System Utilities
+function showfiles { defaults write com.apple.finder AppleShowAllFiles YES; killall Finder }
+function hidefiles { defaults write com.apple.finder AppleShowAllFiles NO; killall Finder }
+function cleanup { 
+    Remove-Item -Recurse -Force "$HOME/.Trash/*" -ErrorAction SilentlyContinue
+    Write-Host "Trash cleaned."
+}
+function emptytrash { cleanup }
+function flushdns { 
+    sudo dscacheutil -flushcache
+    sudo killall -HUP mDNSResponder
+    Write-Host "DNS cache flushed."
+}
+
+if (Get-Command 7zz -ErrorAction SilentlyContinue) {
+    Set-Alias -Name 7z -Value 7zz -Option AllScope
+}

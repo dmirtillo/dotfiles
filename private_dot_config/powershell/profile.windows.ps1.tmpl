@@ -1,0 +1,36 @@
+# =============================================================================
+# Windows-Specific PowerShell Profile
+# =============================================================================
+
+# Require RemoteSigned for scripts
+if ((Get-ExecutionPolicy) -ne 'RemoteSigned' -and (Get-ExecutionPolicy) -ne 'Unrestricted') {
+    Write-Warning "Execution Policy is $((Get-ExecutionPolicy)). Recommend: Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"
+}
+
+# Oh-my-posh (Windows prompt theme)
+if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
+    Invoke-CachedEval "oh-my-posh" "oh-my-posh init pwsh --config ~/AppData/Local/Programs/oh-my-posh/themes/jandedobbeleer.omp.json"
+}
+
+# Directory Shortcuts
+function desktop { Set-Location "$env:USERPROFILE\Desktop" }
+function downloads { Set-Location "$env:USERPROFILE\Downloads" }
+function documents { Set-Location "$env:USERPROFILE\Documents" }
+
+# Networking & Ports
+function localip { (Test-Connection -ComputerName $env:COMPUTERNAME -Count 1).IPv4Address.IPAddressToString }
+function ports { netstat -ano @args }
+function listening { netstat -ano | Select-String "LISTENING" }
+
+function kport {
+    param([Parameter(Mandatory=$true)][string]$Port)
+    $Matches = (netstat -ano | Select-String ":$Port\s+.*\s+(\d+)")
+    if ($Matches) {
+        $Pids = $Matches | ForEach-Object { $_.Matches.Groups[1].Value } | Select-Object -Unique
+        Write-Host "Killing processes on port ${Port}: $Pids"
+        foreach ($p in $Pids) { Stop-Process -Id $p -Force -ErrorAction SilentlyContinue }
+    } else {
+        Write-Host "No process found running on port $Port"
+    }
+}
+Set-Alias -Name killport -Value kport -Option AllScope
