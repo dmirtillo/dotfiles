@@ -29,6 +29,12 @@
 
 model_list:
   # --- Gemini models (via Vertex AI, global endpoint) ---
+  - model_name: gemini-4-argon
+    litellm_params:
+      model: vertex_ai/gemini-4-argon
+      vertex_project: "{{ get . "gcloud_project" }}"
+      vertex_location: "{{ (get . "gcloud_location") | default "global" }}"
+
   - model_name: gemini-3.8-flash
     litellm_params:
       model: vertex_ai/gemini-3.8-flash
@@ -48,6 +54,11 @@ model_list:
       vertex_location: "{{ (get . "gcloud_location") | default "global" }}"
 {{ if get . "gemini_api_key" }}
   # --- Gemini models (via Google AI Studio direct) ---
+  - model_name: gemini-4-argon-direct
+    litellm_params:
+      model: gemini/gemini-4-argon
+      api_key: "{{ get . "gemini_api_key" }}"
+
   - model_name: gemini-3.8-flash-direct
     litellm_params:
       model: gemini/gemini-3.8-flash

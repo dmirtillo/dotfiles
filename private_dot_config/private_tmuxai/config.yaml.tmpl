@@ -42,7 +42,12 @@ models:
 
   gemini-pro:
     provider: "gemini"
-    model: "gemini-3.8-flash"
+    model: "gemini-4-argon"
+    api_key: "{{ get . "gemini_api_key" }}"
+
+  gemini-argon:
+    provider: "gemini"
+    model: "gemini-4-argon"
     api_key: "{{ get . "gemini_api_key" }}"
 
   claude-sonnet:

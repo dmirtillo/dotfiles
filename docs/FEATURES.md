@@ -51,6 +51,7 @@ Models are configured via Google AI Studio and a local LiteLLM proxy:
 | Provider / Model | Route | Usage |
 |---|---|---|
 | **Gemini 3.8 Flash** | Google AI Studio direct (`@ai-sdk/google`) | Default primary & small model; fast, high-context generation |
+| **Gemini 4 Argon** | Google AI Studio direct / LiteLLM | Advanced reasoning, high-capability analysis |
 | **Claude Sonnet 5** | LiteLLM (`localhost:4000/v1` via Vertex AI) | Complex feature implementation, TDD, and code review |
 | **Claude Opus 5.5** | LiteLLM (`localhost:4000/v1` via Vertex AI) | Deep architectural reasoning and planning |
 | **xAI Grok 4.6** | LiteLLM (`localhost:4000/v1` via Vertex AI) | Alternative fast reasoning and verification |

@@ -5,7 +5,7 @@ set -euo pipefail
 # switch-models — Hot-swap OpenCode's active LLM provider
 #
 # Usage:
-#   switch-models gemini     Set all pro agents to Gemini 3.1 Pro (direct)
+#   switch-models gemini     Set all pro agents to Gemini 4 Argon (direct)
 #   switch-models anthropic  Set all pro agents to Claude Sonnet 4.6 (via LiteLLM)
 #   switch-models status     Show current model configuration (default)
 #
@@ -36,7 +36,7 @@ set -euo pipefail
 
 CONFIG="${OPENCODE_CONFIG:-$HOME/.config/opencode/opencode.json}"
 
-GEMINI_PRO="google/gemini-3.8-flash"
+GEMINI_PRO="google/gemini-4-argon"
 GEMINI_FLASH="google/gemini-3.8-flash"
 ANTHROPIC_PRO="google-vertex-anthropic/claude-sonnet-5"
 
