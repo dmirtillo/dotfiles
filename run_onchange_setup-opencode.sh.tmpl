@@ -342,13 +342,18 @@ config.mcp["officecli"] = {
   type: "local",
   command: ["{{ .chezmoi.homeDir }}/.local/bin/officecli", "mcp"]
 };
-const gridcraftBin = fs.existsSync('/opt/homebrew/bin/gridcraft-cli')
-  ? '/opt/homebrew/bin/gridcraft-cli'
-  : (fs.existsSync('/usr/local/bin/gridcraft-cli') ? '/usr/local/bin/gridcraft-cli' : 'gridcraft-cli');
-config.mcp["gridcraft"] = {
-  type: "local",
-  command: [gridcraftBin, "mcp"]
-};
+// Craft app suite MCP servers (gridcraft/pdfcraft/wordcraft/photocraft CLIs).
+// Resolve each binary across Homebrew prefixes (macOS) and PATH (Linux), where
+// the AUR packages install to /usr/bin. DeckCraft ships no CLI/MCP server.
+for (const name of ["gridcraft", "pdfcraft", "wordcraft", "photocraft"]) {
+  const bin = `/opt/homebrew/bin/${name}-cli`;
+  const binLocal = `/usr/local/bin/${name}-cli`;
+  const resolved = fs.existsSync(bin) ? bin : (fs.existsSync(binLocal) ? binLocal : `${name}-cli`);
+  config.mcp[name] = {
+    type: "local",
+    command: [resolved, "mcp"]
+  };
+}
 config.mcp["gcp-cost"] = {
   type: "local",
   command: ["{{ .chezmoi.homeDir }}/.local/share/mise/shims/gcp-cost-mcp-server"],
