@@ -52,7 +52,28 @@ models:
 
   claude-sonnet:
     provider: "openrouter"
-    model: "claude-sonnet-5"
+    model: "claude-sonnet-5-5"
+    api_key: "noop"
+    base_url: "http://localhost:4000/v1"
+    # Routes via local LiteLLM proxy → Vertex AI (gcloud ADC, no real API key needed)
+
+  claude-haiku:
+    provider: "openrouter"
+    model: "claude-haiku-5-5"
+    api_key: "noop"
+    base_url: "http://localhost:4000/v1"
+    # Routes via local LiteLLM proxy → Vertex AI (gcloud ADC, no real API key needed)
+
+  deepseek-flash:
+    provider: "openrouter"
+    model: "deepseek-4.1-flash"
+    api_key: "noop"
+    base_url: "http://localhost:4000/v1"
+    # Routes via local LiteLLM proxy → Vertex AI (gcloud ADC, no real API key needed)
+
+  grok:
+    provider: "openrouter"
+    model: "grok-4.7"
     api_key: "noop"
     base_url: "http://localhost:4000/v1"
     # Routes via local LiteLLM proxy → Vertex AI (gcloud ADC, no real API key needed)

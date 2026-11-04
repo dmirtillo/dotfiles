@@ -80,8 +80,9 @@ progress:
 | 261002-u1m | review recent tasks and update documentation accordingly | 2026-10-02 | edd0f65 | [261002-u1m-review-recent-tasks-and-update-documentation-accordingly](./quick/261002-u1m-review-recent-tasks-and-update-documentation-accordingly/) |
 | 261002-pon | fix opencode plugin error for ponytail | 2026-10-02 | 5c5e465 | [261002-pon-fix-opencode-plugin-error-ponytail](./quick/261002-pon-fix-opencode-plugin-error-ponytail/) |
 | 261016-pws | set up powershell on mac and test it from ghostty tmux terminal | 2026-10-16 | 2e5a0e9 | [261016-pws-setup-powershell-on-mac](./quick/261016-pws-setup-powershell-on-mac/) |
+| 261104-vtx | update vertex models on litellm and opencode (add deepseek 4.1 flash, grok 4.7, haiku 5.5, sonnet 5.5, add costs) | 2026-11-04 | a91dddb | [261104-vtx-update-vertex-models-litellm-opencode](./quick/261104-vtx-update-vertex-models-litellm-opencode/) |
 
-Last activity: 2026-10-16 - Completed quick task 261016-pws: set up powershell on mac and test it from ghostty tmux terminal
+Last activity: 2026-11-04 - Completed quick task 261104-vtx: update vertex models on litellm and opencode
 | 2026-05-27 | fast | Change tmuxai plugin to gemini 3.5 | ✅ |
 | 2026-05-27 | fast | Revert tmuxai gemini-pro to 3.1-pro-preview | ✅ |
 | 2026-05-29 | fast | claude opus 4.8 should be the only available, is it working? i dont care for older versions of the model | ✅ |

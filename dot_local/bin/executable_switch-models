@@ -38,7 +38,7 @@ CONFIG="${OPENCODE_CONFIG:-$HOME/.config/opencode/opencode.json}"
 
 GEMINI_PRO="google/gemini-4-argon"
 GEMINI_FLASH="google/gemini-3.8-flash"
-ANTHROPIC_PRO="google-vertex-anthropic/claude-sonnet-5"
+ANTHROPIC_PRO="litellm/claude-sonnet-5-5"
 
 readonly CONFIG GEMINI_PRO GEMINI_FLASH ANTHROPIC_PRO
 
