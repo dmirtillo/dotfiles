@@ -1,0 +1,30 @@
+### BITBUCKET PROFILES ###
+
+# Personal profile (default)
+Host bitbucket.org bitbucket-personal
+  HostName bitbucket.org
+  User git
+{{- if and (hasKey . "bitbucket_personal_key") .bitbucket_personal_key }}
+  IdentityFile ~/.ssh/keys/{{ .bitbucket_personal_key }}
+{{- end }}
+  IdentitiesOnly yes
+
+# Sysadmin profile
+Host bitbucket-sysadmin
+  HostName bitbucket.org
+  User git
+{{- if and (hasKey . "bitbucket_sysadmin_key") .bitbucket_sysadmin_key }}
+  IdentityFile ~/.ssh/keys/{{ .bitbucket_sysadmin_key }}
+{{- end }}
+  IdentitiesOnly yes
+
+# Company profile (placeholder - dedicated key to be versioned in systools)
+Host bitbucket-work bitbucket-company
+  HostName bitbucket.org
+  User git
+{{- if and (hasKey . "bitbucket_company_key") .bitbucket_company_key }}
+  IdentityFile ~/.ssh/keys/{{ .bitbucket_company_key }}
+{{- else }}
+  # IdentityFile ~/.ssh/keys/<bitbucket-company-key>
+{{- end }}
+  IdentitiesOnly yes

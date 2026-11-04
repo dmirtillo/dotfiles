@@ -4,17 +4,39 @@
 {{ if eq .chezmoi.os "darwin" -}}
 [credential]
 	helper = osxkeychain
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
 {{ else if eq .chezmoi.os "linux" -}}
 [credential]
 	helper = cache --timeout=86400
+[credential "https://github.com"]
+	helper = 
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !gh auth git-credential
 {{ else -}}
 [credential]
 	helper = store
+[credential "https://github.com"]
+	helper = 
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !gh auth git-credential
 {{ end -}}
 [core]
 	editor = vim
 [init]
 	defaultBranch = main
+
+# Rewrite Bitbucket HTTPS to SSH
+[url "git@bitbucket.org:"]
+	insteadOf = https://bitbucket.org/
 
 # Work email overrides -- add these locally per-repo or use includeIf:
 # git config --local user.email "your.work@email.com"
