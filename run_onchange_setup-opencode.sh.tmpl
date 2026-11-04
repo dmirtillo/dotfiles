@@ -338,6 +338,10 @@ config.permission.external_directory = Object.assign({}, config.permission.exter
 });
 
 config.mcp = config.mcp || {};
+config.mcp["officecli"] = {
+  type: "local",
+  command: ["{{ .chezmoi.homeDir }}/.local/bin/officecli", "mcp"]
+};
 config.mcp["gcp-cost"] = {
   type: "local",
   command: ["{{ .chezmoi.homeDir }}/.local/share/mise/shims/gcp-cost-mcp-server"],
