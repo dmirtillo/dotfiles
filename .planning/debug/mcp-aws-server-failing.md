@@ -1,6 +1,6 @@
 ---
 status: resolved
-trigger: the mcp server for aws is failing.. the credentials are in .aws directory in my home, can't you just use those?
+trigger: "the mcp server for aws is failing.. the credentials are in .aws directory in my home, can't you just use those?"
 symptoms:
   expected: The server authenticates properly using credentials in ~/.aws/
   actual: The server returns: "Failed to retrieve service codes from AWS API: Unable to locate credentials"

@@ -19,14 +19,26 @@ Zero-friction provisioning of a high-performance (sub-50ms) shell environment an
 | Secrets handled via chezmoi data | Eliminates the need for a separate secret manager in the critical path; keeps secrets out of the repo entirely. | Interactive prompts on `chezmoi init`. |
 | Documentation parity | Messy documentation leads to configuration drift and forgotten tools. | Every feature/tool addition must include a README/docs update. |
 
+## Requirements
+See: .planning/REQUIREMENTS.md for full requirements inventory and traceability matrix.
+
+- DOCS-01, TOOL-01: Documentation update workflow and cross-OS package parity (Phase 1, Complete)
+- WIN-02: Windows package management via Chocolatey & Winget (Phase 2, Complete)
+- WIN-01: PowerShell profile parity with Zsh workflow (Phase 3 & quick task 261016-pws, Complete)
+- DEP-01: Core dependency version alignment (Phase 4, Complete)
+- BREW-01: Brewfile sync automation (Phase 5, Complete)
+- CORE-01: Core spike knowledge integration (Phase 6, Complete)
+- CORE-02: Antigravity CLI BYOK implementation (Phase 7, Complete)
+- CORE-03: OfficeCLI hybrid markitdown workflow (Phase 8, Complete)
+
 ## Target Users
 - Davide Mirtillo (Primary Developer)
 
 ## Current State
-Phase 04 complete — Dependency Bump finished. The latest versions of `opencode` (v1.14.35) and `litellm` (v1.83.14) have been enforced.
+All phases (01-08) complete. UAT verified for core CLI tools, OfficeCLI/Markitdown hybrid workflows, and Craft app suite integrations.
 
 ---
-*Last updated: 2026-05-05*
+*Last updated: 2026-11-16*
 
 ## Evolution
 
