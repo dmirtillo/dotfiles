@@ -169,14 +169,14 @@
 **Depends on:** Phase 10
 **Success criteria:**
 
-1. Startup claims updated to the measured ~95ms (hyperfine) in `dot_zshrc.tmpl`, `AGENTS.md`, `docs/`, `PROJECT.md`, `REQUIREMENTS.md`; budget is realistic (e.g. <120ms).
+1. Startup claims updated to ~96ms (hyperfine), budget `<120ms`. Now ~81ms after removing the keychain call at startup.
 2. `office-read/write/query/format` removed from zshrc and the PowerShell profile (officecli validates props itself).
 3. Aliases identical to OMZ plugins and unused/dead aliases removed; `gr`/`h` conflicts resolved.
 4. `sizeof` uses `command du -sh`.
 
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
-- [ ] 11-01-PLAN.md — Docs numbers, office-* removal, alias audit, du fix
+- [x] 11-01-PLAN.md — Docs numbers, office-* removal, alias audit, du fix
 
 ### Phase 12: OpenCode and LiteLLM setup fixes
 

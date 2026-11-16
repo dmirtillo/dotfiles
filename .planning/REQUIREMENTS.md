@@ -30,12 +30,12 @@ These requirements are already satisfied by the existing codebase.
 - [x] **HYG-04**: `.chezmoiignore`/`.gitignore` fixed; no repo files leak into `$HOME`.
 - [ ] **SEC-01**: No plaintext Gemini key in rendered configs.
 - [ ] **SEC-02**: LiteLLM listens on 127.0.0.1 only.
-- [ ] **SEC-03**: `CF_API_TOKEN` fetched lazily, not at shell startup.
+- [x] **SEC-03**: `CF_API_TOKEN` fetched lazily, not at shell startup.
 - [ ] **SEC-04**: Cross-platform `get-secret` (macOS Keychain, KDE Secret Service, headless Arch).
-- [ ] **ZSH-01**: Startup-time claims match measurement (~95ms).
-- [ ] **ZSH-02**: `office-*` shell functions removed.
-- [ ] **ZSH-03**: Dead/OMZ-duplicate aliases removed.
-- [ ] **ZSH-04**: `sizeof` not shadowed by `du=dust`.
+- [x] **ZSH-01**: Startup-time claims match measurement (~95ms).
+- [x] **ZSH-02**: `office-*` shell functions removed.
+- [x] **ZSH-03**: Dead/OMZ-duplicate aliases removed.
+- [x] **ZSH-04**: `sizeof` not shadowed by `du=dust`.
 - [ ] **OC-01**: Duplicate gemini cleanup removed.
 - [ ] **OC-02**: GSD MCP avoids `npx -y` on every start.
 - [ ] **OC-03**: Duplicate DeepSeek model entry removed.
@@ -63,12 +63,12 @@ These requirements are already satisfied by the existing codebase.
 | HYG-04 | Phase 9 | Complete |
 | SEC-01 | Phase 10 | Pending |
 | SEC-02 | Phase 10 | Pending |
-| SEC-03 | Phase 10 | Pending |
+| SEC-03 | Phase 10 | Complete |
 | SEC-04 | Phase 10 | Pending |
-| ZSH-01 | Phase 11 | Pending |
-| ZSH-02 | Phase 11 | Pending |
-| ZSH-03 | Phase 11 | Pending |
-| ZSH-04 | Phase 11 | Pending |
+| ZSH-01 | Phase 11 | Complete |
+| ZSH-02 | Phase 11 | Complete |
+| ZSH-03 | Phase 11 | Complete |
+| ZSH-04 | Phase 11 | Complete |
 | OC-01 | Phase 12 | Pending |
 | OC-02 | Phase 12 | Pending |
 | OC-03 | Phase 12 | Pending |

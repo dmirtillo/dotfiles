@@ -1,5 +1,5 @@
 #!/bin/bash
-# hash: {{ get . "gcloud_project" }}
+# hash: {{ get . "gcloud_project" }} {{ include "base_template.docx" | sha256sum }}
 
 set -euo pipefail
 

@@ -5,8 +5,9 @@ set -euo pipefail
 # switch-models — Hot-swap OpenCode's active LLM provider
 #
 # Usage:
-#   switch-models gemini     Set all pro agents to Gemini 4 Argon (direct)
-#   switch-models anthropic  Set all pro agents to Claude Sonnet 4.6 (via LiteLLM)
+#   switch-models gemini     Set pro agents to Gemini 4 Argon
+#   switch-models anthropic  Set pro agents to Claude Sonnet 5.5 (via LiteLLM)
+#   switch-models xai        Set pro agents to Grok 4.7 (via LiteLLM)
 #   switch-models status     Show current model configuration (default)
 #
 # WHAT IT DOES:
@@ -15,23 +16,23 @@ set -euo pipefail
 #     .small_model     — the fast/cheap model
 #     .agent[*].model  — per-agent model overrides (pro → pro, flash → flash)
 #
-# NOTE — opencode.json is now a chezmoi template (opencode.json.tmpl):
-#   `chezmoi apply` will overwrite any changes made by this script.
-#   This script is useful for quick session-level swaps, but changes are NOT
-#   persisted across `chezmoi apply` runs. To make a permanent change, edit
-#   private_dot_config/private_opencode/opencode.json.tmpl in the dotfiles repo.
+# NOTE — opencode.json is GENERATED, not a template:
+#   run_onchange_setup-opencode.sh.tmpl writes it on every `chezmoi apply` and
+#   overwrites anything this script changes. Use this for session-level swaps
+#   only; for a permanent change edit the generator in that script.
 #
 # ROUTING CONTEXT:
 #   gemini     → google/ provider (@ai-sdk/google, direct Google AI Studio)
 #   anthropic  → litellm/ provider (@ai-sdk/openai-compatible, localhost:4000)
 #                LiteLLM proxies to Vertex AI using gcloud ADC.
+#   xai        → litellm/ provider (Grok 4.7 via the Vertex partner endpoint)
 #
 # DEPENDENCIES:
 #   jq  (brew install jq)
 #
 # FLASH MODEL:
-#   The small_model always stays as Gemini Flash in both modes — there is no
-#   Haiku equivalent available via Vertex AI at the time of writing.
+#   The small_model always stays as Gemini Flash in every mode — there is no
+#   cheap fast model available via Vertex AI at the time of writing.
 # =============================================================================
 
 CONFIG="${OPENCODE_CONFIG:-$HOME/.config/opencode/opencode.json}"
@@ -39,14 +40,16 @@ CONFIG="${OPENCODE_CONFIG:-$HOME/.config/opencode/opencode.json}"
 GEMINI_PRO="google/gemini-4-argon"
 GEMINI_FLASH="google/gemini-3.8-flash"
 ANTHROPIC_PRO="litellm/claude-sonnet-5-5"
+XAI_PRO="litellm/grok-4.7"
 
-readonly CONFIG GEMINI_PRO GEMINI_FLASH ANTHROPIC_PRO
+readonly CONFIG GEMINI_PRO GEMINI_FLASH ANTHROPIC_PRO XAI_PRO
 
 usage() {
-  echo "Usage: switch-models [gemini|anthropic|status]"
+  echo "Usage: switch-models [gemini|anthropic|xai|status]"
   echo ""
   echo "  gemini     Use Gemini models (pro + flash)"
-  echo "  anthropic  Use Anthropic models (sonnet 4.6 for pro, keep flash)"
+  echo "  anthropic  Use Claude Sonnet 5.5 via LiteLLM (keep flash)"
+  echo "  xai        Use Grok 4.7 via LiteLLM (keep flash)"
   echo "  status     Show current model configuration (default)"
   exit 1
 }
@@ -71,8 +74,10 @@ status() {
   # Determine current mode
   local mode="unknown"
   case "$main_model" in
-    *gemini*)    mode="gemini" ;;
-    *anthropic*|*claude*) mode="anthropic" ;;
+    litellm/claude*|*claude*)   mode="anthropic" ;;
+    litellm/grok*|*grok*)       mode="xai" ;;
+    litellm/deepseek*|*deepseek*) mode="deepseek" ;;
+    *gemini*)                   mode="gemini" ;;
   esac
 
   echo "Mode: $mode"
@@ -130,6 +135,7 @@ check_deps
 case "${1:-status}" in
   gemini)    switch_models "$GEMINI_PRO" "$GEMINI_FLASH" "Gemini" ;;
   anthropic) switch_models "$ANTHROPIC_PRO" "$GEMINI_FLASH" "Anthropic" ;;
+  xai)       switch_models "$XAI_PRO" "$GEMINI_FLASH" "xAI" ;;
   status)    status ;;
   -h|--help) usage ;;
   *)         usage ;;
