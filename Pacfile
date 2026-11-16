@@ -217,11 +217,11 @@ losslesscut-bin
 # =============================================================================
 # CRAFT APP SUITE (AUR)
 # =============================================================================
-gridcraft
-pdfcraft
-wordcraft
-deckcraft
-photocraft
+gridcraft-bin
+pdfcraft-bin
+wordcraft-bin
+deckcraft-bin
+photocraft-bin
 
 # =============================================================================
 # MAIL

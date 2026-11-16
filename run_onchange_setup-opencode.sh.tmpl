@@ -338,21 +338,38 @@ config.permission.external_directory = Object.assign({}, config.permission.exter
 });
 
 config.mcp = config.mcp || {};
+delete config.mcp.servers;
 config.mcp["officecli"] = {
   type: "local",
   command: ["{{ .chezmoi.homeDir }}/.local/bin/officecli", "mcp"]
 };
-// Craft app suite MCP servers (gridcraft/pdfcraft/wordcraft/photocraft CLIs).
-// Resolve each binary across Homebrew prefixes (macOS) and PATH (Linux), where
-// the AUR packages install to /usr/bin. DeckCraft ships no CLI/MCP server.
-for (const name of ["gridcraft", "pdfcraft", "wordcraft", "photocraft"]) {
-  const bin = `/opt/homebrew/bin/${name}-cli`;
-  const binLocal = `/usr/local/bin/${name}-cli`;
-  const resolved = fs.existsSync(bin) ? bin : (fs.existsSync(binLocal) ? binLocal : `${name}-cli`);
-  config.mcp[name] = {
-    type: "local",
-    command: [resolved, "mcp"]
-  };
+// Craft app suite MCP servers (gridcraft, pdfcraft, wordcraft, deckcraft, photocraft).
+// Resolve each binary across Homebrew (/opt/homebrew/bin, /usr/local/bin), Arch (/usr/bin),
+// and ~/.local/bin. Only register the server if the binary is actually installed.
+for (const name of ["gridcraft", "pdfcraft", "wordcraft", "deckcraft", "photocraft"]) {
+  const candidates = [
+    `/opt/homebrew/bin/${name}-cli`,
+    `/usr/local/bin/${name}-cli`,
+    `/usr/bin/${name}-cli`,
+    path.join(process.env.HOME, '.local', 'bin', `${name}-cli`)
+  ];
+  const found = candidates.find((p) => fs.existsSync(p));
+  let resolved = found;
+  if (!resolved) {
+    try {
+      const { execSync } = require('child_process');
+      const out = execSync(`which ${name}-cli 2>/dev/null`, { encoding: 'utf8' }).trim();
+      if (out && fs.existsSync(out)) resolved = out;
+    } catch (e) {}
+  }
+  if (resolved) {
+    config.mcp[name] = {
+      type: "local",
+      command: [resolved, "mcp"]
+    };
+  } else {
+    delete config.mcp[name];
+  }
 }
 config.mcp["gcp-cost"] = {
   type: "local",
