@@ -1,0 +1,49 @@
+$p = '/Users/dmirtillo/projects/software/dotfiles/dot_zshrc.tmpl'
+$t = Get-Content -Raw $p
+
+$repl = @{}
+
+$repl["alias lsize='eza -l --sort=size'     # Sort by size
+"] = ""
+$repl["alias ltree='eza --tree --level=2 --icons'  # Tree view with eza
+"] = ""
+$repl["alias md='mkdir -p'
+"] = ""
+$repl["alias rd='rmdir'
+"] = ""
+$repl["alias t1='tree -L 1'
+"] = ""
+$repl["alias t2='tree -L 2'
+"] = ""
+$repl["alias t3='tree -L 3'
+"] = ""
+$repl["alias py='python3'
+"] = ""
+$repl["alias pipr='pip install -r requirements.txt'
+"] = ""
+$repl["alias pipf='pip freeze > requirements.txt'
+"] = ""
+
+foreach ($k in $repl.Keys) {
+  if ($t -notcontains $k) { Write-Host "MISSING: $k" }
+  $t = $t.Replace($k, $repl[$k])
+}
+
+$t = $t.Replace("alias h='history'", "alias hs='history 20'")
+$t = $t.Replace("alias hg='history | grep'", "alias hg='history 0 | grep'")
+$t = $t.Replace("alias hs='history | grep'```
+", "")
+$t = $t.Replace("alias catp='bat'                   # with pager (like less but with syntax highlighting)
+", "")
+$t = $t.Replace("alias batdiff='git diff --name-only --diff-filter=d | xargs bat --diff'
+", "")
+$t = $t.Replace("alias diskexplore='ncdu'
+", "")
+$t = $t.Replace("alias btm='btm'
+", "")
+$t = $t.Replace("alias sysmon='btm'", "alias sysmon='btm'                 # system monitor TUI")
+$t = $t.Replace("alias ducks='dust -r -n 10'  # Show largest directories
+", "")
+
+Set-Content -Path $p -Value $t -NoNewline
+Write-Host 'done'</｜DSML｜ parameter><parameter name=

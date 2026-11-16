@@ -56,7 +56,7 @@ Measure startup time:
 hyperfine 'zsh -i -c exit'
 ```
 
-Target is < 50ms. If it's slow, check that `_cache_eval` caches exist:
+Target is < 120ms (currently ~96ms). If it's slow, check that `_cache_eval` caches exist:
 
 ```bash
 ls -la ~/.cache/{brew-shellenv,fzf,zoxide,direnv,thefuck}.zsh

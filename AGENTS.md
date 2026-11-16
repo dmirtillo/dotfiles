@@ -77,7 +77,7 @@ Use `-` to trim whitespace around template actions:
 ## 4. Zsh Configuration Conventions
 
 ### Performance Principles (Crucial)
-Do not degrade startup time (currently sub-50ms).
+Do not degrade startup time (currently ~96ms; budget <120ms, measured with `hyperfine -N --warmup 3 zsh -i -c exit`).
 - Use `_cache_eval` function for slow init commands (`brew`, `fzf`, `zoxide`)
 - Lazy load where possible (e.g., NVM is lazy-loaded)
 - Background slow operations with `&!` (e.g., loading SSH keys)

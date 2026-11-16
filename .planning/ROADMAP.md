@@ -142,9 +142,9 @@
 3. `officemanagement` is merged into `spike-findings-dotfiles`; AGENTS.md auto-load list updated.
 4. `chezmoi managed` lists no `docs`, `Winfile`, `Library` leaks; `.chezmoiignore` has no dead entries and the `Winfile` typo is fixed; `.gitignore` has no stale entries.
 
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
-- [ ] 09-01-PLAN.md — Dedupe spikes, merge skills, fix ignore files
+- [x] 09-01-PLAN.md — Dedupe spikes, merge skills, fix ignore files
 
 ### Phase 10: Secrets and network hardening
 

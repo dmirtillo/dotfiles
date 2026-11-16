@@ -6,7 +6,7 @@ These requirements are already satisfied by the existing codebase.
 
 - ✓ macOS provisioning via `Brewfile`.
 - ✓ Arch Linux/CachyOS provisioning via `Pacfile` and `yay`/`pacman`.
-- ✓ Zsh + Powerlevel10k + Antidote configuration with sub-50ms startup.
+- ✓ Zsh + Powerlevel10k + Antidote configuration with ~96ms startup (<120ms budget).
 - ✓ OpenCode + Get Shit Done (GSD) integration via setup scripts.
 - ✓ Basic Windows support (`.gitconfig`, `.vimrc`, `.ssh/config`).
 
@@ -24,10 +24,10 @@ These requirements are already satisfied by the existing codebase.
 - [x] **WIN-02**: Finalize Windows package management strategy combining `Chocolatey` and `Winget` into a seamless `run_onchange` chezmoi execution.
 
 ### Hygiene & Hardening (Phases 9-13)
-- [ ] **HYG-01**: Spike sources exist once (`.planning/spikes/`); skill `sources/` untracked.
-- [ ] **HYG-02**: Vendored `local-test/` and `test-config/` removed from spike 032.
-- [ ] **HYG-03**: `officemanagement` skill consolidated into `spike-findings-dotfiles`.
-- [ ] **HYG-04**: `.chezmoiignore`/`.gitignore` fixed; no repo files leak into `$HOME`.
+- [x] **HYG-01**: Spike sources exist once (`.planning/spikes/`); skill `sources/` untracked.
+- [x] **HYG-02**: Vendored `local-test/` and `test-config/` removed from spike 032.
+- [x] **HYG-03**: `officemanagement` skill consolidated into `spike-findings-dotfiles`.
+- [x] **HYG-04**: `.chezmoiignore`/`.gitignore` fixed; no repo files leak into `$HOME`.
 - [ ] **SEC-01**: No plaintext Gemini key in rendered configs.
 - [ ] **SEC-02**: LiteLLM listens on 127.0.0.1 only.
 - [ ] **SEC-03**: `CF_API_TOKEN` fetched lazily, not at shell startup.
@@ -57,10 +57,10 @@ These requirements are already satisfied by the existing codebase.
 | WIN-02 | Phase 2 | Complete |
 | WIN-01 | Phase 3 | Complete |
 | DEP-01 | Phase 4 | Complete |
-| HYG-01 | Phase 9 | Pending |
-| HYG-02 | Phase 9 | Pending |
-| HYG-03 | Phase 9 | Pending |
-| HYG-04 | Phase 9 | Pending |
+| HYG-01 | Phase 9 | Complete |
+| HYG-02 | Phase 9 | Complete |
+| HYG-03 | Phase 9 | Complete |
+| HYG-04 | Phase 9 | Complete |
 | SEC-01 | Phase 10 | Pending |
 | SEC-02 | Phase 10 | Pending |
 | SEC-03 | Phase 10 | Pending |

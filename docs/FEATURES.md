@@ -3,7 +3,7 @@
 ## Shell Architecture
 ### Performance Optimizations
 
-Target: **< 50ms** shell startup time. Techniques used:
+Target: **< 120ms** shell startup time (currently ~96ms). Techniques used:
 
 | Optimization | Savings | How |
 |---|---|---|

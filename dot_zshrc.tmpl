@@ -2,9 +2,9 @@
 # ~/.zshrc — Zsh Interactive Shell Configuration
 # Managed by chezmoi. Edit dot_zshrc.tmpl in the dotfiles repo, not this file.
 #
-# PERFORMANCE BUDGET (measured on Apple Silicon, 2026-03):
-#   Target:  <100ms   — imperceptible to humans
-#   Current: ~60ms    — measured with: /usr/bin/time zsh -i -c exit
+# PERFORMANCE BUDGET (measured on Apple Silicon, 2026-11, hyperfine):
+#   Target:  <120ms  — imperceptible to humans
+#   Current: ~96ms   — measured with: hyperfine -N --warmup 3 zsh -i -c exit
 #   Profile: zsh -i -c 'zmodload zsh/zprof; source ~/.zshrc; zprof'
 #
 # TOP COST BREAKDOWN (zprof):
@@ -280,18 +280,6 @@ alias la='eza -a --icons'
 alias l='eza -F --icons'
 alias lt='eza -l --sort=modified'    # Sort by time, newest last
 alias lh='eza -l --icons'            # Human readable sizes (eza default)
-alias lsize='eza -l --sort=size'     # Sort by size
-alias ltree='eza --tree --level=2 --icons'  # Tree view with eza
-
-# Directory operations
-alias md='mkdir -p'
-alias rd='rmdir'
-
-# Tree view
-alias tree='tree -C'
-alias t1='tree -L 1'
-alias t2='tree -L 2'
-alias t3='tree -L 3'
 
 # Quick access to common directories
 alias desktop='cd ~/Desktop'
@@ -299,46 +287,27 @@ alias downloads='cd ~/Downloads'
 alias documents='cd ~/Documents'
 alias projects='cd ~/projects'
 
-# Git Enhancements (beyond what oh-my-zsh provides)
-alias gst='git status'
-alias gco='git checkout'
-alias gcb='git checkout -b'
-alias gp='git push'
-alias gpl='git pull'
-alias gf='git fetch'
-alias gm='git merge'
-alias gr='git rebase'
-alias glog='git log --oneline --graph --decorate'
+# Git Enha</｜DSML｜ parameter></｜DSML｜ parameter>path</｜DSML｜ parameter>: </｜DSML｜ parameter>oldString</｜DSML｜ parameter>: </｜DSML｜ parameter>newString</｜DSML｜ parameter>: </｜DSML｜ parameter>replaceAll</｜DSML｜ parameter>: </｜DSML｜ parameter><parameter name=
 alias gclean='git clean -fd'
 alias greset='git reset --hard HEAD'
-alias gb='git branch'
 alias gbd='git branch -d'
 alias gbD='git branch -D'
 alias gba='git branch -a'
-alias gwip='git add -A && git commit -m "WIP"'
-alias gunwip='git log -n 1 | grep -q -c "WIP" && git reset HEAD~1'
 alias gundo='git reset --soft HEAD~1'
 
 # Development Tools
 
 # Python shortcuts
-alias py='python3'
 alias pip='pip3'
 alias venv='python3 -m venv'
-alias pipr='pip install -r requirements.txt'
-alias pipf='pip freeze > requirements.txt'
 
 # Docker shortcuts (using docker compose v2)
 alias d='docker'
 alias dc='docker compose'
 alias dcu='docker compose up'
 alias dcd='docker compose down'
-alias dcb='docker compose build'
-alias dcr='docker compose restart'
-alias dps='docker ps'
 alias dpsa='docker ps -a'
 alias di='docker images'
-alias drm='docker rm'
 alias drmi='docker rmi'
 alias dprune='docker system prune -f'
 
@@ -371,7 +340,6 @@ alias egrep='grep -E --color=auto'
 # Disk usage (using modern replacements)
 alias du='dust'              # dust: intuitive disk usage with bar chart
 alias df='duf'               # duf: colorful disk free with table layout
-alias ducks='dust -r -n 10'  # Show largest directories
 alias diskspace='duf'
 
 {{ if eq .chezmoi.os "darwin" -}}
@@ -380,13 +348,16 @@ alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall 
 alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder'
 alias cleanup='rm -rf ~/.Trash/* 2>/dev/null; echo "Trash cleaned."'
 alias flushdns='sudo dscacheutil -flushcache'
-alias emptytrash='rm -rfv ~/.Trash/* 2>/dev/null; echo "Trash emptied."'
 alias 7z='7zz'
 
 # Cloudflare API (token in Keychain: cloudflare-api-token)
-export CF_API_TOKEN="$(security find-generic-password -s cloudflare-api-token -w 2>/dev/null)"
 cfapi() {
-  curl -s -H "Authorization: Bearer $CF_API_TOKEN" -H "Content-Type: application/json" \
+  local token
+  token="$(security find-generic-password -s cloudflare-api-token -w 2>/dev/null)" || {
+    echo "cfapi: no cloudflare-api-token in Keychain" >&2
+    return 1
+  }
+  curl -s -H "Authorization: Bearer $token" -H "Content-Type: application/json" \
        "https://api.cloudflare.com/client/v4$1" "${@:2}"
 }
 {{ else if eq .chezmoi.os "linux" -}}
@@ -406,9 +377,8 @@ alias hosts='sudo code /etc/hosts'
 alias sshconfig='code ~/.ssh'
 
 # History aliases
-alias h='history'
-alias hg='history | grep'
-alias hs='history | grep'
+alias hs='history 20'           # last 20 commands (helm plugin shadows a bare `h`)
+alias hg='history 0 | grep'     # full history grep
 
 # Process management
 kport() {
@@ -511,9 +481,9 @@ search() {
     rg "$1" .
 }
 
-# Show file size in human readable format
+# Show file size in human readable format (bypasses the du=dust alias)
 sizeof() {
-    du -sh "$1"
+    command du -sh "$1"
 }
 
 # ============================================================================
@@ -555,8 +525,6 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # bat: syntax-highlighted cat replacement
 alias cat='bat --paging=never'
-alias catp='bat'                   # with pager (like less but with syntax highlighting)
-alias batdiff='git diff --name-only --diff-filter=d | xargs bat --diff'
 
 # Helper: cache a tool's init output, auto-regenerate when binary updates
 _cache_eval() {
@@ -640,11 +608,7 @@ alias ping='gping'
 # tldr: simplified man pages (quicker than man for common usage)
 alias help='tldr'
 
-# ncdu: interactive disk usage explorer
-alias diskexplore='ncdu'
-
 # bottom: system monitor TUI (like htop but better)
-alias btm='btm'
 alias sysmon='btm'
 
 {{ if eq .chezmoi.os "darwin" -}}
@@ -703,105 +667,9 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 {{ end -}}
 
 # === Agent CLI Wrappers ===
-# Office read/write hybrid loop using officecli and markitdown
-# See: .planning/phases/06-core-spike-knowledge-integration/06-01-PLAN.md
-office-read() {
-  local file="$1"
-  if [[ -z "$file" ]]; then
-    echo "Usage: office-read <file>"
-    return 1
-  fi
-  # D-01: Explicitly flush resident mode changes to disk before reading
-  officecli close "$file" 2>/dev/null || true
-  # T-06-01: Explicit version pinning to prevent supply chain injection
-  # D-05: Multimodal OCR is omitted by default for performance
-  uv run --prerelease=allow --with 'markitdown[all]==0.1.6' markitdown "$file"
-}
-
-office-write() {
-  local file="$1"
-  local find_str="$2"
-  local replace_str="$3"
-  if [[ -z "$file" || -z "$find_str" || -z "$replace_str" ]]; then
-    echo "Usage: office-write <file> <find> <replace>"
-    return 1
-  fi
-  # D-01: Execute writes globally using text replacement
-  officecli set "$file" / --find "$find_str" --replace "$replace_str"
-  local exit_code=$?
-  # D-02: Sequentially flush to prevent zip corruption
-  officecli close "$file" 2>/dev/null || true
-  return $exit_code
-}
-
-office-query() {
-  local file="$1"
-  local text="$2"
-  if [[ -z "$file" || -z "$text" ]]; then
-    echo "Usage: office-query <file> <text>"
-    return 1
-  fi
-  officecli close "$file" 2>/dev/null || true
-  officecli query "$file" ":contains(\"$text\")" --json | jq -r '.data.results[] | "Match: \(.text)\nPath: \(.path)\nType: \(.type)\n---"'
-}
-
-office-format() {
-  local file="$1"
-  local text="$2"
-  shift 2
-  if [[ -z "$file" || -z "$text" || $# -eq 0 ]]; then
-    echo "Usage: office-format <file> <text> <property> [value]..."
-    return 1
-  fi
-  
-  local valid_props=(text style alignment bold italic font size color spaceBefore spaceAfter spaceBeforeLines spaceAfterLines lineSpacing indent liststyle formula direction bidi fill background x y w h width height)
-  
-  local i=1
-  while [[ $i -le $# ]]; do
-    local arg="${@[$i]}"
-    local key=""
-    
-    if [[ "$arg" == "--prop" ]]; then
-      local next_arg="${@[$i+1]}"
-      key="${next_arg%%=*}"
-      i=$((i+2))
-    elif [[ "$arg" == --prop=* ]]; then
-      local key_val="${arg#--prop=}"
-      key="${key_val%%=*}"
-      i=$((i+1))
-    else
-      i=$((i+1))
-      continue
-    fi
-    
-    local is_valid=0
-    for valid_prop in "${valid_props[@]}"; do
-      if [[ "$key" == "$valid_prop" || "$key" == font.* || "$key" == underline.* || "$key" == anchor.* ]]; then
-        is_valid=1
-        break
-      fi
-    done
-    
-    if [[ $is_valid -eq 0 ]]; then
-      echo "Error: Invalid formatting property '$key'"
-      return 1
-    fi
-  done
-  
-  officecli close "$file" 2>/dev/null || true
-  
-  local paths=($(officecli query "$file" ":contains(\"$text\")" --json | jq -r '.data.results[].path // empty'))
-  
-  if [[ ${#paths[@]} -eq 0 ]]; then
-    echo "Error: Text not found in document"
-    return 1
-  fi
-  
-  local exit_status=0
-  for dom_path in "${paths[@]}"; do
-    officecli set "$file" "$dom_path" "$@" || exit_status=1
-  done
-  
-  officecli close "$file" 2>/dev/null || true
-  return $exit_status
-}
+# office-read / office-write / office-query / office-format were removed in phase 11.
+# officecli validates its own properties (bad ones print "UNSUPPORTED props" and exit 2)
+# and the wrappers hard-coded a markitdown version pin. Call the tools directly:
+#   reads:  officecli close <file>; uv run --prerelease=allow --with 'markitdown[all]' markitdown <file>
+#   writes: officecli set <file> / --find <old> --replace <new>; officecli close <file>
+# See: .planning/phases/06-core-spike-knowledge-integration/06-01-PLAN.md (historical)

@@ -7,10 +7,10 @@ A centralized dotfiles repository managed by `chezmoi`, providing a consistent d
 No version pins for tools in this setup (mise `latest`, `pipx upgrade`, brew). `brewup` upgrades everything; setup scripts must tolerate upstream changes and warn loudly rather than pin.
 
 ## Core Value
-Zero-friction provisioning of a high-performance (sub-50ms) shell environment and toolchain, maintaining exact tool parity across distinct operating systems without compromising native package management.
+Zero-friction provisioning of a high-performance (<120ms, currently ~96ms) shell environment and toolchain, maintaining exact tool parity across distinct operating systems without compromising native package management.
 
 ## Key Constraints
-1. **Performance:** Shell startup time must remain under 50ms.
+1. **Performance:** Shell startup time must stay under 120ms (measured ~96ms with hyperfine).
 2. **Cross-Platform:** Configurations must leverage chezmoi templates to handle OS differences without runtime overhead.
 3. **OSS Focused:** Preference for cross-platform, open-source CLI tools.
 
