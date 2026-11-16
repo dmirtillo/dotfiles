@@ -118,6 +118,7 @@ Before modifying code or planning architecture:
 Before concluding work or declaring a milestone/task complete:
 - **Synchronize state:** Update `.planning/STATE.md` directly or via GSD MCP `tools.gsd.gsd_write_state` (or `gsd_run progress` via `shell`) with completed tasks, status, and any newly discovered blockers.
 - **Ensure durability:** Document exact next steps in `STATE.md` so subsequent sessions resume without lost context.
+- **Always commit and push:** When work, task, or GSD phase is complete, always stage, commit with Conventional Commits, and push to origin immediately. Never leave completed tasks uncommitted or unpushed.
 
 
 The Feature Implementation Workflow describes the development pipeline: research, planning, TDD, code review, and then committing to git.
@@ -152,6 +153,7 @@ The Feature Implementation Workflow describes the development pipeline: research
 4. **Commit & Push**
    - Detailed commit messages
    - Follow conventional commits format
+   - Always commit and push immediately upon task or phase completion — never leave completed work uncommitted or unpushed.
    - See [git-workflow.md](./git-workflow.md) for commit message format and PR process
 # Git Workflow
 

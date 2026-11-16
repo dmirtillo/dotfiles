@@ -103,6 +103,7 @@ Do not degrade startup time (currently sub-50ms).
 
 - Use Conventional Commits format (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`).
 - Keep descriptions lowercase, no trailing period.
+- **Always commit and push:** When a task, feature, fix, or GSD phase is complete, always stage, commit with Conventional Commits, and push to origin immediately. Never finish without committing and pushing.
 ---
 
 ## 7. Auto-Loaded Skills
