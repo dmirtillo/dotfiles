@@ -52,6 +52,8 @@ Models are configured via Google AI Studio and a local LiteLLM proxy:
 |---|---|---|
 | **Gemini 3.8 Flash** | Google AI Studio direct (`@ai-sdk/google`) | Default primary & small model; fast, high-context generation |
 | **Gemini 4 Argon** | Google AI Studio direct / LiteLLM | Advanced reasoning, high-capability analysis |
+| **Gemini 4 Carbon** | Google AI Studio direct / LiteLLM (`localhost:4000/v1` via Vertex AI) | High-throughput, dense reasoning model ($4.00 / $20.00 per 1M tokens) |
+| **Gemini 4 Hydrogen** | Google AI Studio direct / LiteLLM (`localhost:4000/v1` via Vertex AI) | Lightweight efficient multimodal model ($1.50 / $7.50 per 1M tokens) |
 | **Claude Haiku 5.5** | LiteLLM (`localhost:4000/v1` via Vertex AI) | Lightweight Anthropic fast tier |
 | **Claude Sonnet 5.5** | LiteLLM (`localhost:4000/v1` via Vertex AI) | Complex feature implementation, TDD, and code review |
 | **Claude Opus 5.5** | LiteLLM (`localhost:4000/v1` via Vertex AI) | Deep architectural reasoning and planning |

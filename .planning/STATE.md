@@ -5,7 +5,7 @@ milestone_name: milestone
 status: complete
 current_phase: 08
 stopped_at: All phases complete, UAT verified
-last_updated: "2026-11-16T12:00:00.000Z"
+last_updated: "2026-11-16T15:30:00.000Z"
 last_activity: 2026-11-16
 progress:
   total_phases: 8
@@ -22,7 +22,7 @@ progress:
 Phase: 8 of 8 (OfficeCLI Hybrid Markitdown Workflow)
 Plan: 1 of 1 in current phase
 Status: All phases complete
-Last activity: 2026-11-16 — Phase 06-08 verified and UAT complete
+Last activity: 2026-11-16 — Added Gemini 4 Carbon and Hydrogen models with verified GCP pricing
 
 Progress: [██████████] 100%
 
@@ -52,6 +52,7 @@ Progress: [██████████] 100%
 | 261016-pws | set up powershell on mac and test it from ghostty tmux terminal | 2026-10-16 | 2e5a0e9 | [261016-pws-setup-powershell-on-mac](./quick/261016-pws-setup-powershell-on-mac/) |
 | 261104-vtx | update vertex models on litellm and opencode (add deepseek 4.1 flash, grok 4.7, haiku 5.5, sonnet 5.5, add costs) | 2026-11-04 | a91dddb | [261104-vtx-update-vertex-models-litellm-opencode](./quick/261104-vtx-update-vertex-models-litellm-opencode/) |
 | 261104-craft | install craft suite (gridcraft, pdfcraft, wordcraft, deckcraft, photocraft), drop artcraft launcher, wire craft mcp servers | 2026-11-04 | 0fb2871 | [261104-craft-app-suite-and-mcp](./quick/261104-craft-app-suite-and-mcp/) |
+| 261116-g4m | add gemini 4 carbon and gemini 4 hydrogen to litellm and opencode with verified gcp billing catalog pricing | 2026-11-16 | - | [261116-g4m-add-gemini-4-carbon-and-hydrogen](./quick/261116-g4m-add-gemini-4-carbon-and-hydrogen/) |
 
 Last activity: 2026-11-04 - Completed quick task 261104-craft: install craft suite and wire mcp servers
 | 2026-05-27 | fast | Change tmuxai plugin to gemini 3.5 | ✅ |

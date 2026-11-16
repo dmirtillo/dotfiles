@@ -99,6 +99,27 @@ Before marking work complete:
 
 > This file extends [common/git-workflow.md](./git-workflow.md) with the full feature development process that happens before git operations.
 
+# GSD (Get Shit Done) Protocol
+
+When working in any project containing a `.planning/` directory (or when establishing project planning):
+
+## 1. State Inspection (Before Non-Trivial Work)
+Before modifying code or planning architecture:
+- **Inspect project state:** Check `.planning/STATE.md` and `.planning/ROADMAP.md` via `read` or GSD MCP `tools.gsd.gsd_read_state({ path: "STATE.md" })` or CLI `gsd_run state`.
+- **Identify active phase & blockers:** Verify current milestone, active phase goals, dependencies, and any unresolved blockers.
+- **Respect locked decisions:** Adhere to prior decisions recorded in `.planning/` artifacts (`PROJECT.md`, `REQUIREMENTS.md`, `*-CONTEXT.md`).
+
+## 2. Execution & Slicing
+- Keep implementation scoped strictly to the active phase in `ROADMAP.md`.
+- Break work into small, test-driven vertical slices.
+- If phase plans exist under `.planning/phases/`, execute against their verification criteria.
+
+## 3. State Synchronization (After Work)
+Before concluding work or declaring a milestone/task complete:
+- **Synchronize state:** Update `.planning/STATE.md` directly or via GSD MCP `tools.gsd.gsd_write_state` (or `gsd_run progress` via `shell`) with completed tasks, status, and any newly discovered blockers.
+- **Ensure durability:** Document exact next steps in `STATE.md` so subsequent sessions resume without lost context.
+
+
 The Feature Implementation Workflow describes the development pipeline: research, planning, TDD, code review, and then committing to git.
 
 ## Feature Implementation Workflow

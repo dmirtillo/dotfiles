@@ -73,12 +73,9 @@ for dir in "$OC_CONFIG"/*; do
   fi
 done
 
-export GSD_INSTALLER_MIGRATION_RESOLVE=keep
-export GSD_ALLOW_SYMLINKED_DEST=1
-npx @opengsd/gsd-core@latest --opencode --global
-
-# Clean up obsolete V1 plugins installed by gsd-core or legacy hooks that break OpenCode V2
-rm -f "$OC_CONFIG/plugins/ecc-hooks.ts" "$OC_CONFIG/plugins/gsd-core.js" "$OC_CONFIG/plugins/package.json"
+# Clean up broken GSD installer artifacts and obsolete V1 plugins
+rm -rf "$OC_CONFIG"/gsd-* "$OC_CONFIG"/.gsd-* "$OC_CONFIG/gsd-core" "$OC_CONFIG/plugins/gsd-statusline" "$HOME/.agents/skills"/gsd-* "$HOME/.agents/agents"/gsd* "$HOME/.agents/agents/subagents"/gsd-* "$HOME/.agents"/gsd-* "$HOME/.agents"/.gsd-*
+rm -f "$OC_CONFIG/plugins/ecc-hooks.ts" "$OC_CONFIG/plugins/gsd-core.js" "$OC_CONFIG/plugins/package.json" "$OC_CONFIG/hooks"/gsd-* "$OC_CONFIG/agents"/gsd-*
 
 # Deploy OpenCode V2 bridge for Ponytail plugin
 cat << 'PONYTAIL_EOF' > "$OC_CONFIG/plugins/ponytail.ts"
@@ -242,6 +239,12 @@ config.provider.google = {
     },
     "gemini-4-argon": {
       name: "Gemini 4 Argon"
+    },
+    "gemini-4-carbon": {
+      name: "Gemini 4 Carbon"
+    },
+    "gemini-4-hydrogen": {
+      name: "Gemini 4 Hydrogen"
     }
   }
 };
@@ -295,6 +298,24 @@ config.provider.litellm = {
         input: 2.0,
         output: 10.0,
         cache_read: 0.1,
+        cache_write: 0.0
+      }
+    },
+    "gemini-4-carbon": {
+      name: "Gemini 4 Carbon (Vertex)",
+      cost: {
+        input: 4.0,
+        output: 20.0,
+        cache_read: 0.2,
+        cache_write: 0.0
+      }
+    },
+    "gemini-4-hydrogen": {
+      name: "Gemini 4 Hydrogen (Vertex)",
+      cost: {
+        input: 1.5,
+        output: 7.5,
+        cache_read: 0.075,
         cache_write: 0.0
       }
     },
