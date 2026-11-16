@@ -37,4 +37,4 @@ Use the `awk` script developed in Spike 018 that compares the `brew bundle dump 
 ## Origin
 
 Synthesized from spikes: 017, 018, 019, 020
-Source files available in: sources/017-opencode-update-method/, sources/018-sync-brewfile-review/, sources/019-orchestrated-update-flow/, sources/020-workflow-docs-generation/
+Source files available in: .planning/spikes/017-opencode-update-method/, .planning/spikes/018-sync-brewfile-review/, .planning/spikes/019-orchestrated-update-flow/, .planning/spikes/020-workflow-docs-generation/

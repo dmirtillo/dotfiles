@@ -25,4 +25,4 @@ OpenCode is the unified terminal AI client in this repository:
 ## Origin
 
 Synthesized from spikes: 043
-Source files available in: sources/043-antigravity-cli-byok/
+Source files available in: .planning/spikes/043-antigravity-cli-byok/

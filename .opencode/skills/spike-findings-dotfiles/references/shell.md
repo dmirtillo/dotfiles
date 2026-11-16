@@ -25,4 +25,4 @@
 ## Origin
 
 Synthesized from spikes: 026
-Source files available in: sources/026-simplify-bash-wrappers/
+Source files available in: .planning/spikes/026-simplify-bash-wrappers/

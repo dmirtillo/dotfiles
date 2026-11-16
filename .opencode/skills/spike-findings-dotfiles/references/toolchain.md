@@ -22,4 +22,4 @@
 ## Origin
 
 Synthesized from spikes: 030, 033
-Source files available in: sources/030-mise-global-tools/, sources/033-uv-mise-path-integration/
+Source files available in: .planning/spikes/030-mise-global-tools/, .planning/spikes/033-uv-mise-path-integration/

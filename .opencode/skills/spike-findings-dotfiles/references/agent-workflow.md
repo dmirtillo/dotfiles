@@ -16,4 +16,4 @@ Agents processing text changes from MarkItDown outputs should feed those directl
 
 ## Origin
 Synthesized from spikes: 036, 037, 038
-Source files available in: sources/036-full-skill-replacement-e2e/, sources/037-concurrent-officecli-resident-mode/, sources/038-markdown-to-dom-translation/
+Source files available in: .planning/spikes/036-full-skill-replacement-e2e/, .planning/spikes/037-concurrent-officecli-resident-mode/, .planning/spikes/038-markdown-to-dom-translation/

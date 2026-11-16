@@ -3,26 +3,20 @@
 # chezmoi will not manage these files on the excluded platforms
 # =============================================================================
 
-# Repo metadata and docs (never deploy to home)
+# Repo metadata, docs and tooling (never deploy to home)
 AGENTS.md
 README.md
-LICENSE
 Brewfile
 Pacfile
-.ecc-version
-.gitmodules
-
-# Old files (kept for reference during migration, remove later)
-scripts/
-config.sh.example
-config.sh
-opencode/
-git/
-zsh/
-vim/
-ssh/
-vendor/
-iterm2/
+Winfile
+docs/
+dot_local/bin
+dot_termux
+run_once_*
+run_onchange_*
+.pre-commit-config.yaml
+.chezmoiexternal.toml
+.chezmoiremove
 
 {{ if ne .chezmoi.os "darwin" }}
 # macOS-only files
@@ -33,13 +27,13 @@ private_Library
 {{ if ne .chezmoi.os "linux" }}
 # Linux-only files
 Pacfile
-.config/systemd
 .makepkg.conf
+.config/systemd
 {{ end }}
 
 {{ if ne .chezmoi.os "windows" }}
 # Windows-only files
-Wingetfile.json
+Winfile
 Documents/PowerShell
 {{ end }}
 
@@ -51,9 +45,11 @@ Documents/PowerShell
 *.docx
 *.pptx
 
-# OpenCode config and plugins managed directly / from source, not dotfiles
+# OpenCode config, plugins and skill content managed directly / from source
 .config/opencode/opencode.json
 .config/opencode/plugins/**
+.opencode
+.planning
 
 # Dynamically ignore work Git configuration if not set
 {{ if not (get . "work_email") }}

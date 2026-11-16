@@ -13,7 +13,7 @@
 ## What to Avoid
 
 - Do not attempt to abstract `chezmoi` output using dynamic scripts (`switch-models`), as `chezmoi apply` wipes out those changes.
-- Avoid maintaining copies of spikes (`.opencode/skills/officemanagement/sources/`). `AGENTS.md` should point directly to `.planning/spikes/`.
+- Avoid maintaining copies of spikes (`.opencode/skills/*/sources/`). `AGENTS.md` should point directly to `.planning/spikes/`.
 
 ## Constraints
 
@@ -22,4 +22,4 @@
 ## Origin
 
 Synthesized from spikes: 025, 027
-Source files available in: sources/025-remove-redundant-deps/, sources/027-cleanup-dead-code/
+Source files available in: .planning/spikes/025-remove-redundant-deps/, .planning/spikes/027-cleanup-dead-code/

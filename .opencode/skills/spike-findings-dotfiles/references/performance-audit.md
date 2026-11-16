@@ -35,4 +35,4 @@
 ## Origin
 
 Synthesized from spikes: 028, 031, 039
-Source files available in: sources/028-ponytail-audit-validation/, sources/031-zsh-startup-profiling/, sources/039-markitdown-cost-profiling/
+Source files available in: .planning/spikes/028-ponytail-audit-validation/, .planning/spikes/031-zsh-startup-profiling/, .planning/spikes/039-markitdown-cost-profiling/

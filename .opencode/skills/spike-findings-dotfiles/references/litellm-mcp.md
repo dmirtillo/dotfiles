@@ -21,4 +21,4 @@ If you want an MCP server connected through LiteLLM to be used by an agent, the 
 ## Origin
 
 Synthesized from spikes: 001, 002, 003
-Source files available in: sources/001-litellm-mcp-integration/, sources/002-opencode-litellm-connection/, sources/003-gemini-cli-litellm-connection/
+Source files available in: .planning/spikes/001-litellm-mcp-integration/, .planning/spikes/002-opencode-litellm-connection/, .planning/spikes/003-gemini-cli-litellm-connection/

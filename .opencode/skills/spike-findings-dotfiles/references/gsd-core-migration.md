@@ -32,4 +32,4 @@
 ## Origin
 
 Synthesized from spikes: 021, 022, 023, 024
-Source files available in: sources/021-uninstall-old-gsd/, sources/022-install-new-gsd-core/, sources/023-gsd-core-compatibility/, sources/024-chezmoi-orchestration-update/
+Source files available in: .planning/spikes/021-uninstall-old-gsd/, .planning/spikes/022-install-new-gsd-core/, .planning/spikes/023-gsd-core-compatibility/, .planning/spikes/024-chezmoi-orchestration-update/

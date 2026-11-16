@@ -26,4 +26,4 @@ Use an `awk` or bash script to perform a 3-way reconciliation:
 ## Origin
 
 Synthesized from spikes: 004, 005, 006, 018
-Source files available in: sources/004-brew-list-parsing/, sources/005-brewfile-sync/, sources/006-brewfile-sync-preserve-comments/, sources/018-sync-brewfile-review/
+Source files available in: .planning/spikes/004-brew-list-parsing/, .planning/spikes/005-brewfile-sync/, .planning/spikes/006-brewfile-sync-preserve-comments/, .planning/spikes/018-sync-brewfile-review/

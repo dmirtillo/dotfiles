@@ -41,4 +41,4 @@ When working with Office Documents (.docx, .pptx, .xlsx) inside GSD pipelines or
 ## Origin
 
 Synthesized from spikes: 007, 008, 009, 011, 012, 013, 014, 029, 034, 035, 036, 037, 038
-Source files available in: sources/007-hybrid-targeting/, sources/008-markitdown-baseline/, etc.
+Source files available in: .planning/spikes/007-hybrid-targeting/, .planning/spikes/008-markitdown-baseline/, etc.

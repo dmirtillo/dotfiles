@@ -32,4 +32,4 @@
 ## Origin
 
 Synthesized from spikes: 010, 019, 020, 024, 040
-Source files available in: sources/040-officecli-template-hydration/
+Source files available in: .planning/spikes/040-officecli-template-hydration/

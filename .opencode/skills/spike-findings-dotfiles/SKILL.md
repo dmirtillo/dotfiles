@@ -39,7 +39,7 @@ Spike sessions wrapped: 2026-07-06
 
 ## Source Files
 
-Original spike source files are preserved in `sources/` for complete reference.
+Original spike source files are preserved in `.planning/spikes/` for complete reference.
 </findings_index>
 
 <metadata>

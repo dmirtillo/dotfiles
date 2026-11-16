@@ -108,6 +108,4 @@ Do not degrade startup time (currently sub-50ms).
 
 ## 7. Auto-Loaded Skills
 
-- **Spike findings for dotfiles** (implementation patterns, constraints, gotchas) → `Skill("officemanagement")`
-
 - **Spike findings for dotfiles** (implementation patterns, constraints, gotchas) → `Skill("spike-findings-dotfiles")`
