@@ -397,11 +397,7 @@ for (const name of ["gridcraft", "pdfcraft", "wordcraft", "deckcraft", "photocra
 config.mcp["gsd"] = {
   type: "local",
   command: [
-    "npx",
-    "-y",
-    "-p",
-    "@opengsd/gsd-core",
-    "gsd-mcp-server",
+    "{{ .chezmoi.homeDir }}/.local/share/mise/shims/gsd-mcp-server",
     "--no-prompts"
   ],
   enabled: true

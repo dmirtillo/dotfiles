@@ -65,7 +65,7 @@ Models are configured via Google AI Studio and a local LiteLLM proxy:
 OpenCode and Gemini CLI connect to standardized local MCP servers:
 - **`gcp-cost`**: Live Google Cloud cost analysis and SKU pricing.
 - **`aws-pricing`**: AWS Pricing API and Bedrock architecture patterns.
-- **`gsd`**: Get Shit Done MCP server (`npx -y -p @opengsd/gsd-core gsd-mcp-server`) exposing command routing and state management tools.
+- **`gsd`**: Get Shit Done MCP server (`gsd-mcp-server` from the mise-managed `npm:@opengsd/gsd-core`) exposing command routing and state management tools.
 
 ### Updating GSD
 

@@ -663,6 +663,7 @@ brewup() {
   fi
   
   antidote update
+  command -v mise &>/dev/null && mise upgrade
   npm install -g @fission-ai/openspec@latest --dangerously-allow-all-scripts
 }
 

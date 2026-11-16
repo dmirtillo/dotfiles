@@ -11,4 +11,5 @@ if command -v mise &> /dev/null; then
     mise trust ~/.mise.toml || true
     echo "[mise] Installing tools from ~/.mise.toml..."
     mise install || true
+    mise upgrade || true
 fi
