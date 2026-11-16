@@ -1,21 +1,17 @@
 ---
-status: testing
+status: complete
 phase: 06-core-spike-knowledge-integration
 source:
   - 06-01-SUMMARY.md
   - 06-02-SUMMARY.md
   - 06-03-SUMMARY.md
 started: 2026-11-04T12:00:00Z
-updated: 2026-11-04T12:00:00Z
+updated: 2026-11-16T12:00:00Z
 ---
 
 ## Current Test
 
-number: 6
-name: office-read CLI function
-expected: |
-  Running `office-read` in zsh against a supported Office file converts and prints the document contents in Markdown format using `uv run` and `markitdown` without errors.
-awaiting: user response
+[all tests complete]
 
 ## Tests
 
@@ -51,20 +47,20 @@ coverage_id: D2
 
 ### 6. office-read CLI function
 expected: Running `office-read` in zsh against a supported Office file converts and prints the document contents in Markdown format using `uv run` and `markitdown` without errors.
-result: pending
+result: pass
 
 ### 7. office-write CLI function
 expected: Running `office-write` in zsh executes `officecli set` followed by `officecli close` to write and flush modifications.
-result: pending
+result: pass
 
 ## Summary
 
 total: 7
-passed: 5
+passed: 7
 issues: 0
-pending: 2
+pending: 0
 skipped: 0
 
 ## Gaps
 
-[none yet]
+[none]

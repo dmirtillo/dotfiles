@@ -729,10 +729,10 @@ office-write() {
   fi
   # D-01: Execute writes globally using text replacement
   officecli set "$file" / --find "$find_str" --replace "$replace_str"
-  local status=$?
+  local exit_code=$?
   # D-02: Sequentially flush to prevent zip corruption
   officecli close "$file" 2>/dev/null || true
-  return $status
+  return $exit_code
 }
 
 office-query() {
