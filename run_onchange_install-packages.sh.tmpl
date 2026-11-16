@@ -9,7 +9,13 @@ set -euo pipefail
 {{ if eq .chezmoi.os "darwin" -}}
 echo "[packages] Installing Homebrew packages..."
 if command -v brew &>/dev/null; then
-  brew bundle install --file="{{ .chezmoi.sourceDir }}/Brewfile" 2>&1 | sed 's/^/  /' || true
+  set +e
+  brew bundle install --file="{{ .chezmoi.sourceDir }}/Brewfile" 2>&1 | sed 's/^/  /'
+  brew_status=${PIPESTATUS[0]}
+  set -e
+  if [ "$brew_status" -ne 0 ]; then
+    echo "  WARNING: brew bundle exited $brew_status — some packages may be missing (see output above)" >&2
+  fi
 else
   echo "  WARNING: Homebrew not installed. Install from https://brew.sh/"
 fi

@@ -206,6 +206,6 @@
 1. `switch-models` header and model names match the current config, or script is removed if obsolete.
 2. `run_onchange_hydrate_office.sh.tmpl` hash includes `base_template.docx`.
 
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
-- [ ] 13-01-PLAN.md — switch-models and hydrate-office fixes
+- [x] 13-01-PLAN.md — switch-models and hydrate-office fixes

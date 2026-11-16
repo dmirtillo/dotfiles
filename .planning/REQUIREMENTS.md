@@ -41,8 +41,8 @@ These requirements are already satisfied by the existing codebase.
 - [ ] **OC-03**: Duplicate DeepSeek model entry removed.
 - [ ] **OC-04**: LiteLLM unpinned and always upgraded to latest; `top_p` patch replaced by `additional_drop_params`; xAI patch kept in a re-runnable `litellm-patch`.
 - [ ] **OC-05**: `brew bundle` errors printed.
-- [ ] **TOOL-02**: `switch-models` updated.
-- [ ] **TOOL-03**: hydrate-office hash covers `base_template.docx`.
+- [x] **TOOL-02**: `switch-models` updated.
+- [x] **TOOL-03**: hydrate-office hash covers `base_template.docx`.
 
 ## Out of Scope
 
@@ -74,8 +74,8 @@ These requirements are already satisfied by the existing codebase.
 | OC-03 | Phase 12 | Pending |
 | OC-04 | Phase 12 | Pending |
 | OC-05 | Phase 12 | Pending |
-| TOOL-02 | Phase 13 | Pending |
-| TOOL-03 | Phase 13 | Pending |
+| TOOL-02 | Phase 13 | Complete |
+| TOOL-03 | Phase 13 | Complete |
 
 ### OfficeCLI Hybrid Workflow
 - [ ] **CORE-03**: Establish a robust hybrid approach to document modification that pairs `markitdown` for reading and `officecli query/set` for structurally-aware targeting.

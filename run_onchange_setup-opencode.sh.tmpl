@@ -76,9 +76,6 @@ done
 # Clean up broken GSD installer artifacts and obsolete V1 plugins
 rm -rf "$OC_CONFIG"/gsd-* "$OC_CONFIG"/.gsd-* "$OC_CONFIG/gsd-core" "$OC_CONFIG/plugins/gsd-statusline" "$HOME/.agents/skills"/gsd-* "$HOME/.agents/agents"/gsd* "$HOME/.agents/agents/subagents"/gsd-* "$HOME/.agents"/gsd-* "$HOME/.agents"/.gsd-*
 rm -f "$OC_CONFIG/plugins/ecc-hooks.ts" "$OC_CONFIG/plugins/gsd-core.js" "$OC_CONFIG/plugins/package.json" "$OC_CONFIG/hooks"/gsd-* "$OC_CONFIG/agents"/gsd-*
-# Clean up obsolete Gemini CLI and Antigravity artifacts
-rm -rf "$HOME/.gemini" "$HOME/.local/bin/patch-gemini-cli"
-
 # Deploy OpenCode V2 bridge for Ponytail plugin
 cat << 'PONYTAIL_EOF' > "$OC_CONFIG/plugins/ponytail.ts"
 import { createRequire } from 'module';
@@ -339,15 +336,6 @@ config.provider.litellm = {
         cache_write: 0.0
       }
     },
-    "deepseek-ai/deepseek-v4.1-flash-maas": {
-      name: "DeepSeek V4.1 Flash MaaS (Vertex)",
-      cost: {
-        input: 0.3,
-        output: 1.2,
-        cache_read: 0.03,
-        cache_write: 0.0
-      }
-    }
   }
 };
 
