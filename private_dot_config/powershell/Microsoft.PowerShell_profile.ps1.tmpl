@@ -7,8 +7,6 @@
 # Google Cloud / Vertex AI Settings
 $env:GOOGLE_GENAI_USE_VERTEXAI="true"
 $env:GOOGLE_CLOUD_PROJECT="{{ get . "gcloud_project" }}"
-$env:AGY_BUSINESS_PAYGO_TIER="true"
-$env:GCP_GE_PAYGO_TIER="true"
 {{ end -}}
 
 {{ if get . "gcloud_location" -}}

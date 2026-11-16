@@ -15,7 +15,7 @@ Spike sessions wrapped: 2026-07-06
 ## Requirements
 
 - The client MUST explicitly request the MCP tools in its API call using LiteLLM's custom `{"type": "mcp", "server_url": "litellm_proxy"}` syntax.
-- Clients like OpenCode and Gemini CLI cannot "implicitly" inherit tools configured on the LiteLLM proxy without code modifications.
+- Clients like OpenCode cannot "implicitly" inherit tools configured on the LiteLLM proxy without code modifications.
 - **Markitdown+OfficeCLI:** Must explicitly call `officecli close <file>` to flush edits to disk before passing the file to `markitdown` for reading, due to `officecli`'s resident mode.
 - Must support Vertex AI (BYOK) for pay-as-you-go billing.
 - Must operate from the terminal.
@@ -26,7 +26,7 @@ Spike sessions wrapped: 2026-07-06
 ## Feature Areas
 
 | Area | Reference | Key Finding |
-| CLI Tooling | references/cli-tooling.md | How to bypass antigravity-cli subscription using PAYGO env vars |
+| CLI Tooling | references/cli-tooling.md | Unified OpenCode AI terminal runtime with Vertex AI and Google AI Studio |
 |------|-----------|-------------|
 | litellm-mcp | references/litellm-mcp.md | Standard clients need custom payloads to reach MCP servers |
 | brew-sync | references/brew-sync.md | Safe merging of Brewfiles preserves user comments |
@@ -35,7 +35,6 @@ Spike sessions wrapped: 2026-07-06
 | opencode-gsd | references/opencode-gsd.md | gsd-core safely replaces legacy tools without skill loss |
 | toolchain | references/toolchain.md | mise for JS globals, uv for python extras |
 | performance-audit | references/performance-audit.md | Sequential OCR triggers timeouts; Ponytail keeps Zsh fast |
-| gemini-extensions | references/gemini-extensions.md | Automated installs of Gemini CLI extensions require `--consent` |
 | agent-workflow | references/agent-workflow.md | Agent edits must be sequential; text-replace is preferred over DOM mapping |
 
 ## Source Files

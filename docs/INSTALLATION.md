@@ -129,7 +129,6 @@ On first run, chezmoi prompts for these values. They are stored in `~/.config/ch
 | **SSH key filenames** | Keys in `~/.ssh/keys/` to auto-load on shell startup. Comma-separated. Leave empty for none. | `my-key.key,work-key.key` |
 | **Google Cloud project** | Sets `GOOGLE_CLOUD_PROJECT` env var. Leave empty to skip. | `my-gcp-project` |
 | **Google Cloud location** | Sets `GOOGLE_CLOUD_LOCATION` env var. Leave empty to skip. | `global` |
-| **Enable Antigravity** | Whether to add `~/.antigravity/antigravity/bin` to PATH | `false` |
 
 ### Reconfiguring Later
 
@@ -156,7 +155,6 @@ If you want to automate setup without interactive prompts (e.g., in a script or 
   ssh_keys = "key1.key,key2.key"
   gcloud_project = ""
   gcloud_location = ""
-  enable_antigravity = false
 ```
 
 ---

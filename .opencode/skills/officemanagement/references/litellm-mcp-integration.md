@@ -46,7 +46,7 @@ If you are building a custom client that connects to a LiteLLM proxy, you can ac
 
 ## What to Avoid
 
--   **Do not assume standard AI CLI tools (OpenCode, Gemini CLI, Claude Code) will "just work" with LiteLLM's MCP tools out of the box.** Because these tools send standard OpenAI payloads without the custom `{"type": "mcp"}` object, LiteLLM simply passes their requests through to the upstream model without injecting the tools.
+-   **Do not assume standard AI CLI tools (OpenCode, Claude Code) will "just work" with LiteLLM's MCP tools out of the box.** Because these tools send standard OpenAI payloads without the custom `{"type": "mcp"}` object, LiteLLM simply passes their requests through to the upstream model without injecting the tools.
 -   **Do not rely on implicit tool inheritance.** A proxy cannot unilaterally add tools to a conversation unless the upstream model supports it and the client is capable of rendering tool use chunks it didn't explicitly define.
 
 ## Constraints

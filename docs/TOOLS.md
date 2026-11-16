@@ -22,7 +22,6 @@ This repository installs a wide variety of tools to ensure a consistent, modern 
 - **Version Control:** `git`, `lazygit`, `gh`, `git-filter-repo`
 - **AI Runtimes & CLIs:**
   - `opencode`: Official v2 client/server runtime (extra/opencode on Arch, homebrew-core on macOS)
-  - `gemini-cli`: Google Gemini CLI via `mise` (`npm:@google/gemini-cli`)
   - `litellm`: Local proxy service on `localhost:4000` routing Claude (Haiku 5.5/Sonnet 5.5/Opus 5.5), xAI Grok 4.7, and DeepSeek 4.1 Flash to Vertex AI endpoints
   - `markitdown`: Microsoft document conversion tool (via `uv tool`)
 - **Model Context Protocol (MCP) Servers:**

@@ -89,27 +89,6 @@ opencode run "ping"
 
 ---
 
-## Gemini CLI Extensions & MCP
-
-### Extension status
-List installed extensions:
-```bash
-gemini extensions list
-```
-
-Install or update ponytail extension:
-```bash
-gemini extensions install https://github.com/DietrichGebert/ponytail --consent
-```
-
-### MCP server status
-List configured MCP servers:
-```bash
-gemini mcp list
-```
-
----
-
 ## LiteLLM Proxy Issues
 
 ### LiteLLM is not responding

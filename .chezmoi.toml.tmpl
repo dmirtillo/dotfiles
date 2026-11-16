@@ -17,7 +17,6 @@
 #                       • ~/.config/litellm/config.yaml  (Gemini models in proxy)
 #                       • ~/.config/opencode/opencode.json (direct google/ provider)
 #                       • ~/.config/tmuxai/config.yaml   (direct Gemini access)
-#   enable_antigravity - Enable Antigravity Python env manager
 # =============================================================================
 {{ $gitName := promptStringOnce . "git_name" "Git user name" -}}
 {{- $gitEmail := promptStringOnce . "git_email" "Git email address" -}}
@@ -32,7 +31,6 @@
 {{- $awsProfilesOutput := output "bash" "-c" "cat ~/.aws/config ~/.aws/credentials 2>/dev/null | grep -E '^\\[.*\\]' | tr -d '[]' | sed 's/^profile //' | sort -u | paste -sd ',' - || true" | trim -}}
 {{- $promptMsg := printf "AWS Profile name for MCP (available: %s, leave empty to skip)" ($awsProfilesOutput | default "none found") -}}
 {{- $awsProfile := promptStringOnce . "aws_profile" $promptMsg -}}
-{{- $enableAntigravity := promptBoolOnce . "enable_antigravity" "Enable Antigravity Python env manager" false -}}
 
 [data]
   git_name = {{ $gitName | quote }}
@@ -46,4 +44,3 @@
   gcloud_location = {{ $gcloudLocation | quote }}
   gemini_api_key = {{ $geminiApiKey | quote }}
   aws_profile = {{ $awsProfile | quote }}
-  enable_antigravity = {{ $enableAntigravity }}

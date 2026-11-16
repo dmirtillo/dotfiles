@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Provide smooth updates and correct MCP integration for OpenCode v2 and Gemini CLI.
+- Provide smooth updates and correct MCP integration for OpenCode v2.
 - Ensure GSD core updates do not overwrite custom skill folders.
 - Avoid tracking static `opencode.json` in git; synthesize configuration and MCP servers dynamically via Chezmoi apply.
 
@@ -10,8 +10,7 @@
 
 1. Use `npx @opengsd/gsd-core@latest --opencode --global` to stage workflows, commands, and skills.
 2. In OpenCode v2, GSD operates as an MCP server using `gsd-mcp-server` (`npx -y -p @opengsd/gsd-core gsd-mcp-server`).
-3. In Gemini CLI, GSD is registered as an MCP server under `mcpServers.gsd` in `~/.gemini/settings.json`.
-4. Chezmoi's `run_onchange_setup-opencode.sh.tmpl` automatically ensures `~/.config/opencode/opencode.json` contains:
+3. Chezmoi's `run_onchange_setup-opencode.sh.tmpl` automatically ensures `~/.config/opencode/opencode.json` contains:
    - Google AI Studio provider for Gemini models
    - LiteLLM proxy provider (`http://localhost:4000/v1`) for Claude and Grok models
    - MCP servers: `gcp-cost`, `aws-pricing`, and `gsd`

@@ -76,6 +76,8 @@ done
 # Clean up broken GSD installer artifacts and obsolete V1 plugins
 rm -rf "$OC_CONFIG"/gsd-* "$OC_CONFIG"/.gsd-* "$OC_CONFIG/gsd-core" "$OC_CONFIG/plugins/gsd-statusline" "$HOME/.agents/skills"/gsd-* "$HOME/.agents/agents"/gsd* "$HOME/.agents/agents/subagents"/gsd-* "$HOME/.agents"/gsd-* "$HOME/.agents"/.gsd-*
 rm -f "$OC_CONFIG/plugins/ecc-hooks.ts" "$OC_CONFIG/plugins/gsd-core.js" "$OC_CONFIG/plugins/package.json" "$OC_CONFIG/hooks"/gsd-* "$OC_CONFIG/agents"/gsd-*
+# Clean up obsolete Gemini CLI and Antigravity artifacts
+rm -rf "$HOME/.gemini" "$HOME/.local/bin/patch-gemini-cli"
 
 # Deploy OpenCode V2 bridge for Ponytail plugin
 cat << 'PONYTAIL_EOF' > "$OC_CONFIG/plugins/ponytail.ts"
@@ -392,6 +394,18 @@ for (const name of ["gridcraft", "pdfcraft", "wordcraft", "deckcraft", "photocra
     delete config.mcp[name];
   }
 }
+config.mcp["gsd"] = {
+  type: "local",
+  command: [
+    "npx",
+    "-y",
+    "-p",
+    "@opengsd/gsd-core",
+    "gsd-mcp-server",
+    "--no-prompts"
+  ],
+  enabled: true
+};
 config.mcp["gcp-cost"] = {
   type: "local",
   command: ["{{ .chezmoi.homeDir }}/.local/share/mise/shims/gcp-cost-mcp-server"],
