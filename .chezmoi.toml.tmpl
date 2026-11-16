@@ -13,10 +13,11 @@
 #   bitbucket_company_key  - SSH key filename in ~/.ssh/keys/ for Bitbucket company profile
 #   gcloud_project  - GCP project for Vertex AI (Claude models via LiteLLM proxy)
 #   gcloud_location - GCP region / endpoint (defaults to global in litellm config)
-#   gemini_api_key  - Google AI Studio key; used by:
-#                       • ~/.config/litellm/config.yaml  (Gemini models in proxy)
-#                       • ~/.config/opencode/opencode.json (direct google/ provider)
-#                       • ~/.config/tmuxai/config.yaml   (direct Gemini access)
+#
+# SECRETS ARE NOT STORED HERE. Keys live in the platform store and are read with
+# `get-secret` (see dot_local/bin/executable_get-secret). On macOS:
+#   security add-generic-password -a "$USER" -s gemini-api-key -w
+# or simply:  get-secret --set gemini-api-key
 # =============================================================================
 {{ $gitName := promptStringOnce . "git_name" "Git user name" -}}
 {{- $gitEmail := promptStringOnce . "git_email" "Git email address" -}}
@@ -27,7 +28,6 @@
 {{- $bitbucketCompanyKey := promptStringOnce . "bitbucket_company_key" "SSH key filename in ~/.ssh/keys/ for Bitbucket company (leave empty to skip)" -}}
 {{- $gcloudProject := promptStringOnce . "gcloud_project" "Google Cloud project (leave empty to skip)" -}}
 {{- $gcloudLocation := promptStringOnce . "gcloud_location" "Google Cloud location (leave empty to skip)" -}}
-{{- $geminiApiKey := promptStringOnce . "gemini_api_key" "Gemini API Key (Google AI Studio, leave empty to skip)" -}}
 {{- $awsProfilesOutput := output "bash" "-c" "cat ~/.aws/config ~/.aws/credentials 2>/dev/null | grep -E '^\\[.*\\]' | tr -d '[]' | sed 's/^profile //' | sort -u | paste -sd ',' - || true" | trim -}}
 {{- $promptMsg := printf "AWS Profile name for MCP (available: %s, leave empty to skip)" ($awsProfilesOutput | default "none found") -}}
 {{- $awsProfile := promptStringOnce . "aws_profile" $promptMsg -}}
@@ -42,5 +42,4 @@
   bitbucket_company_key = {{ $bitbucketCompanyKey | quote }}
   gcloud_project = {{ $gcloudProject | quote }}
   gcloud_location = {{ $gcloudLocation | quote }}
-  gemini_api_key = {{ $geminiApiKey | quote }}
   aws_profile = {{ $awsProfile | quote }}

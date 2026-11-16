@@ -66,6 +66,54 @@ If missing, open a new terminal — they regenerate automatically on first load.
 
 ---
 
+## Secrets
+
+Secrets are never stored in the repo or in a chezmoi variable, and never exported
+at shell startup. They live in the platform's native store and are read on demand
+by `get-secret` (`~/.local/bin/get-secret`).
+
+### Store a secret
+
+```bash
+get-secret --set gemini-api-key
+```
+
+This writes to whichever backend the machine has (see below). The Gemini key is
+the only one this repo needs; OpenCode and tmuxai pick it up through wrapper
+functions that run `get-secret` for that one process.
+
+### Backends, in order
+
+1. `$SECRET_FILE_DIR/<name>` — a 0600 file, default `~/.config/secrets/`. Set
+   `SECRET_FILE_DIR` to force this on any platform.
+2. **macOS** — Keychain.
+3. **Linux with a session bus** — Secret Service via `secret-tool`. On KDE this
+   is KWallet/ksecretd; you need `kwallet-pam` so KWallet is unlocked at login
+   (otherwise the first `get-secret` opens a KWallet prompt).
+4. **Headless Linux** (no DBus, remote shell) — `pass show dotfiles/<name>`.
+   `pass` needs a GPG key and `gpg-agent`; over SSH the agent must be running.
+   For a machine with neither, fall back to the 0600 file.
+
+### Verify the backend on a machine
+
+```bash
+get-secret --set smoke-test
+get-secret smoke-test          # prints the value
+```
+
+### Rotate a leaked key
+
+The old `gemini_api_key` was written in plaintext into `~/.config/opencode/`,
+`~/.config/litellm/` and `~/.config/tmuxai/`. Rotate it in Google AI Studio,
+then `get-secret --set gemini-api-key` with the new value, and confirm no
+`AIza…` string is left behind:
+
+```bash
+grep -rE 'AIza' ~/.config/opencode ~/.config/litellm ~/.config/tmuxai
+```
+
+---
+
 ## OpenCode CLI & Plugins
 
 ### OpenCode warning: "Plugins are KO" or TypeScript errors
@@ -98,9 +146,9 @@ If Claude models in OpenCode are failing, verify if the proxy is running:
 # Check if the process is active
 pgrep -fl litellm
 
-# Check if port 4000 is listening
-ss -tulpn | grep 4000   # Linux
-lsof -i :4000          # macOS
+# It must be bound to 127.0.0.1:4000, never 0.0.0.0 (master_key is null)
+lsof -iTCP:4000 -sTCP:LISTEN      # macOS
+ss -tlnp 'sport = :4000'          # Linux
 
 # Restart the service (macOS)
 launchctl kickstart -k gui/$(id -u)/com.litellm.proxy
@@ -108,6 +156,10 @@ launchctl kickstart -k gui/$(id -u)/com.litellm.proxy
 # Restart the service (Linux)
 systemctl --user restart litellm
 ```
+
+The proxy has no authentication (`master_key: null`), so it is only safe while
+it listens on loopback. If `lsof`/`ss` shows `*:4000`, the `--host 127.0.0.1`
+flag has gone missing from the LaunchAgent plist or the systemd unit.
 
 ### Linux Installation & Service Setup
 LiteLLM is managed via chezmoi:

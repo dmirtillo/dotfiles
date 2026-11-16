@@ -8,12 +8,13 @@
 #
 # ROUTING:
 #   - claude-*  →  Vertex AI (gcloud ADC, no API key needed)
-#   - gemini-*  →  Google AI Studio (kept for potential direct use / tmuxai)
+#   - gemini-*  →  Vertex AI (gcloud ADC)
 #
 # NO DATABASE:
 #   Runs completely DB-free (no PostgreSQL). master_key is null so the proxy
-#   accepts all requests without authentication — safe because it only listens
-#   on localhost (macOS LaunchAgent binds to 127.0.0.1 by default).
+#   accepts all requests without authentication. This is safe ONLY because it is
+#   bound to 127.0.0.1 via --host (see the LaunchAgent / systemd unit) — never
+#   run it without that flag.
 #   The /ui endpoint is available but shows login errors without a DB; use
 #   `tail -f ~/.local/share/litellm/proxy.log` to monitor live traffic instead.
 #
@@ -60,36 +61,6 @@ model_list:
       model: vertex_ai/gemini-3.8-flash
       vertex_project: "{{ get . "gcloud_project" }}"
       vertex_location: "{{ (get . "gcloud_location") | default "global" }}"
-{{ if get . "gemini_api_key" }}
-  # --- Gemini models (via Google AI Studio direct) ---
-  - model_name: gemini-4-argon-direct
-    litellm_params:
-      model: gemini/gemini-4-argon
-      api_key: "{{ get . "gemini_api_key" }}"
-
-  - model_name: gemini-4-carbon-direct
-    litellm_params:
-      model: gemini/gemini-4-carbon
-      api_key: "{{ get . "gemini_api_key" }}"
-    model_info:
-      input_cost_per_token: 0.000004
-      output_cost_per_token: 0.000020
-      cache_read_input_token_cost: 0.0000002
-
-  - model_name: gemini-4-hydrogen-direct
-    litellm_params:
-      model: gemini/gemini-4-hydrogen
-      api_key: "{{ get . "gemini_api_key" }}"
-    model_info:
-      input_cost_per_token: 0.0000015
-      output_cost_per_token: 0.0000075
-      cache_read_input_token_cost: 0.000000075
-
-  - model_name: gemini-3.8-flash-direct
-    litellm_params:
-      model: gemini/gemini-3.8-flash
-      api_key: "{{ get . "gemini_api_key" }}"
-{{ end }}
   # --- Anthropic models (via Vertex AI, global endpoint) ---
   - model_name: claude-haiku-5-5
     litellm_params:

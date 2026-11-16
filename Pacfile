@@ -99,8 +99,19 @@ zoxide
 chezmoi
 
 # =============================================================================
-# NETWORKING
+# SECRETS
 # =============================================================================
+# secret-tool ships with libsecret. On KDE the Secret Service API is served by
+# ksecretd (a kwalletd5/kwalletd6 dependency); kwallet-pam unlocks KWallet at
+# login, which is what makes credentials readable without a prompt.
+libsecret
+kwallet-pam
+pass
+gnupg
+
+# =============================================================================
+# NETWORKING
+# =============================================================================</parameters>
 bind
 curl
 inetutils

@@ -3,28 +3,28 @@ gsd_state_version: 1.0
 milestone: v1.14.35
 milestone_name: milestone
 status: planned
-current_phase: 10
-stopped_at: Phases 9, 11, 13 complete; next: 12-01, then 10, then 12-02
-last_updated: "2026-11-16T15:30:00.000Z"
+current_phase: 12
+stopped_at: Phases 9, 11, 13, 12-01, 10 complete; only 12-02 (litellm upgrade) remains and needs manual verification
+last_updated: "2026-11-16T16:00:00.000Z"
 last_activity: 2026-11-16
 progress:
   total_phases: 13
-  completed_phases: 11
+  completed_phases: 12
   total_plans: 18
-  completed_plans: 15
-  percent: 85
+  completed_plans: 16
+  percent: 92
 ---
 
 # Project State
 
 ## Current Position
 
-Phase: 10 of 13 (Secrets and network hardening)
-Plan: 0 of 1 in current phase
-Status: Phases 9, 11, 13 done; next: 12-01, 10-01, 12-02
-Last activity: 2026-11-16 — Added Gemini 4 Carbon and Hydrogen models with verified GCP pricing
+Phase: 12 of 13 (OpenCode and LiteLLM setup fixes)
+Plan: 1 of 2 in current phase
+Status: Phases 9, 10, 11, 12-01, 13 done; remaining: 12-02 (LiteLLM 1.83 -> 1.109, manual check)
+Last activity: 2026-11-16 — Moved secrets to the platform store, bound LiteLLM to loopback
 
-Progress: [████████░░] 85%
+Progress: [█████████░] 92%
 
 ### Quick Tasks Completed
 

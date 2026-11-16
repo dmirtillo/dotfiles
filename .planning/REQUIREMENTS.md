@@ -28,19 +28,19 @@ These requirements are already satisfied by the existing codebase.
 - [x] **HYG-02**: Vendored `local-test/` and `test-config/` removed from spike 032.
 - [x] **HYG-03**: `officemanagement` skill consolidated into `spike-findings-dotfiles`.
 - [x] **HYG-04**: `.chezmoiignore`/`.gitignore` fixed; no repo files leak into `$HOME`.
-- [ ] **SEC-01**: No plaintext Gemini key in rendered configs.
-- [ ] **SEC-02**: LiteLLM listens on 127.0.0.1 only.
+- [x] **SEC-01**: No plaintext Gemini key in rendered configs.
+- [x] **SEC-02**: LiteLLM listens on 127.0.0.1 only.
 - [x] **SEC-03**: `CF_API_TOKEN` fetched lazily, not at shell startup.
-- [ ] **SEC-04**: Cross-platform `get-secret` (macOS Keychain, KDE Secret Service, headless Arch).
+- [x] **SEC-04**: Cross-platform `get-secret` (macOS Keychain, KDE Secret Service, headless Arch).
 - [x] **ZSH-01**: Startup-time claims match measurement (~95ms).
 - [x] **ZSH-02**: `office-*` shell functions removed.
 - [x] **ZSH-03**: Dead/OMZ-duplicate aliases removed.
 - [x] **ZSH-04**: `sizeof` not shadowed by `du=dust`.
-- [ ] **OC-01**: Duplicate gemini cleanup removed.
-- [ ] **OC-02**: GSD MCP avoids `npx -y` on every start.
-- [ ] **OC-03**: Duplicate DeepSeek model entry removed.
+- [x] **OC-01**: Duplicate gemini cleanup removed.
+- [x] **OC-02**: GSD MCP avoids `npx -y` on every start.
+- [x] **OC-03**: Duplicate DeepSeek model entry removed.
 - [ ] **OC-04**: LiteLLM unpinned and always upgraded to latest; `top_p` patch replaced by `additional_drop_params`; xAI patch kept in a re-runnable `litellm-patch`.
-- [ ] **OC-05**: `brew bundle` errors printed.
+- [x] **OC-05**: `brew bundle` errors printed.
 - [x] **TOOL-02**: `switch-models` updated.
 - [x] **TOOL-03**: hydrate-office hash covers `base_template.docx`.
 
@@ -61,19 +61,19 @@ These requirements are already satisfied by the existing codebase.
 | HYG-02 | Phase 9 | Complete |
 | HYG-03 | Phase 9 | Complete |
 | HYG-04 | Phase 9 | Complete |
-| SEC-01 | Phase 10 | Pending |
-| SEC-02 | Phase 10 | Pending |
+| SEC-01 | Phase 10 | Complete |
+| SEC-02 | Phase 10 | Complete |
 | SEC-03 | Phase 10 | Complete |
-| SEC-04 | Phase 10 | Pending |
+| SEC-04 | Phase 10 | Complete |
 | ZSH-01 | Phase 11 | Complete |
 | ZSH-02 | Phase 11 | Complete |
 | ZSH-03 | Phase 11 | Complete |
 | ZSH-04 | Phase 11 | Complete |
-| OC-01 | Phase 12 | Pending |
-| OC-02 | Phase 12 | Pending |
-| OC-03 | Phase 12 | Pending |
+| OC-01 | Phase 12 | Complete |
+| OC-02 | Phase 12 | Complete |
+| OC-03 | Phase 12 | Complete |
 | OC-04 | Phase 12 | Pending |
-| OC-05 | Phase 12 | Pending |
+| OC-05 | Phase 12 | Complete |
 | TOOL-02 | Phase 13 | Complete |
 | TOOL-03 | Phase 13 | Complete |
 

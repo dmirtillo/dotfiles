@@ -158,9 +158,9 @@
 3. `CF_API_TOKEN` is read lazily inside `cfapi()`, not at shell start.
 4. A `get-secret` helper dispatches: macOS Keychain, Linux with Secret Service (KWallet/ksecretd or gnome-keyring via `secret-tool`), headless Linux (`pass`, or 0600 env file fallback). Documented in `docs/`.
 
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
-- [ ] 10-01-PLAN.md — Env-based keys, localhost bind, get-secret helper
+- [x] 10-01-PLAN.md — Env-based keys, localhost bind, get-secret helper
 
 ### Phase 11: Zsh cleanup
 
@@ -193,7 +193,7 @@
 
 **Plans:** 2 plans
 
-- [ ] 12-01-PLAN.md — Duplicate cleanup, MCP via mise shim (done), duplicate model, brew errors
+- [x] 12-01-PLAN.md — Duplicate cleanup, MCP via mise shim, duplicate model, brew errors
 - [ ] 12-02-PLAN.md — Unpinned LiteLLM upgrade, `additional_drop_params`, `litellm-patch` (needs manual verification)
 
 ### Phase 13: Tooling scripts and docs

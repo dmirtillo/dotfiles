@@ -5,7 +5,7 @@ set -euo pipefail
 # Set up OpenCode + ECC configuration
 # Creates symlinks from the ECC clone into ~/.config/opencode/
 # Also installs plugin SDK dependencies and registers with GSD
-# chezmoi:template:hash {{ include "private_dot_config/private_opencode/AGENTS.md" | sha256sum }}
+# chezmoi:template:hash {{ include "private_dot_config/private_opencode/AGENTS.md" | sha256sum }} {{ include "run_onchange_setup-opencode.sh.tmpl" | sha256sum }}
 # =============================================================================
 
 OC_CONFIG="$HOME/.config/opencode"
@@ -230,7 +230,7 @@ config.provider.google = {
   npm: "@ai-sdk/google",
   name: "Google AI Studio",
   options: {
-    apiKey: "{{ get . "gemini_api_key" }}"
+    apiKey: "{env:GEMINI_API_KEY}"
   },
   models: {
     "gemini-3.8-flash": {
