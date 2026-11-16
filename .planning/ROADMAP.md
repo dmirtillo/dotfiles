@@ -186,14 +186,15 @@
 **Success criteria:**
 
 1. Duplicate `rm -rf ~/.gemini ...` removed (handled by `.chezmoiremove`).
-2. GSD MCP no longer runs `npx -y` at every start (pinned/installed binary).
+2. GSD MCP runs from the mise shim, not `npx -y` (done; mise upgraded to latest).
 3. Duplicate `deepseek-ai/deepseek-v4.1-flash-maas` model removed.
 4. LiteLLM is installed unpinned and upgraded to latest (`pipx upgrade` in install script and `brewup`); the Claude `top_p` patch is replaced by `additional_drop_params: ["top_p"]` (verified on 1.109.1); the xAI patch moves to an idempotent `litellm-patch` script re-run after every upgrade, warning loudly if upstream code changes.
 5. `brew bundle` failures are printed, not swallowed.
 
-**Plans:** 1 plan
+**Plans:** 2 plans
 
-- [ ] 12-01-PLAN.md — Setup script fixes and LiteLLM patch verification
+- [ ] 12-01-PLAN.md — Duplicate cleanup, MCP via mise shim (done), duplicate model, brew errors
+- [ ] 12-02-PLAN.md — Unpinned LiteLLM upgrade, `additional_drop_params`, `litellm-patch` (needs manual verification)
 
 ### Phase 13: Tooling scripts and docs
 

@@ -3,6 +3,9 @@
 ## What This Is
 A centralized dotfiles repository managed by `chezmoi`, providing a consistent development environment across macOS, Arch Linux/CachyOS, and Windows.
 
+## Constraint: always latest
+No version pins for tools in this setup (mise `latest`, `pipx upgrade`, brew). `brewup` upgrades everything; setup scripts must tolerate upstream changes and warn loudly rather than pin.
+
 ## Core Value
 Zero-friction provisioning of a high-performance (sub-50ms) shell environment and toolchain, maintaining exact tool parity across distinct operating systems without compromising native package management.
 
