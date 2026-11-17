@@ -1,6 +1,6 @@
 # Project Roadmap
 
-**13 phases** | **27 requirements mapped** | Phases 1-8 complete, 9-13 planned
+**13 phases** | **27 requirements mapped** | All phases complete
 
 ## Phase Details
 
@@ -129,6 +129,11 @@
 | 6. Core Spike Knowledge Integration | 3/3 | Complete | 2026-11-16 |
 | 7. Antigravity CLI BYOK Implementation | 1/1 | Complete | 2026-07-13 |
 | 8. OfficeCLI Hybrid Markitdown Workflow | 1/1 | Complete | 2026-07-16 |
+| 9. Repo hygiene | 1/1 | Complete | 2026-11-16 |
+| 10. Secrets and network hardening | 1/1 | Complete | 2026-11-16 |
+| 11. Zsh cleanup | 1/1 | Complete | 2026-11-16 |
+| 12. OpenCode and LiteLLM setup fixes | 2/2 | Complete | 2026-11-17 |
+| 13. Tooling scripts and docs | 1/1 | Complete | 2026-11-16 |
 
 ### Phase 9: Repo hygiene
 
@@ -188,13 +193,13 @@
 1. Duplicate `rm -rf ~/.gemini ...` removed (handled by `.chezmoiremove`).
 2. GSD MCP runs from the mise shim, not `npx -y` (done; mise upgraded to latest).
 3. Duplicate `deepseek-ai/deepseek-v4.1-flash-maas` model removed.
-4. LiteLLM is installed unpinned and upgraded to latest (`pipx upgrade` in install script and `brewup`); the Claude `top_p` patch is replaced by `additional_drop_params: ["top_p"]` (verified on 1.109.1); the xAI patch moves to an idempotent `litellm-patch` script re-run after every upgrade, warning loudly if upstream code changes.
+4. LiteLLM is installed unpinned and upgraded to latest (`pipx upgrade` in install script and `brewup`); the Claude `top_p`/`temperature` patch is replaced by `additional_drop_params` (verified on 1.109.1); the xAI patch moves to an idempotent `litellm-patch` script re-run after every upgrade, warning loudly if upstream code changes.
 5. `brew bundle` failures are printed, not swallowed.
 
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 - [x] 12-01-PLAN.md — Duplicate cleanup, MCP via mise shim, duplicate model, brew errors
-- [ ] 12-02-PLAN.md — Unpinned LiteLLM upgrade, `additional_drop_params`, `litellm-patch` (needs manual verification)
+- [x] 12-02-PLAN.md — Unpinned LiteLLM upgrade, `additional_drop_params`, `litellm-patch`
 
 ### Phase 13: Tooling scripts and docs
 

@@ -629,6 +629,14 @@ brewup() {
   antidote update
   command -v mise &>/dev/null && mise upgrade
   npm install -g @fission-ai/openspec@latest --dangerously-allow-all-scripts
+
+  # LiteLLM is installed unpinned. An upgrade recreates the pipx venv and wipes
+  # the local xAI patch, so re-apply it and bounce the proxy.
+  if command -v pipx &>/dev/null && pipx list --short 2>/dev/null | grep -q '^litellm '; then
+    pipx upgrade litellm 2>&1 | sed 's/^/  /'
+    "$HOME/.local/bin/litellm-patch" 2>&1 | sed 's/^/  /'
+    launchctl kickstart -k gui/$(id -u)/com.litellm.proxy 2>/dev/null || true
+  fi
 }
 
 # Zscaler VPN controls (macOS only)

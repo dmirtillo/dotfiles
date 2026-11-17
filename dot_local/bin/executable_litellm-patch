@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# =============================================================================
+# litellm-patch — re-apply local patches to a pipx-installed LiteLLM
+#
+# WHY: LiteLLM is installed UNPINNED and upgraded to latest (`pipx upgrade
+# litellm`). Every upgrade recreates the venv and wipes these patches, so this
+# script runs after every install/upgrade (see run_onchange_install-packages
+# and `brewup`). It is idempotent: running it twice changes nothing.
+#
+# PATCHES:
+#   1. xAI Grok via the Vertex AI partner endpoint. LiteLLM 1.109 still has no
+#      `xai/` prefix in the partner-model list, but Vertex serves Grok under
+#      `vertex_ai/xai/grok-*`, which LiteLLM, OpenCode and tmuxai all use.
+#
+#      (A second patch used to drop `top_p` for Vertex Claude. That is now
+#      handled by `additional_drop_params: ["top_p"]` in config.yaml, so the
+#      sed patch is gone.)
+#
+# If an anchor disappears after an upgrade it means upstream restructured the
+# file: the patch may be unnecessary now, or it may be broken. Either way this
+# says so loudly instead of silently skipping.
+# =============================================================================
+
+VENV="${LITELLM_VENV:-$HOME/.local/pipx/venvs/litellm}"
+PY="$VENV/lib/python3.13/site-packages"
+PARTNER_MAIN="$PY/litellm/llms/vertex_ai/vertex_ai_partner_models/main.py"
+
+if [ ! -f "$PARTNER_MAIN" ]; then
+  echo "litellm-patch: no partner-models/main.py under $VENV" >&2
+  echo "litellm-patch: is litellm installed via pipx with python3.13?" >&2
+  exit 1
+fi
+
+if grep -q 'XAI_PREFIX' "$PARTNER_MAIN"; then
+  echo "litellm-patch: xAI patch already applied"
+  exit 0
+fi
+
+if ! grep -q 'ZAI_PREFIX = "zai-org/"' "$PARTNER_MAIN"; then
+  echo "litellm-patch: WARNING — anchor 'ZAI_PREFIX' not found in" >&2
+  echo "  $PARTNER_MAIN" >&2
+  echo "  Upstream changed. The xAI prefix may now be built in (check and" >&2
+  echo "  delete this script) or the patch needs updating. Not patching." >&2
+  exit 0
+fi
+
+echo "litellm-patch: applying xAI Grok prefix..."
+LITELLM_PARTNER_MAIN="$PARTNER_MAIN" python3.13 - <<'PY'
+import os
+p = os.environ["LITELLM_PARTNER_MAIN"]
+with open(p) as f:
+    c = f.read()
+if "XAI_PREFIX" in c:
+    raise SystemExit(0)
+before = c
+c = c.replace('ZAI_PREFIX = "zai-org/"',
+              'ZAI_PREFIX = "zai-org/"\n    XAI_PREFIX = "xai/"')
+c = c.replace('or model.startswith(PartnerModelPrefixes.ZAI_PREFIX)',
+              'or model.startswith(PartnerModelPrefixes.ZAI_PREFIX)\n            or model.startswith(PartnerModelPrefixes.XAI_PREFIX)')
+c = c.replace('PartnerModelPrefixes.ZAI_PREFIX,',
+              'PartnerModelPrefixes.ZAI_PREFIX,\n            PartnerModelPrefixes.XAI_PREFIX,')
+if c == before:
+    raise SystemExit("litellm-patch: replacements had no effect")
+with open(p, "w") as f:
+    f.write(c)
+print("litellm-patch: xAI prefix injected")
+PY

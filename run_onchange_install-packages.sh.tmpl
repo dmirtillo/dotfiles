@@ -19,49 +19,34 @@ if command -v brew &>/dev/null; then
 else
   echo "  WARNING: Homebrew not installed. Install from https://brew.sh/"
 fi
-# Install LiteLLM proxy via pipx.
+# Install or upgrade the LiteLLM proxy via pipx (always the latest release;
+# this repo deliberately pins nothing).
 # WHY pipx: isolates litellm and its heavy dependency tree from the system Python.
 # WHY python3.13: litellm's grpcio wheel is prebuilt for 3.13 on macOS arm64;
 #   older Python versions require a source build that fails without Xcode headers.
 # WHY google-cloud-aiplatform inject: litellm's [proxy] extra does not pull in the
 #   Vertex AI SDK automatically; it is required for Claude models via Vertex.
-# IDEMPOTENT: only installs if litellm is not already listed by pipx.
+# AFTER EVERY INSTALL/UPGRADE: run litellm-patch, because recreating the venv
+#   wipes the local xAI patch.
 if command -v pipx &>/dev/null; then
-  if ! pipx list --short 2>/dev/null | grep -q '^litellm 1\.83\.14'; then
-    echo "[packages] Installing litellm proxy..."
-    pipx install --force 'litellm[proxy]==1.83.14' --python python3.13 2>&1 | sed 's/^/  /'
+  VENV_PY="$HOME/.local/pipx/venvs/litellm/bin/python"
+  if ! pipx list --short 2>/dev/null | grep -q '^litellm '; then
+    echo "[packages] Installing litellm proxy (latest)..."
+    pipx install 'litellm[proxy]' --python python3.13 2>&1 | sed 's/^/  /'
+  else
+    echo "[packages] Upgrading litellm proxy to latest..."
+    pipx upgrade litellm 2>&1 | sed 's/^/  /' || \
+      echo "  WARNING: pipx upgrade litellm failed (see above)" >&2
+  fi
+
+  # The Vertex SDK is a separate inject; a recreated venv can drop it.
+  if ! "$VENV_PY" -c 'import google.cloud.aiplatform' 2>/dev/null; then
+    echo "[packages] Injecting google-cloud-aiplatform (Vertex SDK)..."
     pipx inject litellm 'google-cloud-aiplatform>=1.38' 2>&1 | sed 's/^/  /'
   fi
 
-  # Patch LiteLLM to drop top_p when temperature is also present for Vertex Claude models.
-  # Vertex AI rejects requests specifying both parameters, and AI-SDK passes both by default.
-  LITELLM_TRANSFORM="$HOME/.local/pipx/venvs/litellm/lib/python3.13/site-packages/litellm/llms/vertex_ai/vertex_ai_partner_models/anthropic/transformation.py"
-  if [ -f "$LITELLM_TRANSFORM" ]; then
-    if ! grep -q 'data.pop("top_p", None)' "$LITELLM_TRANSFORM"; then
-      echo "  [packages] Patching LiteLLM Vertex AI transformation to drop top_p..."
-      sed -i '' 's/data\.pop("output_format", None)/data.pop("output_format", None)\n        if "temperature" in data and "top_p" in data:\n            data.pop("top_p", None)/' "$LITELLM_TRANSFORM"
-    fi
-  fi
-
-  # Patch LiteLLM to route xAI Grok models via Vertex AI partner openapi endpoint
-  LITELLM_PARTNER_MAIN="$HOME/.local/pipx/venvs/litellm/lib/python3.13/site-packages/litellm/llms/vertex_ai/vertex_ai_partner_models/main.py"
-  if [ -f "$LITELLM_PARTNER_MAIN" ]; then
-    if ! grep -q 'XAI_PREFIX' "$LITELLM_PARTNER_MAIN"; then
-      echo "  [packages] Patching LiteLLM Vertex AI partner models for xAI Grok..."
-      python3.13 -c '
-import os
-p = os.path.expanduser("'"$LITELLM_PARTNER_MAIN"'")
-with open(p, "r") as f:
-    c = f.read()
-if "XAI_PREFIX" not in c:
-    c = c.replace("ZAI_PREFIX = \"zai-org/\"", "ZAI_PREFIX = \"zai-org/\"\n    XAI_PREFIX = \"xai/\"")
-    c = c.replace("or model.startswith(PartnerModelPrefixes.ZAI_PREFIX)", "or model.startswith(PartnerModelPrefixes.ZAI_PREFIX)\n            or model.startswith(PartnerModelPrefixes.XAI_PREFIX)")
-    c = c.replace("PartnerModelPrefixes.ZAI_PREFIX,", "PartnerModelPrefixes.ZAI_PREFIX,\n            PartnerModelPrefixes.XAI_PREFIX,")
-    with open(p, "w") as f:
-        f.write(c)
-'
-    fi
-  fi
+  "$HOME/.local/bin/litellm-patch" 2>&1 | sed 's/^/  /' || \
+    echo "  WARNING: litellm-patch failed (see above)" >&2
 else
   echo "  WARNING: pipx not found. Install litellm manually: pipx install 'litellm[proxy]'"
 fi

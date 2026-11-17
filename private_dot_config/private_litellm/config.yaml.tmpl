@@ -19,9 +19,7 @@
 #   `tail -f ~/.local/share/litellm/proxy.log` to monitor live traffic instead.
 #
 # OPENCODE:
-#   OpenCode routes Gemini models DIRECTLY to Google AI Studio via @ai-sdk/google
-#   (not through this proxy) to avoid agent loop issues with the LiteLLM
-#   OpenAI-compatible translation layer. Only Claude models go through LiteLLM.
+#   OpenCode sends Claude and Grok through this proxy (OpenAI-compatible API)
 #
 # LOGS:
 #   stdout → ~/.local/share/litellm/proxy.log
@@ -61,24 +59,32 @@ model_list:
       model: vertex_ai/gemini-3.8-flash
       vertex_project: "{{ get . "gcloud_project" }}"
       vertex_location: "{{ (get . "gcloud_location") | default "global" }}"
+
+  #    Vertex rejects a request carrying both temperature and top_p, and the
+  #    AI-SDK sends both by default. Claude 5.5 additionally accepts only
+  #    temperature=1 (LiteLLM enforces this before the call reaches Vertex), so
+  #    both parameters are stripped at the edge rather than patching LiteLLM.
   # --- Anthropic models (via Vertex AI, global endpoint) ---
   - model_name: claude-haiku-5-5
     litellm_params:
       model: vertex_ai/claude-haiku-5-5
       vertex_project: "{{ get . "gcloud_project" }}"
       vertex_location: "global"
+      additional_drop_params: ["top_p", "temperature"]
 
   - model_name: claude-sonnet-5-5
     litellm_params:
       model: vertex_ai/claude-sonnet-5-5
       vertex_project: "{{ get . "gcloud_project" }}"
       vertex_location: "global"
+      additional_drop_params: ["top_p", "temperature"]
 
   - model_name: claude-opus-5-5
     litellm_params:
       model: vertex_ai/claude-opus-5-5@default
       vertex_project: "{{ get . "gcloud_project" }}"
       vertex_location: "global"
+      additional_drop_params: ["top_p", "temperature"]
 
   # --- xAI Grok models (via Vertex AI, global endpoint) ---
   - model_name: xai/grok-4.7

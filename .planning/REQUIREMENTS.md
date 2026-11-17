@@ -39,7 +39,7 @@ These requirements are already satisfied by the existing codebase.
 - [x] **OC-01**: Duplicate gemini cleanup removed.
 - [x] **OC-02**: GSD MCP avoids `npx -y` on every start.
 - [x] **OC-03**: Duplicate DeepSeek model entry removed.
-- [ ] **OC-04**: LiteLLM unpinned and always upgraded to latest; `top_p` patch replaced by `additional_drop_params`; xAI patch kept in a re-runnable `litellm-patch`.
+- [x] **OC-04**: LiteLLM unpinned and always upgraded to latest; `top_p` patch replaced by `additional_drop_params`; xAI patch kept in a re-runnable `litellm-patch`.
 - [x] **OC-05**: `brew bundle` errors printed.
 - [x] **TOOL-02**: `switch-models` updated.
 - [x] **TOOL-03**: hydrate-office hash covers `base_template.docx`.
@@ -72,7 +72,7 @@ These requirements are already satisfied by the existing codebase.
 | OC-01 | Phase 12 | Complete |
 | OC-02 | Phase 12 | Complete |
 | OC-03 | Phase 12 | Complete |
-| OC-04 | Phase 12 | Pending |
+| OC-04 | Phase 12 | Complete |
 | OC-05 | Phase 12 | Complete |
 | TOOL-02 | Phase 13 | Complete |
 | TOOL-03 | Phase 13 | Complete |
