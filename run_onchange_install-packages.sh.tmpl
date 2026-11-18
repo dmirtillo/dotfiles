@@ -107,8 +107,19 @@ if command -v yay &>/dev/null; then
   # yay handles both official repos and AUR
   # --needed skips already-installed packages
   # --noconfirm avoids interactive prompts
+  #
+  # Non-fatal: yay aborts the whole transaction when ONE AUR package fails to
+  # build (observed with python-msal-extensions, whose upstream test suite
+  # fails headless). Without this guard that single failure kills provisioning
+  # before the rest of the Pacfile is installed.
   echo "  Using yay (official + AUR)..."
+  set +e
   yay -S --needed --noconfirm $PACKAGES 2>&1 | sed 's/^/  /'
+  yay_status=${PIPESTATUS[0]}
+  set -e
+  if [ "$yay_status" -ne 0 ]; then
+    echo "  WARNING: yay exited $yay_status — some packages may be missing (see output above)" >&2
+  fi
 elif command -v pacman &>/dev/null; then
   # Fallback to pacman (official repos only -- AUR packages will fail)
   echo "  WARNING: yay not found, using pacman (AUR packages will be skipped)."

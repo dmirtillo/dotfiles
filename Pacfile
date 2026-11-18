@@ -236,8 +236,12 @@ python-python-multipart
 python-cryptography
 python-pynacl
 python-websockets
-python-azure-identity
-python-azure-storage-blob
+
+# Dropped python-azure-identity / python-azure-storage-blob: litellm imports
+# them lazily inside the Azure handlers, so the proxy runs without them. Their
+# AUR builds are broken (azure-core is fine, but msal-extensions fails its own
+# test suite), which aborted the whole transactional yay install. Add them back
+# only if you actually route to Azure — install via pip/uv, not the AUR.
 
 # AUR
 openspec

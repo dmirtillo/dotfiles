@@ -178,6 +178,14 @@ LiteLLM is managed via chezmoi:
 > `systemctl --user status litellm` shows an `ImportError`, add the missing
 > package from `pacman -Si litellm`'s optdepends list (`: proxy` suffix).
 
+> **Azure extras are deliberately omitted.** litellm lists
+> `azure-identity`/`azure-storage-blob` in the proxy extras, but imports them
+> lazily inside the Azure handlers, so the proxy runs without them. Their AUR
+> builds are broken today (`python-msal-extensions` fails its own headless test
+> suite, which cascades into `python-azure-identity`), and one failed AUR build
+> aborts the entire `yay` transaction. If you ever route to Azure, install them
+> with `uv pip install`/`pipx inject` rather than via the AUR.
+
 ### Permission Denied / ADC Errors
 LiteLLM uses Google Cloud Application Default Credentials (ADC) for Vertex AI. If you see auth errors:
 
