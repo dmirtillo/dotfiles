@@ -186,6 +186,21 @@ LiteLLM is managed via chezmoi:
 > aborts the entire `yay` transaction. If you ever route to Azure, install them
 > with `uv pip install`/`pipx inject` rather than via the AUR.
 
+> **`systemctl --user` says "Failed to connect to user scope bus".** In a
+> non-login shell (SSH, script) neither `$XDG_RUNTIME_DIR` nor
+> `$DBUS_SESSION_BUS_ADDRESS` is set, and `--user` needs both:
+> ```bash
+> export XDG_RUNTIME_DIR=/run/user/$(id -u)
+> export DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus
+> systemctl --user status litellm
+> ```
+> If it still fails, the per-user manager isn't running without a login session
+> — enable lingering so it (and the proxy) survive logout:
+> ```bash
+> loginctl enable-linger $USER
+> ```
+> The install script does both of these itself.
+
 ### Permission Denied / ADC Errors
 LiteLLM uses Google Cloud Application Default Credentials (ADC) for Vertex AI. If you see auth errors:
 

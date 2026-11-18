@@ -141,13 +141,25 @@ mkdir -p "$HOME/.local/share/litellm"
 
 # (Re)load and enable the litellm systemd user service so changes take effect immediately.
 if [ -f "$HOME/.config/systemd/user/litellm.service" ] && command -v systemctl &>/dev/null; then
+  # A non-login shell (SSH, this script) has neither of these set, and
+  # `systemctl --user` needs both to reach the per-user manager:
+  #   "Failed to connect to user scope bus ... $DBUS_SESSION_BUS_ADDRESS and
+  #    $XDG_RUNTIME_DIR not defined"
   export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+  export DBUS_SESSION_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS:-unix:path=${XDG_RUNTIME_DIR}/bus}"
+
+  # Keep the user manager alive when there is no login session (headless/SSH),
+  # otherwise the proxy dies at logout. Only needs doing once; harmless to repeat.
+  if command -v loginctl &>/dev/null; then
+    loginctl enable-linger "$USER" 2>/dev/null || true
+  fi
+
   echo "  [packages] Reloading litellm systemd user service..."
   if systemctl --user daemon-reload 2>/dev/null; then
     systemctl --user enable --now litellm 2>&1 | sed 's/^/  /' || true
     echo "  [packages] LiteLLM proxy service active."
   else
-    echo "  [packages] Note: Systemd user bus not accessible; skipping litellm service reload."
+    echo "  [packages] Note: Systemd user bus not accessible; skipping litellm service reload." >&2
   fi
 fi
 
