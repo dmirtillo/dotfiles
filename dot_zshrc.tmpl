@@ -682,6 +682,15 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 #   writes: officecli set <file> / --find <old> --replace <new>; officecli close <file>
 # See: .planning/phases/06-core-spike-knowledge-integration/06-01-PLAN.md (historical)
 
+# officecli runs its daily auto-update check on EVERY invocation, and on the
+# trimmed Linux build that check crashes: PublishTrimmed drops
+# System.Diagnostics.Process (nothing statically references it) but
+# UpdateChecker.ApplyPendingUpdate() reflects into it, so the process dies with
+# FileNotFoundException before doing any work. OFFICECLI_SKIP_UPDATE is the
+# upstream-supported opt-out (OfficeCli/Core/UpdateChecker.cs). It also stops a
+# provisioning step from swapping the binary mid-run.
+export OFFICECLI_SKIP_UPDATE=1
+
 # Secrets are never exported at shell startup: they live in the platform store and
 # are read by `get-secret` into the environment of one process only.
 # Store one with:  get-secret --set gemini-api-key  (see docs/TROUBLESHOOTING.md)

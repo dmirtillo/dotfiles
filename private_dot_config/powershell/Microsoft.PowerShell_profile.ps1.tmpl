@@ -282,6 +282,11 @@ if (Get-Command btm -ErrorAction SilentlyContinue) {
 # Call officecli directly (reads: officecli close <f>; uv run --with 'markitdown[all]' markitdown <f>).
 # ============================================================================
 
+# Skip officecli's per-invocation auto-update check. On the trimmed Linux build it
+# crashes (System.Diagnostics.Process trimmed out, then reflected into by
+# UpdateChecker), and it must never swap the binary mid-provisioning.
+$env:OFFICECLI_SKIP_UPDATE = "1"</parameter>
+
 # =============================================================================
 # Load OS-Specific Profile
 # =============================================================================

@@ -3,6 +3,14 @@
 
 set -euo pipefail
 
+# OfficeCLI's background update check crashes on its trimmed Linux build: the
+# trimmer drops System.Diagnostics.Process (nothing statically references it)
+# but UpdateChecker.ApplyPendingUpdate() reflects into it. It runs on EVERY
+# invocation, and there is no way to run `officecli set` without tripping it.
+# Provisioning must not auto-update the tool anyway. See OFFICECLI_SKIP_UPDATE
+# in OfficeCli/Core/UpdateChecker.cs.
+export OFFICECLI_SKIP_UPDATE=1
+
 DEST="$HOME/Documents/template.docx"
 mkdir -p "$(dirname "$DEST")"
 cp "{{ .chezmoi.sourceDir }}/base_template.docx" "$DEST"
