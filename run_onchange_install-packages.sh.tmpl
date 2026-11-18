@@ -20,10 +20,13 @@ else
   echo "  WARNING: Homebrew not installed. Install from https://brew.sh/"
 fi
 # Install or upgrade the LiteLLM proxy via pipx (always the latest release;
-# this repo deliberately pins nothing).
+# this repo deliberately pins nothing, including Python).
 # WHY pipx: isolates litellm and its heavy dependency tree from the system Python.
-# WHY python3.13: litellm's grpcio wheel is prebuilt for 3.13 on macOS arm64;
-#   older Python versions require a source build that fails without Xcode headers.
+# WHY no --python pin: an earlier revision pinned python3.13 because litellm's
+#   grpcio dependency had no prebuilt wheel for newer Pythons on macOS arm64 and
+#   fell back to a source build that fails without Xcode headers. grpcio now
+#   ships prebuilt wheels for 3.13-3.15 and litellm supports >=3.10,<3.16, so
+#   pipx picks the default interpreter and always tracks the latest release.
 # WHY google-cloud-aiplatform inject: litellm's [proxy] extra does not pull in the
 #   Vertex AI SDK automatically; it is required for Claude models via Vertex.
 # AFTER EVERY INSTALL/UPGRADE: run litellm-patch, because recreating the venv
@@ -32,7 +35,7 @@ if command -v pipx &>/dev/null; then
   VENV_PY="$HOME/.local/pipx/venvs/litellm/bin/python"
   if ! pipx list --short 2>/dev/null | grep -q '^litellm '; then
     echo "[packages] Installing litellm proxy (latest)..."
-    pipx install 'litellm[proxy]' --python python3.13 2>&1 | sed 's/^/  /'
+    pipx install 'litellm[proxy]' 2>&1 | sed 's/^/  /'
   else
     echo "[packages] Upgrading litellm proxy to latest..."
     pipx upgrade litellm 2>&1 | sed 's/^/  /' || \

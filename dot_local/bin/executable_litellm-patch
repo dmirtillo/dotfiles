@@ -24,12 +24,18 @@ set -euo pipefail
 # =============================================================================
 
 VENV="${LITELLM_VENV:-$HOME/.local/pipx/venvs/litellm}"
-PY="$VENV/lib/python3.13/site-packages"
+PYBIN="$VENV/bin/python"
+
+# Resolve site-packages from the venv's OWN interpreter rather than hardcoding a
+# version directory: litellm is installed unpinned, so the venv's Python can
+# (and will) change on upgrade. Asking the interpreter keeps this patch working
+# across Python versions.
+PY="$("$PYBIN" -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')"
 PARTNER_MAIN="$PY/litellm/llms/vertex_ai/vertex_ai_partner_models/main.py"
 
 if [ ! -f "$PARTNER_MAIN" ]; then
   echo "litellm-patch: no partner-models/main.py under $VENV" >&2
-  echo "litellm-patch: is litellm installed via pipx with python3.13?" >&2
+  echo "litellm-patch: is litellm installed via pipx? (looked in $PY)" >&2
   exit 1
 fi
 
@@ -47,7 +53,7 @@ if ! grep -q 'ZAI_PREFIX = "zai-org/"' "$PARTNER_MAIN"; then
 fi
 
 echo "litellm-patch: applying xAI Grok prefix..."
-LITELLM_PARTNER_MAIN="$PARTNER_MAIN" python3.13 - <<'PY'
+LITELLM_PARTNER_MAIN="$PARTNER_MAIN" "$PYBIN" - <<'PY'
 import os
 p = os.environ["LITELLM_PARTNER_MAIN"]
 with open(p) as f:
