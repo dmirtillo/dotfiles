@@ -10,7 +10,6 @@ Brewfile
 Pacfile
 Winfile
 docs/
-dot_local/bin
 dot_termux
 run_once_*
 run_onchange_*

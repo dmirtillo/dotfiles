@@ -215,7 +215,29 @@ ttf-meslo-nerd-font-powerlevel10k
 # =============================================================================
 ollama
 opencode
+
+# LiteLLM proxy runtime. The AUR `litellm` package (below) ships the library
+# only — every proxy dependency is an optdepend — so the systemd user service
+# (~/.config/systemd/user/litellm.service) cannot start without these.
 python-httpx2
+python-fastapi
+python-fastapi-sso
+python-starlette
+python-uvicorn
+python-granian
+python-uvloop
+python-orjson
+python-hiredis
+python-rq
+python-apscheduler
+python-backoff
+python-pyjwt
+python-python-multipart
+python-cryptography
+python-pynacl
+python-websockets
+python-azure-identity
+python-azure-storage-blob
 
 # AUR
 openspec

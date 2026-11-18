@@ -171,6 +171,13 @@ LiteLLM is managed via chezmoi:
   journalctl --user -u litellm -f
   ```
 
+> **Proxy extras are required.** The AUR `litellm` package ships the *library*
+> only — every proxy dependency (FastAPI, uvicorn/granian, uvloop, orjson,
+> APScheduler, …) is an `optdepends`. `Pacfile` therefore lists them explicitly
+> under "AI / LLM TOOLS". Without them the unit starts and immediately exits; if
+> `systemctl --user status litellm` shows an `ImportError`, add the missing
+> package from `pacman -Si litellm`'s optdepends list (`: proxy` suffix).
+
 ### Permission Denied / ADC Errors
 LiteLLM uses Google Cloud Application Default Credentials (ADC) for Vertex AI. If you see auth errors:
 
