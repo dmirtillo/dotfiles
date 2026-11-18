@@ -218,24 +218,50 @@ opencode
 
 # LiteLLM proxy runtime. The AUR `litellm` package (below) ships the library
 # only — every proxy dependency is an optdepend — so the systemd user service
-# (~/.config/systemd/user/litellm.service) cannot start without these.
-python-httpx2
+# (~/.config/systemd/user/litellm.service) cannot start without these. The
+# proxy imports them at startup and exits 1 on the first missing module.
+#
+# From the official `extra` repo (no AUR build, always current):
 python-fastapi
-python-fastapi-sso
 python-starlette
-python-uvicorn
+uvicorn
 python-granian
 python-uvloop
 python-orjson
-python-hiredis
-python-rq
-python-apscheduler
-python-backoff
 python-pyjwt
 python-python-multipart
 python-cryptography
 python-pynacl
 python-websockets
+python-httpx2
+python-sqlalchemy
+python-alembic
+python-psycopg
+python-tzdata
+python-semver
+python-mcp
+python-polars
+python-soundfile
+python-email-validator
+python-redis
+python-rq
+python-apscheduler
+python-backoff
+python-fastapi-sso
+gunicorn
+hiredis
+python-hiredis
+
+# AUR-only proxy deps (pure Python, build cleanly):
+python-expression
+python-inquirerpy
+python-restrictedpython
+
+# Deliberately omitted: casbin, pyroscope-io (not in Arch repos or the AUR;
+# imported lazily), azure-identity, azure-storage-blob (imported lazily inside
+# the Azure handlers; their AUR chain is broken today — msal-extensions fails
+# its own headless test suite — and one failed AUR build aborts the whole yay
+# transaction). Add via uv/pipx, not the AUR, only if you route to Azure.
 
 # Dropped python-azure-identity / python-azure-storage-blob: litellm imports
 # them lazily inside the Azure handlers, so the proxy runs without them. Their

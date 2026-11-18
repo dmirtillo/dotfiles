@@ -173,10 +173,13 @@ LiteLLM is managed via chezmoi:
 
 > **Proxy extras are required.** The AUR `litellm` package ships the *library*
 > only — every proxy dependency (FastAPI, uvicorn/granian, uvloop, orjson,
-> APScheduler, …) is an `optdepends`. `Pacfile` therefore lists them explicitly
-> under "AI / LLM TOOLS". Without them the unit starts and immediately exits; if
-> `systemctl --user status litellm` shows an `ImportError`, add the missing
-> package from `pacman -Si litellm`'s optdepends list (`: proxy` suffix).
+> sqlalchemy, semver, mcp, …) is an `optdepends`. `Pacfile` lists them explicitly
+> under "AI / LLM TOOLS" (the verified-complete set). The proxy imports them at
+> startup and exits 1 on the *first* missing module, so diagnosis is iterative:
+> the failing import is named at the bottom of `~/.local/share/litellm/proxy.err`
+> as `ModuleNotFoundError: No module named 'X'` — add the package for `X` and
+> restart. `pyroscope-io` and `casbin` are imported lazily and are not needed
+> for local Vertex/Grok routing.
 
 > **Azure extras are deliberately omitted.** litellm lists
 > `azure-identity`/`azure-storage-blob` in the proxy extras, but imports them
