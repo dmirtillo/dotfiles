@@ -1,12 +1,12 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.14.35
-milestone_name: milestone
+milestone: v2.0
+milestone_name: Cross-platform parity and hardening
 status: complete
-current_phase: 12
-stopped_at: All 13 phases complete; milestone ready to close out
-last_updated: "2026-11-17T09:00:00.000Z"
-last_activity: 2026-11-17
+current_phase: 13
+stopped_at: v2.0 complete and archived; ready for v2.1 scoping
+last_updated: "2026-11-18T16:20:00.000Z"
+last_activity: 2026-11-18
 progress:
   total_phases: 13
   completed_phases: 13
@@ -19,10 +19,9 @@ progress:
 
 ## Current Position
 
-Phase: 12 of 13 (OpenCode and LiteLLM setup fixes)
-Plan: 2 of 2 in current phase
-Status: All phases complete
-Last activity: 2026-11-17 — Upgraded LiteLLM to 1.109.1 unpinned; moved Claude top_p/temperature handling to config
+Milestone: v2.0 — complete and archived (see `.planning/milestones/v2.0/`)
+Status: All 13 phases complete
+Last activity: 2026-11-18 — Verified LiteLLM proxy on Arch; closed v2.0
 
 Progress: [██████████] 100%
 
@@ -68,6 +67,12 @@ Last activity: 2026-11-04 - Completed quick task 261104-craft: install craft sui
 
 ## Session
 
-**Last session:** 2026-11-16T12:00:00.000Z
-**Stopped at:** Completed all phases and verified UAT
-**Resume file:** None
+**Last session:** 2026-11-18
+**Stopped at:** v2.0 archived (audit, ROADMAP, REQUIREMENTS in `.planning/milestones/v2.0/`)
+**Resume file:** `.planning/v2.0-MILESTONE-AUDIT.md`
+
+### Next Session
+
+- Phase 2 (Windows toolchain) still `human_needed` — verify on a Windows host.
+- v2.1 scoping via `/gsd-new-milestone`.
+- Open: `OFFICECLI_SKIP_UPDATE` set globally; narrow to Linux-only if desired.

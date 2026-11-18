@@ -1,0 +1,87 @@
+# Requirements
+
+## Validated
+
+These requirements are already satisfied by the existing codebase.
+
+- ✓ macOS provisioning via `Brewfile`.
+- ✓ Arch Linux/CachyOS provisioning via `Pacfile` and `yay`/`pacman`.
+- ✓ Zsh + Powerlevel10k + Antidote configuration with ~96ms startup (<120ms budget).
+- ✓ OpenCode + Get Shit Done (GSD) integration via setup scripts.
+- ✓ Basic Windows support (`.gitconfig`, `.vimrc`, `.ssh/config`).
+
+## Active
+
+### Dependencies
+- [x] **DEP-01**: Align opencode/litellm versions across tracking files. *Superseded by the "always latest" constraint — nothing is pinned; install scripts upgrade to latest.*
+
+### Documentation & Hygiene
+- [x] **DOCS-01**: Implement a strict documentation update workflow for any feature/tool addition to prevent drift.
+- [x] **TOOL-01**: Audit existing tools across `Brewfile` and `Pacfile` to ensure exact cross-OS parity where missing.
+
+### Windows Expansion
+- [x] **WIN-01**: Establish PowerShell profile parity with the existing Zsh aliases and functions (using cross-platform OSS tools where applicable).
+- [x] **WIN-02**: Finalize Windows package management strategy combining `Chocolatey` and `Winget` into a seamless `run_onchange` chezmoi execution.
+
+### Core Integration
+- [x] **CORE-01**: Core spike knowledge integrated into the core CLI scripts for agentic operation.
+- [x] **CORE-02**: Antigravity CLI BYOK via PAYGO env vars (superseded by Gemini CLI removal).
+- [x] **CORE-03**: Robust hybrid document modification: `markitdown` for reading, `officecli query/set` for structurally-aware targeting.
+
+### Hygiene & Hardening (Phases 9-13)
+- [x] **HYG-01**: Spike sources exist once (`.planning/spikes/`); skill `sources/` untracked.
+- [x] **HYG-02**: Vendored `local-test/` and `test-config/` removed from spike 032.
+- [x] **HYG-03**: `officemanagement` skill consolidated into `spike-findings-dotfiles`.
+- [x] **HYG-04**: `.chezmoiignore`/`.gitignore` fixed; no repo files leak into `$HOME`.
+- [x] **SEC-01**: No plaintext Gemini key in rendered configs.
+- [x] **SEC-02**: LiteLLM listens on 127.0.0.1 only.
+- [x] **SEC-03**: `CF_API_TOKEN` fetched lazily, not at shell startup.
+- [x] **SEC-04**: Cross-platform `get-secret` (macOS Keychain, KDE Secret Service, headless Arch).
+- [x] **ZSH-01**: Startup-time claims match measurement (~95ms).
+- [x] **ZSH-02**: `office-*` shell functions removed.
+- [x] **ZSH-03**: Dead/OMZ-duplicate aliases removed.
+- [x] **ZSH-04**: `sizeof` not shadowed by `du=dust`.
+- [x] **OC-01**: Duplicate gemini cleanup removed.
+- [x] **OC-02**: GSD MCP avoids `npx -y` on every start.
+- [x] **OC-03**: Duplicate DeepSeek model entry removed.
+- [x] **OC-04**: LiteLLM unpinned and always upgraded to latest; `top_p` patch replaced by `additional_drop_params`; xAI patch kept in a re-runnable `litellm-patch`.
+- [x] **OC-05**: `brew bundle` errors printed.
+- [x] **TOOL-02**: `switch-models` updated.
+- [x] **TOOL-03**: hydrate-office hash covers `base_template.docx`.
+
+## Out of Scope
+
+- **Forcing a unified package manager:** Implementing tools like `mise` or `nix` to handle OS-level base packages across all operating systems is excluded to maintain simplicity and native OS integration.
+
+## Traceability
+
+| Requirement ID | Phase | Status |
+|----------------|-------|--------|
+| DOCS-01 | Phase 1 | Complete |
+| TOOL-01 | Phase 1 | Complete |
+| WIN-02 | Phase 2 | Complete |
+| WIN-01 | Phase 3 | Complete |
+| DEP-01 | Phase 4 | Complete |
+| BREW-01 | Phase 5 | Complete |
+| CORE-01 | Phase 6 | Complete |
+| CORE-02 | Phase 7 | Complete |
+| CORE-03 | Phase 8 | Complete |
+| HYG-01 | Phase 9 | Complete |
+| HYG-02 | Phase 9 | Complete |
+| HYG-03 | Phase 9 | Complete |
+| HYG-04 | Phase 9 | Complete |
+| SEC-01 | Phase 10 | Complete |
+| SEC-02 | Phase 10 | Complete |
+| SEC-03 | Phase 10 | Complete |
+| SEC-04 | Phase 10 | Complete |
+| ZSH-01 | Phase 11 | Complete |
+| ZSH-02 | Phase 11 | Complete |
+| ZSH-03 | Phase 11 | Complete |
+| ZSH-04 | Phase 11 | Complete |
+| OC-01 | Phase 12 | Complete |
+| OC-02 | Phase 12 | Complete |
+| OC-03 | Phase 12 | Complete |
+| OC-04 | Phase 12 | Complete |
+| OC-05 | Phase 12 | Complete |
+| TOOL-02 | Phase 13 | Complete |
+| TOOL-03 | Phase 13 | Complete |

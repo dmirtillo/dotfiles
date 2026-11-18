@@ -38,10 +38,12 @@ See: .planning/REQUIREMENTS.md for full requirements inventory and traceability 
 - Davide Mirtillo (Primary Developer)
 
 ## Current State
-All phases (01-08) complete. UAT verified for core CLI tools, OfficeCLI/Markitdown hybrid workflows, and Craft app suite integrations.
+Milestone v2.0 complete and archived (13 phases). Verified: cross-platform package parity, secrets/network hardening, "always latest" (no version pins), and a healthy LiteLLM proxy on both macOS and Arch. See `.planning/milestones/v2.0/`.
+
+Open item: Phase 2 (Windows toolchain) remains `human_needed` — verify on a Windows host.
 
 ---
-*Last updated: 2026-11-16*
+*Last updated: 2026-11-18*
 
 ## Evolution
 

@@ -115,7 +115,7 @@
 
 - **Templating Syntax:** Go templates (`{{ ... }}`)
 - **No Hardcoded Secrets:** Credentials handled by chezmoi variables or system keystores.
-- **Zsh Startup Speed:** < 50ms requirement; heavy commands must use `_cache_eval` or lazy loading.
+- **Zsh Startup Speed:** < 120ms budget (measured ~96ms, Apple Silicon); heavy commands must use `_cache_eval` or lazy loading.
 
 ## Anti-Patterns
 

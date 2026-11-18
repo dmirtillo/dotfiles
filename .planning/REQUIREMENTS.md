@@ -13,7 +13,7 @@ These requirements are already satisfied by the existing codebase.
 ## Active
 
 ### Dependencies
-- [x] **DEP-01**: Bump opencode to `v1.14.35` and litellm to `v1.83.14` across repository tracking files.
+- [x] **DEP-01**: Align opencode/litellm versions across tracking files. *Superseded by the "always latest" constraint — nothing is pinned; install scripts upgrade to latest.*
 
 ### Documentation & Hygiene
 - [x] **DOCS-01**: Implement a strict documentation update workflow for any feature/tool addition to prevent drift.
@@ -22,6 +22,11 @@ These requirements are already satisfied by the existing codebase.
 ### Windows Expansion
 - [x] **WIN-01**: Establish PowerShell profile parity with the existing Zsh aliases and functions (using cross-platform OSS tools where applicable).
 - [x] **WIN-02**: Finalize Windows package management strategy combining `Chocolatey` and `Winget` into a seamless `run_onchange` chezmoi execution.
+
+### Core Integration
+- [x] **CORE-01**: Core spike knowledge integrated into the core CLI scripts for agentic operation.
+- [x] **CORE-02**: Antigravity CLI BYOK via PAYGO env vars (superseded by Gemini CLI removal).
+- [x] **CORE-03**: Robust hybrid document modification: `markitdown` for reading, `officecli query/set` for structurally-aware targeting.
 
 ### Hygiene & Hardening (Phases 9-13)
 - [x] **HYG-01**: Spike sources exist once (`.planning/spikes/`); skill `sources/` untracked.
@@ -57,6 +62,10 @@ These requirements are already satisfied by the existing codebase.
 | WIN-02 | Phase 2 | Complete |
 | WIN-01 | Phase 3 | Complete |
 | DEP-01 | Phase 4 | Complete |
+| BREW-01 | Phase 5 | Complete |
+| CORE-01 | Phase 6 | Complete |
+| CORE-02 | Phase 7 | Complete |
+| CORE-03 | Phase 8 | Complete |
 | HYG-01 | Phase 9 | Complete |
 | HYG-02 | Phase 9 | Complete |
 | HYG-03 | Phase 9 | Complete |
@@ -76,6 +85,3 @@ These requirements are already satisfied by the existing codebase.
 | OC-05 | Phase 12 | Complete |
 | TOOL-02 | Phase 13 | Complete |
 | TOOL-03 | Phase 13 | Complete |
-
-### OfficeCLI Hybrid Workflow
-- [ ] **CORE-03**: Establish a robust hybrid approach to document modification that pairs `markitdown` for reading and `officecli query/set` for structurally-aware targeting.

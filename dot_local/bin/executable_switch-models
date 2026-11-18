@@ -25,7 +25,7 @@ set -euo pipefail
 #   gemini     → google/ provider (@ai-sdk/google, direct Google AI Studio)
 #   anthropic  → litellm/ provider (@ai-sdk/openai-compatible, localhost:4000)
 #                LiteLLM proxies to Vertex AI using gcloud ADC.
-#   xai        → litellm/ provider (Grok 4.7 via the Vertex partner endpoint)
+#   xai        → litellm/xai/ provider (Grok 4.7 via the Vertex partner endpoint)</｜DSML｜ parameter>,
 #
 # DEPENDENCIES:
 #   jq  (brew install jq)
@@ -40,10 +40,12 @@ CONFIG="${OPENCODE_CONFIG:-$HOME/.config/opencode/opencode.json}"
 GEMINI_PRO="google/gemini-4-argon"
 GEMINI_FLASH="google/gemini-3.8-flash"
 ANTHROPIC_PRO="litellm/claude-sonnet-5-5"
-XAI_PRO="litellm/grok-4.7"
+# litellm proxies Vertex's partner endpoints; opencode nests the provider (xai)
+# inside the litellm provider name, so the model key in opencode.json is
+# "xai/grok-4.7" and the fully-qualified id is litellm/xai/grok-4.7.
+XAI_PRO="litellm/xai/grok-4.7"
 
 readonly CONFIG GEMINI_PRO GEMINI_FLASH ANTHROPIC_PRO XAI_PRO
-
 usage() {
   echo "Usage: switch-models [gemini|anthropic|xai|status]"
   echo ""
@@ -65,6 +67,22 @@ check_deps() {
   fi
 }
 
+# Verify the fully-qualified model id exists in the generated config's provider
+# map. Guards against provider/model renames in run_onchange_setup-opencode.sh.tmpl
+# drifting away from the constants above (litellm/xai/grok-4.7, not litellm/grok-4.7).
+check_model_exists() {
+  local id="$1" provider model
+  provider="${id%%/*}"
+  model="${id#*/}"
+  if ! sed 's|^[[:space:]]*//.*||g' "$CONFIG" |
+       jq -e --arg p "$provider" --arg m "$model" \
+         '.provider[$p].models[$m] != null' >/dev/null 2>&1; then
+    echo "ERROR: model '$id' is not defined in $CONFIG" >&2
+    echo "       (provider '$provider', model '$model') — check switch-models constants" >&2
+    exit 1
+  fi
+}
+
 status() {
   local main_model small_model clean_json
   clean_json=$(sed 's|^[[:space:]]*//.*||g' "$CONFIG")
@@ -74,10 +92,10 @@ status() {
   # Determine current mode
   local mode="unknown"
   case "$main_model" in
-    litellm/claude*|*claude*)   mode="anthropic" ;;
-    litellm/grok*|*grok*)       mode="xai" ;;
-    litellm/deepseek*|*deepseek*) mode="deepseek" ;;
-    *gemini*)                   mode="gemini" ;;
+    *claude*)   mode="anthropic" ;;
+    *grok*)     mode="xai" ;;
+    *deepseek*) mode="deepseek" ;;
+    *gemini*)   mode="gemini" ;;
   esac
 
   echo "Mode: $mode"
@@ -133,9 +151,9 @@ switch_models() {
 check_deps
 
 case "${1:-status}" in
-  gemini)    switch_models "$GEMINI_PRO" "$GEMINI_FLASH" "Gemini" ;;
-  anthropic) switch_models "$ANTHROPIC_PRO" "$GEMINI_FLASH" "Anthropic" ;;
-  xai)       switch_models "$XAI_PRO" "$GEMINI_FLASH" "xAI" ;;
+  gemini)    check_model_exists "$GEMINI_PRO"; switch_models "$GEMINI_PRO" "$GEMINI_FLASH" "Gemini" ;;
+  anthropic) check_model_exists "$ANTHROPIC_PRO"; switch_models "$ANTHROPIC_PRO" "$GEMINI_FLASH" "Anthropic" ;;
+  xai)       check_model_exists "$XAI_PRO"; switch_models "$XAI_PRO" "$GEMINI_FLASH" "xAI" ;;
   status)    status ;;
   -h|--help) usage ;;
   *)         usage ;;
