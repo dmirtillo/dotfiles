@@ -2,7 +2,8 @@
 # Pacfile - Arch Linux package manifest (analogous to Brewfile for macOS)
 # Managed by chezmoi - do not edit on target machines
 #
-# Usage: yay -S --needed --noconfirm $(grep -v '^#' Pacfile | grep -v '^$')
+# Usage: yay -S --needed --noconfirm $(sed 's/[[:space:]]*#.*//' Pacfile | awk 'NF')
+#        (add grep -v '#.*@gui' before sed on headless/no-GUI servers)
 #
 # Note: zsh plugins (autosuggestions, fast-syntax-highlighting, powerlevel10k)
 # are managed by antidote, NOT by system packages.
@@ -52,7 +53,8 @@ texinfo
 zsh
 zsh-completions
 tmux
-ghostty
+ghostty-terminfo
+ghostty  # @gui
 
 # AUR: antidote plugin manager (replaces manual plugin sourcing)
 # antidote is managed via AUR: zsh-antidote
@@ -105,7 +107,7 @@ chezmoi
 # ksecretd (a kwalletd5/kwalletd6 dependency); kwallet-pam unlocks KWallet at
 # login, which is what makes credentials readable without a prompt.
 libsecret
-kwallet-pam
+kwallet-pam  # @gui
 pass
 gnupg
 
@@ -204,11 +206,11 @@ pacman-contrib
 yay-bin
 
 # =============================================================================
-# FONTS
+# FONTS (GUI only)
 # =============================================================================
-awesome-terminal-fonts
-powerline-fonts
-ttf-meslo-nerd-font-powerlevel10k
+awesome-terminal-fonts  # @gui
+powerline-fonts  # @gui
+ttf-meslo-nerd-font-powerlevel10k  # @gui
 
 # =============================================================================
 # AI / LLM TOOLS
@@ -274,7 +276,7 @@ openspec
 officecli
 litellm
 markitdown-bin
-losslesscut-bin
+losslesscut-bin  # @gui
 
 # =============================================================================
 # CRAFT APP SUITE (AUR)

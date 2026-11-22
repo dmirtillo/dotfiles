@@ -77,8 +77,20 @@ if [ ! -f "$PACFILE" ]; then
   exit 1
 fi
 
-# Parse Pacfile: strip comments and blank lines
-PACKAGES=$(grep -v '^#' "$PACFILE" | grep -v '^$' | tr '\n' ' ')
+# Detect whether the host has a GUI stack (display server, DE/WM, or active display).
+HAS_GUI=0
+if [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ] || [ -e /etc/systemd/system/display-manager.service ] \
+  || pacman -Qq 2>/dev/null | grep -qE '^(xorg-server|xorg-xwayland|plasma-desktop|plasma-meta|gnome-shell|xfce4-session|sway|hyprland|i3-wm|river|niri|wayfire|sddm|gdm|lightdm|ly|greetd)$'; then
+  HAS_GUI=1
+fi
+
+# Parse Pacfile: strip comments/blank lines, and skip @gui packages when headless
+if [ "$HAS_GUI" -eq 1 ]; then
+  PACKAGES=$(sed 's/[[:space:]]*#.*//' "$PACFILE" | grep -v '^$' | tr '\n' ' ')
+else
+  echo "  Headless/no-GUI system detected — skipping @gui packages."
+  PACKAGES=$(grep -v '#[[:space:]]*@gui' "$PACFILE" | sed 's/[[:space:]]*#.*//' | grep -v '^$' | tr '\n' ' ')
+fi
 
 if [ -z "$PACKAGES" ]; then
   echo "  No packages to install."
