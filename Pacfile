@@ -235,6 +235,8 @@ python-python-multipart
 python-cryptography
 python-pynacl
 python-websockets
+python-google-auth
+python-requests
 python-httpx2
 python-sqlalchemy
 python-alembic

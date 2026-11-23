@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 # =============================================================================
 # Trust mise configuration
-# chezmoi:template:hash {{ include "dot_mise.toml.tmpl" | sha256sum }}
+# chezmoi:template:hash {{ include "private_dot_config/mise/config.toml.tmpl" | sha256sum }}
 # =============================================================================
 
 set -euo pipefail
 
 if command -v mise &> /dev/null; then
-    echo "[mise] Trusting ~/.mise.toml..."
-    mise trust ~/.mise.toml || true
-    echo "[mise] Installing tools from ~/.mise.toml..."
+    rm -f ~/.mise.toml
+    echo "[mise] Trusting ~/.config/mise/config.toml..."
+    mise trust ~/.config/mise/config.toml || true
+    echo "[mise] Installing tools from ~/.config/mise/config.toml..."
     mise install || true
     mise upgrade || true
 fi
