@@ -354,26 +354,29 @@ config.permission.external_directory = Object.assign({}, config.permission.exter
 
 config.mcp = config.mcp || {};
 delete config.mcp.servers;
-config.mcp["officecli"] = {
-  type: "local",
-  command: ["{{ .chezmoi.homeDir }}/.local/bin/officecli", "mcp"]
-};
-// Craft app suite MCP servers (gridcraft, pdfcraft, wordcraft, deckcraft, photocraft).
+// OfficeCLI + Craft app suite MCP servers.
 // Resolve each binary across Homebrew (/opt/homebrew/bin, /usr/local/bin), Arch (/usr/bin),
 // and ~/.local/bin. Only register the server if the binary is actually installed.
-for (const name of ["gridcraft", "pdfcraft", "wordcraft", "deckcraft", "photocraft"]) {
+for (const [name, bin] of [
+  ["officecli", "officecli"],
+  ["gridcraft", "gridcraft-cli"],
+  ["pdfcraft", "pdfcraft-cli"],
+  ["wordcraft", "wordcraft-cli"],
+  ["deckcraft", "deckcraft-cli"],
+  ["photocraft", "photocraft-cli"]
+]) {
   const candidates = [
-    `/opt/homebrew/bin/${name}-cli`,
-    `/usr/local/bin/${name}-cli`,
-    `/usr/bin/${name}-cli`,
-    path.join(process.env.HOME, '.local', 'bin', `${name}-cli`)
+    `/opt/homebrew/bin/${bin}`,
+    `/usr/local/bin/${bin}`,
+    `/usr/bin/${bin}`,
+    path.join(process.env.HOME, '.local', 'bin', bin)
   ];
   const found = candidates.find((p) => fs.existsSync(p));
   let resolved = found;
   if (!resolved) {
     try {
       const { execSync } = require('child_process');
-      const out = execSync(`which ${name}-cli 2>/dev/null`, { encoding: 'utf8' }).trim();
+      const out = execSync(`which ${bin} 2>/dev/null`, { encoding: 'utf8' }).trim();
       if (out && fs.existsSync(out)) resolved = out;
     } catch (e) {}
   }
