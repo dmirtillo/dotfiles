@@ -363,11 +363,6 @@ cfapi() {
 {{ else if eq .chezmoi.os "linux" -}}
 # Linux Specific
 alias flushdns='sudo systemd-resolve --flush-caches 2>/dev/null || sudo resolvectl flush-caches 2>/dev/null'
-if command -v yay &>/dev/null; then
-  alias update='yay -Syu && antidote update'
-elif command -v pacman &>/dev/null; then
-  alias update='sudo pacman -Syu && antidote update'
-fi
 alias syslog='journalctl -xe'
 {{ end -}}
 
@@ -611,34 +606,56 @@ alias help='tldr'
 # bottom: system monitor TUI (like htop but better)
 alias sysmon='btm'
 
-{{ if eq .chezmoi.os "darwin" -}}
-# Upgrade everything: brew formulae + casks + antidote plugins in one command
-brewup() {
-  brew update
-  brew upgrade
-  brew upgrade --cask --greedy
-  brew cleanup
-  
+# Upgrade system packages, shell plugins, mise tools, openspec, and LiteLLM proxy
+update() {
+{{- if eq .chezmoi.os "darwin" }}
+  brew update &&
+    brew upgrade &&
+    brew upgrade --cask --greedy &&
+    brew cleanup || return $?
+
   # brew cleanup deletes old antidote versions, breaking its autoload functions.
   # Re-source it so 'antidote update' works in the same shell session.
   local antidote_path="${HOMEBREW_PREFIX:-/opt/homebrew}/opt/antidote/share/antidote/antidote.zsh"
   if [[ -f "$antidote_path" ]]; then
     source "$antidote_path"
   fi
-  
-  antidote update
-  command -v mise &>/dev/null && mise upgrade
-  npm install -g @fission-ai/openspec@latest --dangerously-allow-all-scripts
+{{- else if eq .chezmoi.os "linux" }}
+  if command -v yay &>/dev/null; then
+    yay -Syu || return $?
+  elif command -v pacman &>/dev/null; then
+    sudo pacman -Syu || return $?
+  fi
 
-  # LiteLLM is installed unpinned. An upgrade recreates the pipx venv and wipes
-  # the local xAI patch, so re-apply it and bounce the proxy.
+  if [[ -f /usr/share/zsh-antidote/antidote.zsh ]]; then
+    source /usr/share/zsh-antidote/antidote.zsh
+  fi
+{{- end }}
+
+  command -v antidote &>/dev/null && antidote update
+  command -v mise &>/dev/null && mise upgrade
+  command -v npm &>/dev/null && npm install -g @fission-ai/openspec@latest --dangerously-allow-all-scripts
+
+  # LiteLLM is installed unpinned. Upgrades wipe the local xAI patch, so
+  # re-apply it and bounce the proxy.
+{{- if eq .chezmoi.os "darwin" }}
   if command -v pipx &>/dev/null && pipx list --short 2>/dev/null | grep -q '^litellm '; then
     pipx upgrade litellm 2>&1 | sed 's/^/  /'
     "$HOME/.local/bin/litellm-patch" 2>&1 | sed 's/^/  /'
     launchctl kickstart -k gui/$(id -u)/com.litellm.proxy 2>/dev/null || true
   fi
+{{- else if eq .chezmoi.os "linux" }}
+  if command -v pipx &>/dev/null && pipx list --short 2>/dev/null | grep -q '^litellm '; then
+    pipx upgrade litellm 2>&1 | sed 's/^/  /'
+  fi
+  if command -v litellm &>/dev/null || [[ -x "$HOME/.local/pipx/venvs/litellm/bin/python" ]]; then
+    "$HOME/.local/bin/litellm-patch" 2>&1 | sed 's/^/  /'
+    XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}" systemctl --user restart litellm 2>/dev/null || true
+  fi
+{{- end }}
 }
 
+{{ if eq .chezmoi.os "darwin" -}}
 # Zscaler VPN controls (macOS only)
 # zscaler-start: opens the Zscaler.app hidden then loads all system LaunchDaemons
 #                (sudo required — daemons run as root)

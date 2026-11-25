@@ -5,9 +5,10 @@ set -euo pipefail
 # litellm-patch — re-apply local patches to a pipx-installed LiteLLM
 #
 # WHY: LiteLLM is installed UNPINNED and upgraded to latest (`pipx upgrade
-# litellm`). Every upgrade recreates the venv and wipes these patches, so this
-# script runs after every install/upgrade (see run_onchange_install-packages
-# and `brewup`). It is idempotent: running it twice changes nothing.
+# litellm` on macOS, AUR `litellm` on Arch). Every upgrade wipes these patches,
+# so this script runs after every install/upgrade (see
+# run_onchange_install-packages and `update`). It is idempotent: running it
+# twice changes nothing.
 #
 # PATCHES:
 #   1. xAI Grok via the Vertex AI partner endpoint. LiteLLM 1.109 still has no
@@ -24,18 +25,26 @@ set -euo pipefail
 # =============================================================================
 
 VENV="${LITELLM_VENV:-$HOME/.local/pipx/venvs/litellm}"
-PYBIN="$VENV/bin/python"
+if [ -x "$VENV/bin/python" ]; then
+  PYBIN="$VENV/bin/python"
+elif command -v litellm &>/dev/null; then
+  SHEBANG="$(head -n1 "$(command -v litellm)" | sed -n 's/^#![[:space:]]*//p')"
+  PYBIN="${SHEBANG%% *}"
+  [ -x "${PYBIN:-}" ] || PYBIN="$(command -v python3)"
+else
+  echo "litellm-patch: neither $VENV nor a litellm binary on PATH was found" >&2
+  exit 1
+fi
 
-# Resolve site-packages from the venv's OWN interpreter rather than hardcoding a
-# version directory: litellm is installed unpinned, so the venv's Python can
+# Resolve site-packages from the target interpreter rather than hardcoding a
+# version directory: litellm is installed unpinned, so the Python version can
 # (and will) change on upgrade. Asking the interpreter keeps this patch working
 # across Python versions.
 PY="$("$PYBIN" -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')"
 PARTNER_MAIN="$PY/litellm/llms/vertex_ai/vertex_ai_partner_models/main.py"
 
 if [ ! -f "$PARTNER_MAIN" ]; then
-  echo "litellm-patch: no partner-models/main.py under $VENV" >&2
-  echo "litellm-patch: is litellm installed via pipx? (looked in $PY)" >&2
+  echo "litellm-patch: no partner-models/main.py under $PY" >&2
   exit 1
 fi
 
@@ -53,7 +62,9 @@ if ! grep -q 'ZAI_PREFIX = "zai-org/"' "$PARTNER_MAIN"; then
 fi
 
 echo "litellm-patch: applying xAI Grok prefix..."
-LITELLM_PARTNER_MAIN="$PARTNER_MAIN" "$PYBIN" - <<'PY'
+env_cmd=(env "LITELLM_PARTNER_MAIN=$PARTNER_MAIN")
+[ -w "$PARTNER_MAIN" ] || env_cmd=(sudo "${env_cmd[@]}")
+"${env_cmd[@]}" "$PYBIN" - <<'PY'
 import os
 p = os.environ["LITELLM_PARTNER_MAIN"]
 with open(p) as f:

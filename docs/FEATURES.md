@@ -30,8 +30,9 @@ The `.zshrc` template includes ~100 aliases organized by category. Highlights:
 | Docker | `d`, `dc`, `dcu`, `dcd`, `dps`, `lzd`=lazydocker |
 | Terraform | `tf`, `tfi`, `tfp`, `tfa`, `tfs` |
 | Ansible | `ap`, `apv`, `apc`, `av`, `ave`, `avd`, `al` |
-| macOS only | `showfiles`, `hidefiles`, `flushdns`, `emptytrash`, `zscaler-start`, `zscaler-kill`, `brewup` |
-| Linux only | `update` (yay/pacman), `flushdns` (systemd-resolve) |
+| System update | `update` (brew/yay/pacman + antidote + mise + openspec + litellm) |
+| macOS only | `showfiles`, `hidefiles`, `flushdns`, `emptytrash`, `zscaler-start`, `zscaler-kill` |
+| Linux only | `flushdns` (systemd-resolve) |
 
 ---
 
