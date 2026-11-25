@@ -222,8 +222,12 @@ if (Array.isArray(config.plugins)) {
 }
 
 config.$schema = "https://opencode.ai/config.json";
-config.model = config.model || "google/gemini-3.8-flash";
-config.small_model = config.small_model || "google/gemini-3.8-flash";
+config.model = (!config.model || config.model === "google/gemini-3.8-flash")
+  ? "litellm/gemini-4-hydrogen"
+  : config.model;
+config.small_model = (!config.small_model || config.small_model === "google/gemini-3.8-flash")
+  ? "litellm/gemini-4-hydrogen"
+  : config.small_model;
 
 config.provider = config.provider || {};
 config.provider.google = {

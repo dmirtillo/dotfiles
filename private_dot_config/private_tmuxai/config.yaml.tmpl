@@ -26,7 +26,7 @@
 # in your Exec Pane and waits for them to finish before reading the output.
 # =============================================================================
 
-default_model: "gemini-fast"
+default_model: "gemini-hydrogen"
 
 # MODEL NOTES:
 #   gemini provider:    native Google AI SDK, bare model names (no "google/" prefix)
@@ -35,6 +35,13 @@ default_model: "gemini-fast"
 #                       at local LiteLLM proxy (localhost:4000) instead of openrouter.ai
 #                       LiteLLM then forwards to Vertex AI using gcloud ADC (no API key)
 models:
+  gemini-hydrogen:
+    provider: "openrouter"
+    model: "gemini-4-hydrogen"
+    api_key: "noop"
+    base_url: "http://localhost:4000/v1"
+    # Routes via local LiteLLM proxy → Vertex AI (gcloud ADC, no real API key needed)
+
   gemini-fast:
     provider: "gemini"
     model: "gemini-3.8-flash"

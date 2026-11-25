@@ -5,7 +5,7 @@ set -euo pipefail
 # switch-models — Hot-swap OpenCode's active LLM provider
 #
 # Usage:
-#   switch-models gemini     Set pro agents to Gemini 4 Argon
+#   switch-models gemini     Set agents to Gemini 4 Hydrogen (via LiteLLM)
 #   switch-models anthropic  Set pro agents to Claude Sonnet 5.5 (via LiteLLM)
 #   switch-models xai        Set pro agents to Grok 4.7 (via LiteLLM)
 #   switch-models status     Show current model configuration (default)
@@ -22,23 +22,22 @@ set -euo pipefail
 #   only; for a permanent change edit the generator in that script.
 #
 # ROUTING CONTEXT:
-#   gemini     → google/ provider (@ai-sdk/google, direct Google AI Studio)
+#   gemini     → litellm/ provider (@ai-sdk/openai-compatible, localhost:4000)
 #   anthropic  → litellm/ provider (@ai-sdk/openai-compatible, localhost:4000)
 #                LiteLLM proxies to Vertex AI using gcloud ADC.
-#   xai        → litellm/xai/ provider (Grok 4.7 via the Vertex partner endpoint)</｜DSML｜ parameter>,
+#   xai        → litellm/xai/ provider (Grok 4.7 via the Vertex partner endpoint)
 #
 # DEPENDENCIES:
 #   jq  (brew install jq)
 #
 # FLASH MODEL:
-#   The small_model always stays as Gemini Flash in every mode — there is no
-#   cheap fast model available via Vertex AI at the time of writing.
+#   The small_model stays as Gemini 4 Hydrogen (via LiteLLM) in every mode.
 # =============================================================================
 
 CONFIG="${OPENCODE_CONFIG:-$HOME/.config/opencode/opencode.json}"
 
-GEMINI_PRO="google/gemini-4-argon"
-GEMINI_FLASH="google/gemini-3.8-flash"
+GEMINI_PRO="litellm/gemini-4-hydrogen"
+GEMINI_FLASH="litellm/gemini-4-hydrogen"
 ANTHROPIC_PRO="litellm/claude-sonnet-5-5"
 # litellm proxies Vertex's partner endpoints; opencode nests the provider (xai)
 # inside the litellm provider name, so the model key in opencode.json is
