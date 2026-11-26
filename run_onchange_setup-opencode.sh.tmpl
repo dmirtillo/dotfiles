@@ -366,18 +366,19 @@ for (const [name, bin] of [
   ["photocraft", "photocraft-cli"]
 ]) {
   const candidates = [
+    path.join(process.env.HOME, '.local', 'bin', bin),
     `/opt/homebrew/bin/${bin}`,
     `/usr/local/bin/${bin}`,
-    `/usr/bin/${bin}`,
-    path.join(process.env.HOME, '.local', 'bin', bin)
+    `/usr/bin/${bin}`
   ];
-  const found = candidates.find((p) => fs.existsSync(p));
-  let resolved = found;
+  // Skip npm's colliding `officecli` (.js) wrapper if present in PATH/Homebrew.
+  const isValidBin = (p) => fs.existsSync(p) && !(name === "officecli" && fs.realpathSync(p).endsWith(".js"));
+  let resolved = candidates.find(isValidBin);
   if (!resolved) {
     try {
       const { execSync } = require('child_process');
       const out = execSync(`which ${bin} 2>/dev/null`, { encoding: 'utf8' }).trim();
-      if (out && fs.existsSync(out)) resolved = out;
+      if (out && isValidBin(out)) resolved = out;
     } catch (e) {}
   }
   if (resolved) {
